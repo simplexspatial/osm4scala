@@ -13,3 +13,8 @@ Requirements:
 
   - Runtime:
     - Protobuf compiler: sudo apt-get install protobuf-compiler
+    
+    
+Libraries:
+
+  - ScalaPB: http://trueaccord.github.io/ScalaPB/
