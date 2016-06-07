@@ -1,5 +1,6 @@
 # pbf4scala
 [![Build Status](https://travis-ci.org/angelcervera/pbf4scala.svg)](https://travis-ci.org/angelcervera/pbf4scala)
+[![pbf4scala chat](https://badges.gitter.im/angelcervera/pbf4scala.svg)](https://gitter.im/angelcervera/pbf4scala)
 
 Scala library focus in parse and manipulate PBF2 OpenStreetMap files.
 
