@@ -1,10 +1,6 @@
 import com.trueaccord.scalapb.{ScalaPbPlugin => PB}
 
 PB.protobufSettings
-scalaSource in PB.protobufConfig <<= (sourceManaged in Compile) {
-  _ / "compiled_protobuf"
-}
-
 
 lazy val root = (project in file(".")).
   settings(
