@@ -1,6 +1,7 @@
 import com.trueaccord.scalapb.{ScalaPbPlugin => PB}
 
 PB.protobufSettings
+PB.grpc := false
 
 lazy val root = (project in file(".")).
   settings(
