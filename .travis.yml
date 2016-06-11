@@ -2,3 +2,5 @@ language: scala
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y protobuf-compiler
+script: "sbt clean coverage test"
+after_success: "sbt coverageReport coveralls"
