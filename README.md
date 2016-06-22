@@ -11,6 +11,8 @@ As reference:
 
   - PBF2 Documentation: http://wiki.openstreetmap.org/wiki/PBF_Format
   - PBF2 Java library: https://github.com/openstreetmap/osmosis/tree/master/osmosis-osm-binary
+  - Download whole planet pbf files: http://free.nchc.org.tw/osm.planet/
+  - Download country pbf files: http://download.geofabrik.de/index.html
   - Scala protocol buffer library: http://trueaccord.github.io/ScalaPB/
 
 
@@ -23,3 +25,4 @@ Requirements:
 Libraries:
 
   - ScalaPB: http://trueaccord.github.io/ScalaPB/
+  

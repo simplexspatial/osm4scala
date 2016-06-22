@@ -17,6 +17,8 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= List(
       "commons-codec" % "commons-codec" % "1.10" % "test",
       "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-      "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
+      "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
+      "ch.qos.logback" % "logback-classic" % "1.1.7"
     )
   )

@@ -20,7 +20,7 @@ object PbfFileBlockIterator {
   * Iterator over a OSM file in pbf format.
   * Each item is a tuple of BlobHeader and Blob
   *
-  * @param pbfInputStream Opened InputStream that contains the pbf
+  * @param pbfInputStream Input stream that will be used to read the fileblock
   * @author angelcervera
   */
 class PbfFileBlockIterator(pbfInputStream: InputStream) extends Iterator[(BlobHeader, Blob)] {
