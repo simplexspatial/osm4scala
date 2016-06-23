@@ -15,7 +15,7 @@ lazy val root = (project in file(".")).
     scalaVersion := "2.11.8",
     publishMavenStyle := true,
     libraryDependencies ++= List(
-      "commons-codec" % "commons-codec" % "1.10" % "test",
+      "commons-io" % "commons-io" % "2.5" % "test",
       "org.scalatest" %% "scalatest" % "2.2.6" % "test",
       "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",

@@ -117,5 +117,4 @@ object PrimitivesExtractor extends LazyLogging {
 
   }
 
-
 }

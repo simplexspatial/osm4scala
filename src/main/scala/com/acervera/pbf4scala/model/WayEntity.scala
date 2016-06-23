@@ -20,9 +20,7 @@ object WayEntity {
   def apply(osmosisStringTable: StringTable, osmosisWay: Way) = {
 
     // Calculate nodes references in stored in delta compression.
-    val nodes = osmosisWay.refs.scanLeft(0l) {
-      _ + _
-    }.drop(1)
+    val nodes = osmosisWay.refs.scanLeft(0l) { _ + _ }.drop(1)
 
     // Calculate tags using the StringTable.
     val tags = (osmosisWay.keys, osmosisWay.vals).zipped.map { (k, v) => osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8") }.toMap
