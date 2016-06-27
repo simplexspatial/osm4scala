@@ -9,7 +9,7 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
 /**
   * Created by angelcervera on 23/06/16.
   */
-class PrimitivesExtractorTest extends FunSuite with BeforeAndAfter {
+class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
 
   val extractRootFolder = "target/testing/utils/"
 
