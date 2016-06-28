@@ -2,6 +2,7 @@ import com.trueaccord.scalapb.{ScalaPbPlugin => PB}
 
 PB.protobufSettings
 PB.grpc := false
+scalaSource in PB.protobufConfig := sourceManaged.value / "main"
 
 coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*"
 
