@@ -3,7 +3,7 @@ package com.acervera.pbf4scala
 import java.io.{ByteArrayInputStream, DataInputStream}
 import java.util.zip.Inflater
 
-import com.acervera.pbf4scala.model.{OSMEntity, WayEntity}
+import com.acervera.pbf4scala.model.{OSMEntity, RelationEntity, WayEntity}
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 
@@ -68,7 +68,12 @@ class OSMEntitiesIterator(blob: Blob) extends Iterator[OSMEntity] {
         throw new NotImplementedError("Nodes does not implemented jet.")
       } else {
         if (currentPrimitiveGroup.relations.nonEmpty) {
-          throw new NotImplementedError("Relations does not implemented jet")
+          val currentRelation = currentPrimitiveGroup.relations(osmEntityIdx)
+
+          osmEntityIdx += 1
+          if (currentPrimitiveGroup.relations.size == osmEntityIdx) nextPrimitiveGroup()
+
+          RelationEntity(primitiveBlock.stringtable, currentRelation)
         } else {
           if (currentPrimitiveGroup.changesets.nonEmpty) {
             throw new NotImplementedError("Changeset does not implemented jet")
