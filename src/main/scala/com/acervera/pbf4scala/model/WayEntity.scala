@@ -9,7 +9,7 @@ case class WayEntity(val id: Long, val nodes: Seq[Long], val tags: Map[String, S
 
   override val osmModel: OSMTypes.Value = OSMTypes.Way
 
-  object WayEntityTypes extends Enumeration {
+  object WayEntityTypes extends Enumeration { // TODO: How to know the type ?????
     val Open, Close, Area, CombinedClosedPolylineArea = Value
   }
 
