@@ -2,16 +2,6 @@ package com.acervera.pbf4scala.model
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.{Relation, StringTable}
 
-object RelationMemberEntityTypes extends Enumeration {
-  type RelationMemberEntityTypes = Value
-  val Node = Value(0)
-  val Way = Value(1)
-  val Relation = Value(2)
-  val Unrecognized = Value(3)
-}
-
-
-case class RelationMemberEntity(val id: Long, val relationTypes: RelationMemberEntityTypes.Value, val role: String)
 
 /**
   * Created by angelcervera on 14/06/16.
