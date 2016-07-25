@@ -34,7 +34,7 @@ class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
     }).length == 1, "Must extract two dense primitives.")
   }
 
-  test("Extracting ways blocks from pbf") {
+  test("Extracting relations blocks from pbf") {
     val pbfFile = "src/test/resources/com/acervera/pbf4scala/utils/relations_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
@@ -48,7 +48,7 @@ class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
 
   }
 
-  test("Extracting ways relations from pbf") {
+  test("Extracting ways blocks from pbf") {
     val pbfFile = "src/test/resources/com/acervera/pbf4scala/utils/ways_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
