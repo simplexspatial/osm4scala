@@ -49,6 +49,7 @@ class OSMEntitiesIterator(blob: Blob) extends Iterator[OSMEntity] {
 
   var primitiveGroupIdx = 0
   var osmEntityIdx = 0
+  var denseNodesIterator : Option[DenseNodesIterator] = None
 
   override def hasNext: Boolean = primitiveBlock.primitivegroup.size != primitiveGroupIdx
 
@@ -56,47 +57,87 @@ class OSMEntitiesIterator(blob: Blob) extends Iterator[OSMEntity] {
 
     val currentPrimitiveGroup = primitiveBlock.primitivegroup(primitiveGroupIdx)
 
-    if (currentPrimitiveGroup.ways.nonEmpty) {
+    /**
+      * Move to the next primitive group.
+      */
+    def nextPrimitiveGroup() = {
+      primitiveGroupIdx += 1
+      osmEntityIdx = 0
+    }
+
+    /**
+      * Extract one relation from the primitive group.
+      */
+    def extractRelationPrimitiveGroup: RelationEntity = {
+      val currentRelation = currentPrimitiveGroup.relations(osmEntityIdx)
+
+      osmEntityIdx += 1
+      if (currentPrimitiveGroup.relations.size == osmEntityIdx) nextPrimitiveGroup
+
+      RelationEntity(primitiveBlock.stringtable, currentRelation)
+    }
+
+    /**
+      * Extract one way from the primitive group.
+      */
+    def extractWayPrimitiveGroup() = {
       val currentWay = currentPrimitiveGroup.ways(osmEntityIdx)
 
       osmEntityIdx += 1
-      if (currentPrimitiveGroup.ways.size == osmEntityIdx) nextPrimitiveGroup()
+      if (currentPrimitiveGroup.ways.size == osmEntityIdx) nextPrimitiveGroup
 
       WayEntity(primitiveBlock.stringtable, currentWay)
+    }
+
+    /**
+      * Extract one node from the densde nodes primitive group.
+      */
+    def extractDenseNodePrimitiveGroup() = {
+      // If it is the first time, create the iterator.
+      if(!denseNodesIterator.isDefined) {
+        denseNodesIterator = Some( DenseNodesIterator(primitiveBlock.stringtable, currentPrimitiveGroup.dense.get) )
+      }
+
+      // At least, one element.
+      val node = denseNodesIterator.get.next
+
+      if(!denseNodesIterator.get.hasNext) {
+        denseNodesIterator = None
+        nextPrimitiveGroup
+      }
+
+      node
+    }
+
+    // Only one type per primitive group.
+    if (currentPrimitiveGroup.dense.isDefined) {
+      extractDenseNodePrimitiveGroup
     } else {
-      if (currentPrimitiveGroup.nodes.nonEmpty) {
-        throw new NotImplementedError("Nodes does not implemented jet.")
+
+      if (currentPrimitiveGroup.ways.nonEmpty) {
+        extractWayPrimitiveGroup
       } else {
+
         if (currentPrimitiveGroup.relations.nonEmpty) {
-          val currentRelation = currentPrimitiveGroup.relations(osmEntityIdx)
-
-          osmEntityIdx += 1
-          if (currentPrimitiveGroup.relations.size == osmEntityIdx) nextPrimitiveGroup()
-
-          RelationEntity(primitiveBlock.stringtable, currentRelation)
+          extractRelationPrimitiveGroup
         } else {
-          if (currentPrimitiveGroup.changesets.nonEmpty) {
-            throw new NotImplementedError("Changeset does not implemented jet")
+
+          // Non supported entities.
+          if (currentPrimitiveGroup.nodes.nonEmpty) {
+            throw new NotImplementedError("Nodes does not implemented yet.")
           } else {
-            if (currentPrimitiveGroup.dense.isDefined) {
-              throw new NotImplementedError("Dense does not implemented jet")
+            if (currentPrimitiveGroup.changesets.nonEmpty) {
+              throw new NotImplementedError("Changeset does not implemented yet")
             } else {
               throw new Exception("No data found")
             }
           }
+
         }
+
       }
     }
 
   }
-
-  /**
-    * Move to the next primitive group.
-    */
-  def nextPrimitiveGroup() = {
-    primitiveGroupIdx += 1
-    osmEntityIdx == 0
-  }
-
 
 }
