@@ -15,11 +15,11 @@ lazy val root = (project in file(".")).
     version := "1.0-SNAPSHOT",
     scalaVersion := "2.11.8",
     publishMavenStyle := true,
+    crossScalaVersions := Seq("2.10.6", "2.11.8"),
     libraryDependencies ++= List(
       "commons-io" % "commons-io" % "2.5" % "test",
+      "ch.qos.logback" % "logback-classic" % "1.1.7",
       "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-      "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
-      "ch.qos.logback" % "logback-classic" % "1.1.7"
+      "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
     )
   )
