@@ -5,11 +5,10 @@ import java.nio.file.{Files, Paths}
 import java.util.zip.Inflater
 
 import com.acervera.pbf4scala.PbfFileBlockIterator
-import com.typesafe.scalalogging.LazyLogging
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 
-object PrimitivesExtractor extends LazyLogging {
+object PrimitivesExtractor {
 
   def fromPbf(pbfFilePath: String, extractRootFolder: String): Unit = {
     var pbfIS: InputStream = null
@@ -65,7 +64,6 @@ object PrimitivesExtractor extends LazyLogging {
 
     primitiveBlock.primitivegroup.foreach(primitiveGroup => {
       if (primitiveGroup.relations.nonEmpty) {
-        logger.debug(s"relations found - ${primitiveGroup.relations.size}")
         primitiveGroup.relations.foreach(relation => {
           val output = new FileOutputStream(s"$outputFolderPath/$relationCounter.relation")
           relation writeTo output
@@ -74,7 +72,6 @@ object PrimitivesExtractor extends LazyLogging {
         })
       } else {
         if (primitiveGroup.nodes.nonEmpty) {
-          logger.debug(s"nodes found - ${primitiveGroup.nodes.size}")
           primitiveGroup.nodes.foreach(node => {
             val output = new FileOutputStream(s"$outputFolderPath/$nodeCounter.node")
             node writeTo output
@@ -83,7 +80,6 @@ object PrimitivesExtractor extends LazyLogging {
           })
         } else {
           if (primitiveGroup.ways.nonEmpty) {
-            logger.debug(s"ways found - ${primitiveGroup.ways.size}")
             primitiveGroup.ways.foreach(way => {
               val output1 = new FileOutputStream(s"$outputFolderPath/$wayCounter.way")
               way writeTo output1
@@ -92,7 +88,6 @@ object PrimitivesExtractor extends LazyLogging {
             })
           } else {
             if (primitiveGroup.changesets.nonEmpty) {
-              logger.debug(s"changesets found - ${primitiveGroup.changesets.size}")
               primitiveGroup.changesets.foreach(changeset => {
                 val output = new FileOutputStream(s"$outputFolderPath/$changeSetCounter.changeset")
                 changeset writeTo output
@@ -101,7 +96,6 @@ object PrimitivesExtractor extends LazyLogging {
               })
             } else {
               if (primitiveGroup.dense.isDefined) {
-                logger.debug(s"dense found")
                 val output = new FileOutputStream(s"$outputFolderPath/$denseCounter.dense")
                 primitiveGroup.dense.get.writeTo(output)
                 output.close
