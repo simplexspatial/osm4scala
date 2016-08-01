@@ -1,7 +1,6 @@
 package com.acervera.pbf4scala
 
 import java.io.{File, FileInputStream}
-import java.text.DecimalFormat
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
 import org.scalatest.{Matchers, WordSpec}
@@ -9,9 +8,6 @@ import org.scalatest.{Matchers, WordSpec}
 import scala.io.Source
 
 class DenseNodesIteratorSpec extends WordSpec with Matchers {
-
-  val formatter = new DecimalFormat("#.######")
-
 
   "The DenseNodesIterator should" should {
     "Read 6432 nodes" in {
