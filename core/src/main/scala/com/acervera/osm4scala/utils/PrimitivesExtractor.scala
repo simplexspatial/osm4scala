@@ -1,10 +1,10 @@
-package com.acervera.pbf4scala.utils
+package com.acervera.osm4scala.utils
 
 import java.io._
 import java.nio.file.{Files, Paths}
 import java.util.zip.Inflater
 
-import com.acervera.pbf4scala.PbfFileBlockIterator
+import com.acervera.osm4scala.PbfFileBlockIterator
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 

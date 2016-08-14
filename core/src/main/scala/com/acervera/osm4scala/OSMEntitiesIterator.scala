@@ -1,9 +1,9 @@
-package com.acervera.pbf4scala
+package com.acervera.osm4scala
 
 import java.io.{ByteArrayInputStream, DataInputStream}
 import java.util.zip.Inflater
 
-import com.acervera.pbf4scala.model.{OSMEntity, RelationEntity, WayEntity}
+import com.acervera.osm4scala.model.{OSMEntity, RelationEntity, WayEntity}
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 

@@ -1,4 +1,4 @@
-package com.acervera.pbf4scala
+package com.acervera.osm4scala
 
 import java.io.{FileInputStream, InputStream}
 
@@ -8,7 +8,7 @@ class PbfFileBlockIteratorSpec extends WordSpec {
 
   "The PbfFileBlockIterator should" should {
     "Read three pairs" in {
-      val testFile = "core/src/test/resources/com/acervera/pbf4scala/fileblock/three_blocks.osm.pbf"
+      val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.osm.pbf"
       var counter = 0
       var pbfIS: InputStream = null
       try {
@@ -21,7 +21,7 @@ class PbfFileBlockIteratorSpec extends WordSpec {
       }
     }
     "Read ten pairs" in {
-      val testFile = "core/src/test/resources/com/acervera/pbf4scala/fileblock/ten_blocks.osm.pbf"
+      val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/ten_blocks.osm.pbf"
       var counter = 0
       var pbfIS: InputStream = null
       try {

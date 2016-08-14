@@ -1,8 +1,8 @@
-package com.acervera.pbf4scala
+package com.acervera.osm4scala
 
 import java.io.InputStream
 
-import com.acervera.pbf4scala.model.OSMEntity
+import com.acervera.osm4scala.model.OSMEntity
 
 /**
   * Created by angelcervera on 24/07/16.

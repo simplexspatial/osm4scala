@@ -1,4 +1,4 @@
-package com.acervera.pbf4scala.model
+package com.acervera.osm4scala.model
 
 object RelationMemberEntityTypes extends Enumeration {
   type RelationMemberEntityTypes = Value
