@@ -1,11 +1,11 @@
-# pbf4scala
+# osm4scala
 
-[![Build Status](https://travis-ci.org/angelcervera/pbf4scala.svg)](https://travis-ci.org/angelcervera/pbf4scala)
-[![Coverage Status](https://coveralls.io/repos/github/angelcervera/pbf4scala/badge.svg?branch=master)](https://coveralls.io/github/angelcervera/pbf4scala?branch=master)
-[![Join the chat at https://gitter.im/angelcervera/pbf4scala](https://badges.gitter.im/angelcervera/pbf4scala.svg)](https://gitter.im/angelcervera/pbf4scala?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/angelcervera/pbf4scala/master/LICENSE.md)
+[![Build Status](https://travis-ci.org/angelcervera/osm4scala.svg)](https://travis-ci.org/angelcervera/osm4scala)
+[![Coverage Status](https://coveralls.io/repos/github/angelcervera/osm4scala/badge.svg?branch=master)](https://coveralls.io/github/angelcervera/osm4scala?branch=master)
+<!--[![Join the chat at https://gitter.im/angelcervera/osm4scala](https://badges.gitter.im/angelcervera/osm4scala.svg)](https://gitter.im/angelcervera/osm4scala?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)-->
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/angelcervera/osm4scala/master/LICENSE.md)
 
-Scala library focus in parse and manipulate PBF2 OpenStreetMap files.
+Scala library focus in parse and manipulate PBF2 Open Street Map files.
 
 As reference:
 
