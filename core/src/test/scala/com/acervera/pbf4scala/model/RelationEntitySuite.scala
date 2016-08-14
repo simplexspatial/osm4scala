@@ -13,8 +13,8 @@ class RelationEntitySuite extends FunSuite {
   test("read a real osmosis Relations.") {
 
     // Read the osmosis string table and way.
-    val strTable = StringTable parseFrom new FileInputStream("src/test/resources/com/acervera/pbf4scala/osmblock/relations/8486/strTable")
-    val osmosisRelation = Relation parseFrom new FileInputStream("src/test/resources/com/acervera/pbf4scala/osmblock/relations/8486/7954.relation")
+    val strTable = StringTable parseFrom new FileInputStream("core/src/test/resources/com/acervera/pbf4scala/osmblock/relations/8486/strTable")
+    val osmosisRelation = Relation parseFrom new FileInputStream("core/src/test/resources/com/acervera/pbf4scala/osmblock/relations/8486/7954.relation")
 
     // Test
     val relation = RelationEntity(strTable, osmosisRelation)

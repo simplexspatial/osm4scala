@@ -18,7 +18,7 @@ class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("Extracting dense blocks from pbf") {
-    val pbfFile = "src/test/resources/com/acervera/pbf4scala/utils/dense_blocks.osm.pbf"
+    val pbfFile = "core/src/test/resources/com/acervera/pbf4scala/utils/dense_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
     assert( new File(extractRootFolder).list(new FilenameFilter {
@@ -35,7 +35,7 @@ class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("Extracting relations blocks from pbf") {
-    val pbfFile = "src/test/resources/com/acervera/pbf4scala/utils/relations_blocks.osm.pbf"
+    val pbfFile = "core/src/test/resources/com/acervera/pbf4scala/utils/relations_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
     assert( new File(extractRootFolder).list(new FilenameFilter {
@@ -49,7 +49,7 @@ class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("Extracting ways blocks from pbf") {
-    val pbfFile = "src/test/resources/com/acervera/pbf4scala/utils/ways_blocks.osm.pbf"
+    val pbfFile = "core/src/test/resources/com/acervera/pbf4scala/utils/ways_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
     assert( new File(extractRootFolder).list(new FilenameFilter {

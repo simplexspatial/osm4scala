@@ -12,7 +12,7 @@ class PbfFileIteratorSpec extends WordSpec with Matchers {
 
   "The PbfFileIterator should" should {
     "Read X entities" in {
-      val testFile = "src/test/resources/com/acervera/pbf4scala/Madrid.bbbike.osm.pbf"
+      val testFile = "core/src/test/resources/com/acervera/pbf4scala/Madrid.bbbike.osm.pbf"
       var ( nodesCounter, waysCounter, relationsCounter, othersCounter, totalCounter ) = (0,0,0,0,0)
       var pbfIS: InputStream = null
       try {
