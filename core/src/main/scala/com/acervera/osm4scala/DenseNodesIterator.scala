@@ -1,6 +1,6 @@
-package com.acervera.pbf4scala
+package com.acervera.osm4scala
 
-import com.acervera.pbf4scala.model.NodeEntity
+import com.acervera.osm4scala.model.NodeEntity
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
 
 object DenseNodesIterator {

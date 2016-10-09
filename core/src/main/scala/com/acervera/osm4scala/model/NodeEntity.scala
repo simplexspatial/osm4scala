@@ -1,4 +1,4 @@
-package com.acervera.pbf4scala.model
+package com.acervera.osm4scala.model
 
 /**
   * Created by angelcervera on 14/06/16.

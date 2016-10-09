@@ -1,4 +1,4 @@
-package com.acervera.pbf4scala.model
+package com.acervera.osm4scala.model
 
 import java.io.FileInputStream
 
@@ -14,8 +14,8 @@ class WayEntitySuite extends FunSuite {
   test("read a real osmosis Way.") {
 
     // Read the osmosis string table and way.
-    val strTable = StringTable parseFrom new FileInputStream("core/src/test/resources/com/acervera/pbf4scala/osmblock/ways/8133/strTable")
-    val osmosisWay = Way parseFrom new FileInputStream("core/src/test/resources/com/acervera/pbf4scala/osmblock/ways/8133/280.way")
+    val strTable = StringTable parseFrom new FileInputStream("core/src/test/resources/com/acervera/osm4scala/osmblock/ways/8133/strTable")
+    val osmosisWay = Way parseFrom new FileInputStream("core/src/test/resources/com/acervera/osm4scala/osmblock/ways/8133/280.way")
 
     // Test
     val way = WayEntity(strTable, osmosisWay)

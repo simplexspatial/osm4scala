@@ -1,4 +1,4 @@
-package com.acervera.pbf4scala
+package com.acervera.osm4scala
 
 import java.io._
 

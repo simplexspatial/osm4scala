@@ -1,2 +1,4 @@
 .idea
 target
+core/src/pbf_generated/
+project/project/

@@ -1,8 +1,8 @@
-package com.acervera.pbf4scala
+package com.acervera.osm4scala
 
 import java.io.{FileInputStream, InputStream}
 
-import com.acervera.pbf4scala.model.{NodeEntity, RelationEntity, WayEntity}
+import com.acervera.osm4scala.model.{NodeEntity, RelationEntity, WayEntity}
 import org.scalatest.{Matchers, WordSpec}
 
 /**
@@ -12,7 +12,7 @@ class PbfFileIteratorSpec extends WordSpec with Matchers {
 
   "The PbfFileIterator should" should {
     "Read X entities" in {
-      val testFile = "core/src/test/resources/com/acervera/pbf4scala/Madrid.bbbike.osm.pbf"
+      val testFile = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
       var ( nodesCounter, waysCounter, relationsCounter, othersCounter, totalCounter ) = (0,0,0,0,0)
       var pbfIS: InputStream = null
       try {
