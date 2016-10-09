@@ -1,6 +1,6 @@
 package com.acervera.pbf4scala.model
 
-abstract class OSMEntity {
+trait OSMEntity {
 
   val osmModel: OSMTypes.Value
   val id: Long
