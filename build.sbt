@@ -3,13 +3,17 @@ import ReleaseTransformations._
 
 coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*"
 
-// Bintray
-bintrayRepository := "maven"
-bintrayPackage := "osm4scala"
-bintrayReleaseOnPublish := false
+organization := "com.acervera.osm4scala"
+organizationHomepage := Some(url("http://www.acervera.com"))
+licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+description := "Scala Open Street Map Pbf 2 parser."
+scalaVersion := "2.11.8"
+publishMavenStyle := true
+crossScalaVersions := Seq("2.10.6", "2.11.8")
+
+
 
 // Release
-licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 releaseCrossBuild := true
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -29,13 +33,12 @@ releaseProcess := Seq[ReleaseStep](
 lazy val core = (project in file("core")).
   settings(
     PB.protobufSettings ++ Seq(
-      organization := "com.acervera.osm4scala",
       name := "osm4scala-core",
-      organizationHomepage := Some(url("http://www.acervera.com")),
-      description := "Scala Open Street Map Pbf 2 parser.",
-      scalaVersion := "2.11.8",
-      publishMavenStyle := true,
-      crossScalaVersions := Seq("2.10.6", "2.11.8"),
+      licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
+      // Bintray
+      bintrayRepository := "maven",
+      bintrayPackage := "osm4scala-core",
+      bintrayReleaseOnPublish := false,
       PB.grpc := false,
       scalaSource in PB.protobufConfig := sourceDirectory.value / "pbf_generated",
       libraryDependencies ++= List(
