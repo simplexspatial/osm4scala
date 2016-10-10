@@ -3,6 +3,13 @@ import ReleaseTransformations._
 
 coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*"
 
+// Bintray
+bintrayRepository := "maven"
+bintrayPackage := "osm4scala"
+bintrayReleaseOnPublish := false
+
+// Release
+licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 releaseCrossBuild := true
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -12,7 +19,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-//  publishArtifacts,
+  publishArtifacts,
   setNextVersion,
   commitNextVersion,
   pushChanges
@@ -24,7 +31,6 @@ lazy val core = (project in file("core")).
     PB.protobufSettings ++ Seq(
       organization := "com.acervera.osm4scala",
       name := "osm4scala-core",
-      licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
       organizationHomepage := Some(url("http://www.acervera.com")),
       description := "Scala Open Street Map Pbf 2 parser.",
       scalaVersion := "2.11.8",
