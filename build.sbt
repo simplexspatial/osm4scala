@@ -14,8 +14,8 @@ releaseProcess := Seq[ReleaseStep](
   tagRelease,
 //  publishArtifacts,
   setNextVersion,
-  commitNextVersion
-//  pushChanges
+  commitNextVersion,
+  pushChanges
 )
 
 
