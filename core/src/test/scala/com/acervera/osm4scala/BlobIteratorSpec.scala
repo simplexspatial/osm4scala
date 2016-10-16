@@ -4,16 +4,16 @@ import java.io.{FileInputStream, InputStream}
 
 import org.scalatest.WordSpec
 
-class PbfFileBlockIteratorSpec extends WordSpec {
+class BlobIteratorSpec extends WordSpec {
 
-  "The PbfFileBlockIterator should" should {
+  "The BlobIterator should" should {
     "Read three pairs" in {
       val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.osm.pbf"
       var counter = 0
       var pbfIS: InputStream = null
       try {
         pbfIS = new FileInputStream(testFile)
-        val iter = PbfFileBlockIterator(pbfIS)
+        val iter = BlobIterator(pbfIS)
         iter.foreach(x => counter += 1)
         assert(counter == 3, "There are 3 blocks!")
       } finally {
@@ -26,7 +26,7 @@ class PbfFileBlockIteratorSpec extends WordSpec {
       var pbfIS: InputStream = null
       try {
         pbfIS = new FileInputStream(testFile)
-        val iter = PbfFileBlockIterator(pbfIS)
+        val iter = BlobIterator(pbfIS)
         iter.foreach(x => counter += 1)
         assert(counter == 10, "There are 10 blocks!")
       } finally {

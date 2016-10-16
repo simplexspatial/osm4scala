@@ -4,7 +4,7 @@ import java.io._
 import java.nio.file.{Files, Paths}
 import java.util.zip.Inflater
 
-import com.acervera.osm4scala.PbfFileBlockIterator
+import com.acervera.osm4scala.BlobIterator
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 
@@ -15,7 +15,7 @@ object PrimitivesExtractor {
     try {
       var counter = 0
       pbfIS = new FileInputStream(pbfFilePath)
-      val iter = PbfFileBlockIterator(pbfIS)
+      val iter = BlobIterator(pbfIS)
       iter.foreach(x => {
         if (x._1.`type` == "OSMData") {
           val folder = s"$extractRootFolder/$counter"

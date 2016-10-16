@@ -4,15 +4,15 @@ import java.io._
 
 import org.openstreetmap.osmosis.osmbinary.fileformat.{Blob, BlobHeader}
 
-object PbfFileBlockIterator {
+object BlobIterator {
 
   /**
-    * Create a new PbfFileBlockIterator iterator.
+    * Create a new BlobIterator iterator.
     *
     * @param pbfInputStream Opened InputStream that contains the pbf
     * @return
     */
-  def apply(pbfInputStream: InputStream) = new PbfFileBlockIterator(pbfInputStream)
+  def apply(pbfInputStream: InputStream) = new BlobIterator(pbfInputStream)
 
 }
 
@@ -23,7 +23,7 @@ object PbfFileBlockIterator {
   * @param pbfInputStream Input stream that will be used to read the fileblock
   * @author angelcervera
   */
-class PbfFileBlockIterator(pbfInputStream: InputStream) extends Iterator[(BlobHeader, Blob)] {
+class BlobIterator(pbfInputStream: InputStream) extends Iterator[(BlobHeader, Blob)] {
 
   // Read the input stream using DataInputStream to access easily to Int and raw fields.
   val pbfStream = new DataInputStream(pbfInputStream)
