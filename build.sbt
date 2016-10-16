@@ -60,15 +60,15 @@ lazy val core = (project in file("core")).
     )
   )
 
-lazy val examplesPrimitives = Project(id = "examples-primitives", base = file("examples/primitives")).
+lazy val examplesCounter = Project(id = "examples-counter", base = file("examples/counter")).
   settings(commonSettings: _*).
   settings(
     Seq(
-      name := "osm4scala-examples-primitives",
-      description := "Scala Open Street Map Pbf 2 parser. Examples / Primitives",
+      name := "osm4scala-examples-counter",
+      description := "Scala Open Street Map Pbf 2 parser. Examples / Counter",
 
       // Bintray
-      bintrayPackage := "osm4scala-examples-primitives",
+      bintrayPackage := "osm4scala-examples-counter",
 
       libraryDependencies ++= Seq(
         "com.github.scopt" %% "scopt" % "3.5.0"
