@@ -2,7 +2,8 @@ package com.acervera.osm4scala.examples.counter
 
 import java.io.{File, FileInputStream, InputStream}
 
-import com.acervera.osm4scala.PbfFileIterator
+
+import com.acervera.osm4scala.EntityIterator._
 import com.acervera.osm4scala.model.OSMTypes
 
 /**
@@ -55,7 +56,7 @@ object Counter extends App {
     * @return Number of primitives found.
     */
   def count(pbfIS: InputStream, osmType: OSMTypes.Value): Long =
-    PbfFileIterator(pbfIS).count(_.osmModel == osmType)  // This is the interesting code!
+    fromPbf(pbfIS).count(_.osmModel == osmType)  // This is the interesting code!
 
   /**
     * Function that count the number of primitives in a osm pdf
@@ -64,6 +65,6 @@ object Counter extends App {
     * @return Number of primitives found.
     */
   def count(pbfIS: InputStream): Long =
-    PbfFileIterator(pbfIS).size  // This is the interesting code!
+    fromPbf(pbfIS).size  // This is the interesting code!
 
 }

@@ -7,24 +7,11 @@ import com.acervera.osm4scala.model.{OSMEntity, RelationEntity, WayEntity}
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 
-object OSMEntitiesIterator {
-
-  /**
-    * Create a new OSMEntityIterator iterator.
-    *
-    * @param blob Blob for this file block
-    * @return
-    */
-  def apply(blob: Blob) = new OSMEntitiesIterator(blob)
-
-}
-
-
 /**
   * Iterate over all OSMEntities in a FileBlock.
   * The Blob content must be a "OSMData" FileBlock
   */
-class OSMEntitiesIterator(blob: Blob) extends Iterator[OSMEntity] {
+class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator {
 
   // Read the input stream using DataInputStream to access easily to Int and raw fields. The source could be compressed.
   val primitiveBlock = {

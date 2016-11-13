@@ -4,21 +4,21 @@ import java.io.{FileInputStream, InputStream}
 
 import com.acervera.osm4scala.model.{NodeEntity, RelationEntity, WayEntity}
 import org.scalatest.{Matchers, WordSpec}
+import com.acervera.osm4scala.EntityIterator._
 
 /**
   * Created by angelcervera on 24/07/16.
   */
-class PbfFileIteratorSpec extends WordSpec with Matchers {
+class FromPbfFileEntitiesIteratorSpec extends WordSpec with Matchers {
 
-  "The PbfFileIterator should" should {
+  "The FromPbfFileEntitiesIterator should" should {
     "Read X entities" in {
       val testFile = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
       var ( nodesCounter, waysCounter, relationsCounter, othersCounter, totalCounter ) = (0,0,0,0,0)
       var pbfIS: InputStream = null
       try {
         pbfIS = new FileInputStream(testFile)
-        val iter = PbfFileIterator(pbfIS)
-        iter.foreach( x => {
+        fromPbf(pbfIS).foreach( x => {
           x match {
             case _ : NodeEntity => nodesCounter += 1
             case _ : RelationEntity => relationsCounter += 1

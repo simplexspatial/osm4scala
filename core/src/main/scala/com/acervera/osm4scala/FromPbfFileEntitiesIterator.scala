@@ -1,26 +1,8 @@
 package com.acervera.osm4scala
 
-import java.io.{FileInputStream, InputStream}
-import java.nio.file.{Files, Paths}
+import java.io.InputStream
 
 import com.acervera.osm4scala.model.OSMEntity
-
-import scala.io.Source
-
-/**
-  * Created by angelcervera on 24/07/16.
-  */
-object PbfFileIterator {
-
-  /**
-    * Create a new PbfFileIterator iterator.
-    *
-    * @param pbfInputStream Opened InputStream that contains the pbf
-    * @return
-    */
-  def apply(pbfInputStream: InputStream) = new PbfFileIterator(pbfInputStream)
-
-}
 
 /**
   * Iterator over all entities in a pbf file.
@@ -29,13 +11,13 @@ object PbfFileIterator {
   * @param pbfInputStream Input stream that will be used to read all entities.
   * @author angelcervera
   */
-class PbfFileIterator(pbfInputStream: InputStream) extends Iterator[OSMEntity] {
+class FromPbfFileEntitiesIterator(pbfInputStream: InputStream) extends EntityIterator {
 
   // Iterator over OSMData blocks
-  val blobIterator = BlobIterator(pbfInputStream).withFilter(x => {x._1.`type` == "OSMData"})
+  val blobIterator = BlobTupleIterator.fromInputStream(pbfInputStream).withFilter(x => {x._1.`type` == "OSMData"})
 
   // Iterator entities in active block
-  var osmEntitiesIterator : Option[OSMEntitiesIterator] = readNextBlock
+  var osmEntitiesIterator : Option[EntityIterator] = readNextBlock
 
   override def hasNext: Boolean = osmEntitiesIterator.isDefined && ( osmEntitiesIterator.get.hasNext || blobIterator.hasNext)
 
@@ -55,7 +37,7 @@ class PbfFileIterator(pbfInputStream: InputStream) extends Iterator[OSMEntity] {
   private def readNextBlock() = {
 
     if(blobIterator hasNext) {
-      Some( OSMEntitiesIterator( blobIterator.next._2 ) )
+      Some( EntityIterator.fromBlob( blobIterator.next._2 ) )
     } else {
       None
     }
