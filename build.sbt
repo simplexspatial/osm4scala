@@ -41,7 +41,7 @@ lazy val commonSettings = Seq(
 
 )
 
-lazy val core = (project in file("core")).
+lazy val core = Project(id = "core", base = file("core")).
   settings(commonSettings: _*).
   settings(
     PB.protobufSettings ++ Seq(
