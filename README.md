@@ -14,7 +14,7 @@ With this library, you can forget about complexity of the osm.obf format and thi
 
 For example, count all node primitives in a file is so simple as:
 ```scala
-PbfFileIterator(inputStream).count(_.osmModel == OSMTypes.Node)
+EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
 ```
 
 ## Performance
