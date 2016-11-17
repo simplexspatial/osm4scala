@@ -3,7 +3,7 @@ import ReleaseTransformations._
 import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport._
 
-
+licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
   scalaVersion := "2.11.8",
