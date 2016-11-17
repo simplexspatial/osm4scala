@@ -49,7 +49,7 @@ lazy val core = Project(id = "core", base = file("core")).
       name := "osm4scala-core",
       description := "Scala Open Street Map Pbf 2 parser. Core",
       coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
-
+      bintrayPackage := "osm4scala",
       PB.grpc := false,
       scalaSource in PB.protobufConfig := sourceDirectory.value / "pbf_generated",
       libraryDependencies ++= Seq(
@@ -64,7 +64,7 @@ lazy val examplesCounter = Project(id = "examples-counter", base = file("example
     Seq(
       name := "osm4scala-examples-counter",
       description := "Scala Open Street Map Pbf 2 parser. Examples / Counter",
-
+      bintrayPackage := "osm4scala",
       libraryDependencies ++= Seq(
         "com.github.scopt" %% "scopt" % "3.5.0"
       )
