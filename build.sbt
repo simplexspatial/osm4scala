@@ -3,36 +3,33 @@ import ReleaseTransformations._
 import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport._
 
-licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
-
-// Bintray
-publishMavenStyle := true
-bintrayRepository := "maven"
-bintrayPackage := "osm4scala"
-bintrayReleaseOnPublish := false
-
-// Release
-releaseCrossBuild := true
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  publishArtifacts,
-  setNextVersion,
-  commitNextVersion,
-  pushChanges
-)
-
 lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
   scalaVersion := "2.11.8",
   crossScalaVersions := Seq("2.10.6", "2.11.8"),
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
+  // Bintray
+  publishMavenStyle := true,
+  bintrayRepository := "maven",
+  bintrayPackage := "osm4scala",
+  bintrayReleaseOnPublish := false,
+
+  // Release
+  releaseCrossBuild := true,
+  releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    runTest,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    publishArtifacts,
+    setNextVersion,
+    commitNextVersion,
+    pushChanges
+  ),
 
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
@@ -49,7 +46,6 @@ lazy val core = Project(id = "core", base = file("core")).
       name := "osm4scala-core",
       description := "Scala Open Street Map Pbf 2 parser. Core",
       coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
-      bintrayPackage := "osm4scala",
       PB.grpc := false,
       scalaSource in PB.protobufConfig := sourceDirectory.value / "pbf_generated",
       libraryDependencies ++= Seq(
@@ -64,7 +60,6 @@ lazy val examplesCounter = Project(id = "examples-counter", base = file("example
     Seq(
       name := "osm4scala-examples-counter",
       description := "Scala Open Street Map Pbf 2 parser. Examples / Counter",
-      bintrayPackage := "osm4scala",
       libraryDependencies ++= Seq(
         "com.github.scopt" %% "scopt" % "3.5.0"
       )
