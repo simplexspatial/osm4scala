@@ -11,6 +11,12 @@ lazy val commonSettings = Seq(
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
 
+  // Bintray
+  publishMavenStyle := true,
+  bintrayRepository := "maven",
+  bintrayPackage := "osm4scala",
+  bintrayReleaseOnPublish := false,
+
   // Release
   releaseCrossBuild := true,
   releaseProcess := Seq[ReleaseStep](
@@ -26,12 +32,6 @@ lazy val commonSettings = Seq(
     commitNextVersion,
     pushChanges
   ),
-
-  // Bintray
-  publishMavenStyle := true,
-  bintrayRepository := "maven",
-  bintrayReleaseOnPublish := false,
-  bintrayReleaseOnPublish := false,
 
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
