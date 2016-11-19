@@ -3,9 +3,13 @@ import ReleaseTransformations._
 import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport._
 
-publishArtifact := false
+publishArtifact := false // Avoid publish default artifact
 crossScalaVersions := Seq("2.10.6", "2.11.8")
 
+// Bintray BUG workaround: https://github.com/softprops/bintray-sbt/issues/93
+bintrayRelease := false
+bintrayEnsureBintrayPackageExists := false
+bintrayEnsureLicenses := false
 
 lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
@@ -65,6 +69,7 @@ lazy val examplesCounter = Project(id = "examples-counter", base = file("example
     Seq(
       name := "osm4scala-examples-counter",
       description := "Counter of primitives (Way, Node, Relation or All) using osm4scala",
+      publishArtifact := false, // Don't publish this example in maven. Only the library.
       libraryDependencies ++= Seq(
         "com.github.scopt" %% "scopt" % "3.5.0"
       )
