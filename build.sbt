@@ -3,13 +3,17 @@ import ReleaseTransformations._
 import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport._
 
+publishArtifact := false
+
 lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
   scalaVersion := "2.11.8",
   crossScalaVersions := Seq("2.10.6", "2.11.8"),
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
+
   // Bintray
+  publishArtifact := true,
   publishMavenStyle := true,
   bintrayRepository := "maven",
   bintrayPackage := "osm4scala",
@@ -59,7 +63,7 @@ lazy val examplesCounter = Project(id = "examples-counter", base = file("example
   settings(
     Seq(
       name := "osm4scala-examples-counter",
-      description := "Scala Open Street Map Pbf 2 parser. Examples / Counter",
+      description := "Counter of primitives (Way, Node, Relation or All) using osm4scala",
       libraryDependencies ++= Seq(
         "com.github.scopt" %% "scopt" % "3.5.0"
       )
