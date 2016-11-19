@@ -4,11 +4,12 @@ import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport._
 
 publishArtifact := false
+crossScalaVersions := Seq("2.10.6", "2.11.8")
+
 
 lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.6", "2.11.8"),
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
 
