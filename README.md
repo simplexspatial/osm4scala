@@ -42,6 +42,19 @@ Extract a list of unique tags from a pbf file, with he possibility of filter by 
 The list is stored in a file given as parameter.
 
 
+## Requirements:
+
+  - Runtime requirements:
+    - Protobuf compiler:
+        
+        Every OS has a different installation process. Has been tested with version 2.6.1
+        
+        Install in Ubuntu:
+        ```
+        sudo apt-get install protobuf-compiler
+        ```
+    
+
 ## As reference:
 
   - PBF2 Documentation: http://wiki.openstreetmap.org/wiki/PBF_Format
@@ -50,14 +63,7 @@ The list is stored in a file given as parameter.
   - Download country pbf files: http://download.geofabrik.de/index.html
   - Scala protocol buffer library: http://trueaccord.github.io/ScalaPB/
 
-
-## Requirements:
-
-  - Runtime:
-    - Protobuf compiler: sudo apt-get install protobuf-compiler
-    
-    
 ## Libraries:
 
-  - ScalaPB: http://trueaccord.github.io/ScalaPB/
+  - ScalaPB: https://scalapb.github.io/
   
