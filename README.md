@@ -44,16 +44,18 @@ The list is stored in a file given as parameter.
 
 ## Requirements:
 
-  - Runtime requirements:
-    - Protobuf compiler:
-        
-        Every OS has a different installation process. Has been tested with version 2.6.1
-        
-        Install in Ubuntu:
-        ```
-        sudo apt-get install protobuf-compiler
-        ```
+- Protobuf compiler (only if you want build the library):
     
+    Every OS has a different installation process. Has been tested with version 2.6.1
+    
+    Install in Ubuntu:
+    ```
+    sudo apt-get install protobuf-compiler
+    ```
+- Import the library using maven or sbt.
+    ```
+    libraryDependencies += com.acervera.osm4scala %% osm4scala % 1.0
+    ```
 
 ## As reference:
 
