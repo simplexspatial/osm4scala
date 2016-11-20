@@ -18,8 +18,10 @@ EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
 ```
 
 ## Performance
-The performance of the first version looks really good. For example, it expends only 32 seconds to iterate over near of 70 millions of elements that compose Spain. 
-Below the result of few executions of the [Primitive Counter Examples](https://github.com/angelcervera/osm4scala/blob/master/examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) available in the code.
+The performance of the first version looks really good.
+
+For example, it expends only **32 seconds to iterate over near of 70 millions** of elements that compose Spain. 
+Below the result of few executions of the [Primitives Counter Example](blob/master/examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) available in the code.
 ~~~~
 Found [67,976,861] primitives in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.44 sec.
 Found [4,839,505] primitives of type [Way] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 31.72 sec.
@@ -27,7 +29,24 @@ Found [63,006,432] primitives of type [Node] in /home/angelcervera/projects/osm/
 Found [130,924] primitives of type [Relation] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.66 sec.
 ~~~~
 
+The other example, [Tag Extraction Example](blob/master/examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala)
+expends only 42 seconds to extract the list of all unique tags from the Spain pbf.
+~~~~
+Found [4,166] different tags in /home/angelcervera/projects/osm/spain-latest.osm.pbf. List stored in /home/angelcervera/projects/osm/spain-latest.tags.txt. Time to process: 39.22 sec.
+Found [2,451] different tags in primitives of type [Way] in /home/angelcervera/projects/osm/spain-latest.osm.pbf. List stored in /home/angelcervera/projects/osm/spain-latest.tags.txt. Time to process: 33.47 sec.
+~~~~
+
+And the use of memory is negligible.
+
 It is necessary take into account that this first version is a **single thread** implementation. In the next version, I will work into a paralellization to boost the speed processing.
+
+Specs of the computer (laptop) used to execute the test:
+```
+Ubuntu 16.04.1 LTS Desktop / 64bits
+Intel(R) Core(TM) i7-4712HQ CPU @ 2.30GHz
+2x8GiB SODIMM DDR3 Synchronous 1600 MHz (0.6 ns)
+512GB SAMSUNG SSD
+```
 
 ##  Examples:
 In the project, there is a folder called "examples" with few simple examples.
