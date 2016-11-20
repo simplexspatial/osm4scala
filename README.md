@@ -29,8 +29,20 @@ Found [130,924] primitives of type [Relation] in /home/angelcervera/projects/osm
 
 It is necessary take into account that this first version is a **single thread** implementation. In the next version, I will work into a paralellization to boost the speed processing.
 
+##  Examples:
+In the project, there is a folder called "examples" with few simple examples.
 
-As reference:
+### Counter.
+
+Count the number of primitives in a pbf file, with he possibility of filter by primitive type.
+
+### Tags extraction.
+
+Extract a list of unique tags from a pbf file, with he possibility of filter by primitive type.
+The list is stored in a file given as parameter.
+
+
+## As reference:
 
   - PBF2 Documentation: http://wiki.openstreetmap.org/wiki/PBF_Format
   - PBF2 Java library: https://github.com/openstreetmap/osmosis/tree/master/osmosis-osm-binary
@@ -39,13 +51,13 @@ As reference:
   - Scala protocol buffer library: http://trueaccord.github.io/ScalaPB/
 
 
-Requirements:
+## Requirements:
 
   - Runtime:
     - Protobuf compiler: sudo apt-get install protobuf-compiler
     
     
-Libraries:
+## Libraries:
 
   - ScalaPB: http://trueaccord.github.io/ScalaPB/
   

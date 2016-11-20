@@ -63,6 +63,16 @@ lazy val core = Project(id = "core", base = file("core")).
     )
   )
 
+lazy val commonUtilities = Project(id = "examples-common-utilities", base = file("examples/common-utilities")).
+  settings(commonSettings: _*).
+  settings(
+    Seq(
+      name := "osm4scala-examples-common-utilities",
+      description := "Utilities shared by all examples",
+      publishArtifact := false // Don't publish this example in maven. Only the library.
+    )
+  )
+
 lazy val examplesCounter = Project(id = "examples-counter", base = file("examples/counter")).
   settings(commonSettings: _*).
   settings(
@@ -74,4 +84,18 @@ lazy val examplesCounter = Project(id = "examples-counter", base = file("example
         "com.github.scopt" %% "scopt" % "3.5.0"
       )
     )
-  ).dependsOn("core")
+  ).dependsOn("core", "examples-common-utilities")
+
+lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base = file("examples/tagsextraction")).
+  settings(commonSettings: _*).
+  settings(
+    Seq(
+      name := "osm4scala-examples-tags-extraction",
+      description := "Extract all unique tags from the selected primitive type (Way, Node, Relation or All) using osm4scala",
+      publishArtifact := false, // Don't publish this example in maven. Only the library.
+      libraryDependencies ++= Seq(
+        "com.github.scopt" %% "scopt" % "3.5.0"
+      )
+    )
+  ).dependsOn("core", "examples-common-utilities")
+
