@@ -21,7 +21,7 @@ EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
 The performance of the first version looks really good.
 
 For example, it expends only **32 seconds to iterate over near of 70 millions** of elements that compose Spain. 
-Below the result of few executions of the [Primitives Counter Example](blob/master/examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) available in the code.
+Below the result of few executions of the [Primitives Counter Example](examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) available in the code.
 ~~~~
 Found [67,976,861] primitives in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.44 sec.
 Found [4,839,505] primitives of type [Way] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 31.72 sec.
@@ -29,7 +29,7 @@ Found [63,006,432] primitives of type [Node] in /home/angelcervera/projects/osm/
 Found [130,924] primitives of type [Relation] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.66 sec.
 ~~~~
 
-The other example, [Tag Extraction Example](blob/master/examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala)
+The other example, [Tag Extraction Example](examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala)
 expends only 42 seconds to extract the list of all unique tags from the Spain pbf.
 ~~~~
 Found [4,166] different tags in /home/angelcervera/projects/osm/spain-latest.osm.pbf. List stored in /home/angelcervera/projects/osm/spain-latest.tags.txt. Time to process: 39.22 sec.
