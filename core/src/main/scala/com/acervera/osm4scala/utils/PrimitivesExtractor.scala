@@ -15,7 +15,7 @@ object PrimitivesExtractor {
     try {
       var counter = 0
       pbfIS = new FileInputStream(pbfFilePath)
-      BlobTupleIterator.fromInputStream(pbfIS).foreach(x => {
+      BlobTupleIterator.fromPbf(pbfIS).foreach(x => {
         if (x._1.`type` == "OSMData") {
           val folder = s"$extractRootFolder/$counter"
           Files.createDirectories(Paths.get(folder))

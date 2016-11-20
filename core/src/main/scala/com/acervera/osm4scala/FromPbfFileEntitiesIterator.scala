@@ -14,7 +14,7 @@ import com.acervera.osm4scala.model.OSMEntity
 class FromPbfFileEntitiesIterator(pbfInputStream: InputStream) extends EntityIterator {
 
   // Iterator over OSMData blocks
-  val blobIterator = BlobTupleIterator.fromInputStream(pbfInputStream).withFilter(x => {x._1.`type` == "OSMData"})
+  val blobIterator = BlobTupleIterator.fromPbf(pbfInputStream).withFilter(x => {x._1.`type` == "OSMData"})
 
   // Iterator entities in active block
   var osmEntitiesIterator : Option[EntityIterator] = readNextBlock

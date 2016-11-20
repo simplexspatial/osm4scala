@@ -7,12 +7,12 @@ import org.openstreetmap.osmosis.osmbinary.fileformat.{Blob, BlobHeader}
 object BlobTupleIterator {
 
   /**
-    * Create a new BlobTupleIterator iterator from a IntputStream.
+    * Create a new BlobTupleIterator iterator from a IntputStream pbf format.
     *
     * @param pbfInputStream Opened InputStream that contains the pbf
     * @return
     */
-  def fromInputStream(pbfInputStream: InputStream) = new BlobTupleIterator(pbfInputStream)
+  def fromPbf(pbfInputStream: InputStream) = new BlobTupleIterator(pbfInputStream)
 
 }
 
