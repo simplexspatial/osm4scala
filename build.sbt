@@ -32,9 +32,11 @@ lazy val commonSettings = Seq(
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
 
-  // Bintray
-  publishArtifact := true,
+  publishArtifact := true, // Enable publish
   publishMavenStyle := true,
+  publishArtifact in Test := false, // No publish test stuff
+
+  // Bintray
   bintrayRepository := "maven",
   bintrayPackage := "osm4scala",
   bintrayReleaseOnPublish := false,
