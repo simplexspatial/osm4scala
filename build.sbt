@@ -4,7 +4,22 @@ import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport._
 
 publishArtifact := false // Avoid publish default artifact
-crossScalaVersions := Seq("2.10.6", "2.11.8")
+
+// Release
+releaseCrossBuild := true
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  publishArtifacts,
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
 
 // Bintray BUG workaround: https://github.com/softprops/bintray-sbt/issues/93
 bintrayRelease := false
@@ -23,22 +38,6 @@ lazy val commonSettings = Seq(
   bintrayRepository := "maven",
   bintrayPackage := "osm4scala",
   bintrayReleaseOnPublish := false,
-
-  // Release
-  releaseCrossBuild := true,
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    runTest,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    publishArtifacts,
-    setNextVersion,
-    commitNextVersion,
-    pushChanges
-  ),
 
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
