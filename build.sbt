@@ -40,6 +40,7 @@ lazy val commonSettings = Seq(
   bintrayRepository := "maven",
   bintrayPackage := "osm4scala",
   bintrayReleaseOnPublish := false,
+  bintrayRelease := false,
 
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
