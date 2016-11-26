@@ -1,15 +1,15 @@
-package com.acervera.osm4scala.utils
+package com.acervera.osm4scala.examples.blocksextraction
 
 import java.io.{File, FilenameFilter}
 
-import com.acervera.osm4scala.utils.PrimitivesExtractor._
 import org.apache.commons.io.FileUtils
 import org.scalatest.{BeforeAndAfter, FunSuite}
+import com.acervera.osm4scala.examples.blocksextraction.BlocksExtraction._
 
 /**
   * Created by angelcervera on 23/06/16.
   */
-class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
+class BlocksExtractionSuite extends FunSuite with BeforeAndAfter {
 
   val extractRootFolder = "target/testing/utils/"
 
@@ -18,7 +18,7 @@ class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("Extracting dense blocks from pbf") {
-    val pbfFile = "core/src/test/resources/com/acervera/osm4scala/utils/dense_blocks.osm.pbf"
+    val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/dense_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
     assert( new File(extractRootFolder).list(new FilenameFilter {
@@ -35,7 +35,7 @@ class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("Extracting relations blocks from pbf") {
-    val pbfFile = "core/src/test/resources/com/acervera/osm4scala/utils/relations_blocks.osm.pbf"
+    val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/relations_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
     assert( new File(extractRootFolder).list(new FilenameFilter {
@@ -49,7 +49,7 @@ class PrimitivesExtractorSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("Extracting ways blocks from pbf") {
-    val pbfFile = "core/src/test/resources/com/acervera/osm4scala/utils/ways_blocks.osm.pbf"
+    val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/ways_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
     assert( new File(extractRootFolder).list(new FilenameFilter {

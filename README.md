@@ -29,6 +29,11 @@ Found [63,006,432] primitives of type [Node] in /home/angelcervera/projects/osm/
 Found [130,924] primitives of type [Relation] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.66 sec.
 ~~~~
 
+Other example, iterate over the **full planet (near of 4,000 millions of elements), 40 minutes**.
+~~~
+Found [3,976,885,170] primitives in /media/angelcervera/My Passport/osm/planet-latest.osm.pbf in 2,566.11 sec.
+~~~
+
 The other example, [Tag Extraction Example](examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala)
 expends only 42 seconds to extract the list of all unique tags from the Spain pbf.
 ~~~~

@@ -4,6 +4,8 @@ import java.io.{ByteArrayInputStream, DataInputStream}
 import java.util.zip.Inflater
 
 import com.acervera.osm4scala.model.{OSMEntity, RelationEntity, WayEntity}
+import com.acervera.osm4scala.utilities.PrimitiveGroupType._
+import com.acervera.osm4scala.utilities.PrimitiveGroupUtils
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 
@@ -11,7 +13,7 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
   * Iterate over all OSMEntities in a FileBlock.
   * The Blob content must be a "OSMData" FileBlock
   */
-class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator {
+class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with PrimitiveGroupUtils {
 
   // Read the input stream using DataInputStream to access easily to Int and raw fields. The source could be compressed.
   val primitiveBlock = {
@@ -97,32 +99,13 @@ class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator {
     }
 
     // Only one type per primitive group.
-    if (currentPrimitiveGroup.dense.isDefined) {
-      extractDenseNodePrimitiveGroup
-    } else {
-
-      if (currentPrimitiveGroup.ways.nonEmpty) {
-        extractWayPrimitiveGroup
-      } else {
-
-        if (currentPrimitiveGroup.relations.nonEmpty) {
-          extractRelationPrimitiveGroup
-        } else {
-
-          // Non supported entities.
-          if (currentPrimitiveGroup.nodes.nonEmpty) {
-            throw new NotImplementedError("Nodes does not implemented yet.")
-          } else {
-            if (currentPrimitiveGroup.changesets.nonEmpty) {
-              throw new NotImplementedError("Changeset does not implemented yet")
-            } else {
-              throw new Exception("No data found")
-            }
-          }
-
-        }
-
-      }
+    detectType(currentPrimitiveGroup) match {
+      case Relations => extractRelationPrimitiveGroup
+      case Nodes => throw new NotImplementedError("Nodes does not implemented yet.")
+      case Ways =>  extractWayPrimitiveGroup
+      case ChangeSets => throw new NotImplementedError("Changeset does not implemented yet")
+      case DenseNodes => extractDenseNodePrimitiveGroup
+      case _ => throw new Exception("Unknown primitive group found.")
     }
 
   }
