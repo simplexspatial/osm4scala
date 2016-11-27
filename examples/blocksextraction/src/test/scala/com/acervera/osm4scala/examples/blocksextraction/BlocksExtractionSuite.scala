@@ -11,7 +11,7 @@ import BlocksExtraction._
   */
 class BlocksExtractionSuite extends FunSuite with BeforeAndAfter {
 
-  val extractRootFolder = "target/testing/utils/"
+  val extractRootFolder = "target/testing/BlocksExtractionSuite/"
 
   before {
     FileUtils.deleteQuietly(new File(extractRootFolder))

@@ -11,7 +11,7 @@ import com.acervera.osm4scala.examples.primitivesextraction.PrimitivesExtraction
   */
 class PrimitivesExtractionSuite extends FunSuite with BeforeAndAfter {
 
-  val extractRootFolder = "target/testing/utils/"
+  val extractRootFolder = "target/testing/PrimitivesExtractionSuite/"
 
   before {
     FileUtils.deleteQuietly(new File(extractRootFolder))

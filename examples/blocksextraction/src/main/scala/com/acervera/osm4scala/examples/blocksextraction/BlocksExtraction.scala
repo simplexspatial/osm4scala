@@ -4,7 +4,7 @@ import java.io._
 import java.nio.file.{Files, Paths}
 
 import com.acervera.osm4scala.BlobTupleIterator
-import com.acervera.osm4scala.utilities.{PrimitiveGroupType, Osm4ScalaUtils}
+import com.acervera.osm4scala.utilities.Osm4ScalaUtils
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import ParametersConfig._
 import com.acervera.osm4scala.examples.utilities.Benchmarking
