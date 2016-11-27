@@ -116,3 +116,18 @@ lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", b
     )
   ).dependsOn("core", "examples-common-utilities")
 
+
+
+lazy val examplesPrimitivesExtraction = Project(id = "examples-primitives-extraction", base = file("examples/primitivesextraction")).
+  settings(commonSettings: _*).
+  settings(
+    Seq(
+      name := "osm4scala-examples-primitives-extraction",
+      description := "Extract all primitives from the pbf into a folder using osm4scala.",
+      publishArtifact := false, // Don't publish this example in maven. Only the library.
+      libraryDependencies ++= Seq(
+        "com.github.scopt" %% "scopt" % "3.5.0"
+      )
+    )
+  ).dependsOn("core", "examples-common-utilities")
+

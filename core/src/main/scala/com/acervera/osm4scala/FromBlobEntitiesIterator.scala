@@ -1,11 +1,8 @@
 package com.acervera.osm4scala
 
-import java.io.{ByteArrayInputStream, DataInputStream}
-import java.util.zip.Inflater
-
 import com.acervera.osm4scala.model.{OSMEntity, RelationEntity, WayEntity}
 import com.acervera.osm4scala.utilities.PrimitiveGroupType._
-import com.acervera.osm4scala.utilities.PrimitiveGroupUtils
+import com.acervera.osm4scala.utilities.Osm4ScalaUtils
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 
@@ -13,28 +10,10 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
   * Iterate over all OSMEntities in a FileBlock.
   * The Blob content must be a "OSMData" FileBlock
   */
-class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with PrimitiveGroupUtils {
+class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with Osm4ScalaUtils {
 
   // Read the input stream using DataInputStream to access easily to Int and raw fields. The source could be compressed.
-  val primitiveBlock = {
-    if (blob.raw.isDefined) {
-      PrimitiveBlock parseFrom new DataInputStream(new ByteArrayInputStream(blob.raw.get.toByteArray))
-    } else {
-      if (blob.zlibData.isDefined) {
-
-        // Uncompress
-        val inflater = new Inflater()
-        val decompressedData = new Array[Byte](blob.rawSize.get)
-        inflater.setInput(blob.zlibData.get.toByteArray)
-        inflater.inflate(decompressedData)
-        inflater.end()
-
-        PrimitiveBlock parseFrom new DataInputStream(new ByteArrayInputStream(decompressedData))
-      } else {
-        throw new Exception("Data not found even compressed.")
-      }
-    }
-  }
+  val primitiveBlock = PrimitiveBlock parseFrom dataInputStreamBlob(blob)
 
   var primitiveGroupIdx = 0
   var osmEntityIdx = 0

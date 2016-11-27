@@ -4,7 +4,7 @@ import java.io.{File, FilenameFilter}
 
 import org.apache.commons.io.FileUtils
 import org.scalatest.{BeforeAndAfter, FunSuite}
-import com.acervera.osm4scala.examples.blocksextraction.BlocksExtraction._
+import BlocksExtraction._
 
 /**
   * Created by angelcervera on 23/06/16.
@@ -21,45 +21,21 @@ class BlocksExtractionSuite extends FunSuite with BeforeAndAfter {
     val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/dense_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
-    assert( new File(extractRootFolder).list(new FilenameFilter {
-      override def accept(dir: File, name: String): Boolean = new File(dir, name).isDirectory
-    }).length == 2, "Must extract two blocks.")
-
-    assert( new File(s"$extractRootFolder/0/").list(new FilenameFilter {
-      override def accept(dir: File, name: String): Boolean = name.endsWith(".dense")
-    }).length == 1, "First block, one dense.")
-
-    assert( new File(s"$extractRootFolder/1/").list(new FilenameFilter {
-      override def accept(dir: File, name: String): Boolean = name.endsWith(".dense")
-    }).length == 1, "Must extract two dense primitives.")
+    assert( new File(extractRootFolder).list().length == 2, "Must extract two blocks.")
   }
 
   test("Extracting relations blocks from pbf") {
     val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/relations_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
-    assert( new File(extractRootFolder).list(new FilenameFilter {
-      override def accept(dir: File, name: String): Boolean = new File(dir, name).isDirectory
-    }).length == 1, "Must extract one blocks.")
-
-    assert( new File(s"$extractRootFolder/0/").list(new FilenameFilter {
-      override def accept(dir: File, name: String): Boolean = name.endsWith(".relation")
-    }).length == 8000, "8000 relations per block.")
-
+    assert( new File(extractRootFolder).list().length == 1, "Must extract one blocks.")
   }
 
   test("Extracting ways blocks from pbf") {
     val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/ways_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
-    assert( new File(extractRootFolder).list(new FilenameFilter {
-      override def accept(dir: File, name: String): Boolean = new File(dir, name).isDirectory
-    }).length == 1, "Must extract one blocks.")
-
-    assert( new File(s"$extractRootFolder/0/").list(new FilenameFilter {
-      override def accept(dir: File, name: String): Boolean = name.endsWith(".way")
-    }).length == 8000, "8000 ways per block.")
-
+    assert( new File(extractRootFolder).list().length == 1, "Must extract one blocks.")
   }
 
 }

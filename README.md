@@ -29,7 +29,7 @@ Found [63,006,432] primitives of type [Node] in /home/angelcervera/projects/osm/
 Found [130,924] primitives of type [Relation] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.66 sec.
 ~~~~
 
-Other example, iterate over the **full planet (near of 4,000 millions of elements), 40 minutes**.
+Other example, iterate over the **full planet (near of 4,000 millions of elements), 40 minutes**, reading the 36GB file from an USB3 drive.
 ~~~
 Found [3,976,885,170] primitives in /media/angelcervera/My Passport/osm/planet-latest.osm.pbf in 2,566.11 sec.
 ~~~
