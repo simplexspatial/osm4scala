@@ -30,7 +30,8 @@ object Counter extends App with Benchmarking {
     * @param pbfIS InputStream with the osm pbf.
     * @return Number of primitives found.
     */
-  def count(pbfIS: InputStream): Long = count(fromPbf(pbfIS)) // .size is not valid because return a int, so too small type for the full planet.
+  def count(pbfIS: InputStream): Long =
+    count(fromPbf(pbfIS)) // .size is not valid because return a int, so too small type for the full planet.
     // fromPbf(pbfIS).size // This is the interesting code!
 
   /**
