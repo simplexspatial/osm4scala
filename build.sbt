@@ -36,6 +36,21 @@ lazy val commonSettings = Seq(
   publishArtifact := true, // Enable publish
   publishMavenStyle := true,
   publishArtifact in Test := false, // No publish test stuff
+  pomExtra :=
+    <url>https://github.com/angelcervera/osm4scala</url>
+      <scm>
+        <connection>scm:git:git://github.com/angelcervera/osm4scala.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/angelcervera/osm4scala.git</developerConnection>
+        <url>https://github.com/angelcervera/osm4scala</url>
+      </scm>
+      <developers>
+        <developer>
+          <id>angelcervera</id>
+          <name>Angel Cervera Claudio</name>
+          <email>angelcervera@silyan.com</email>
+        </developer>
+      </developers>
+  ,
 
   // Bintray
   bintrayRepository := "maven",
