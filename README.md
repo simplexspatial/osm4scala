@@ -81,6 +81,11 @@ The list is stored in a file given as parameter.
     ```
     libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "1.0"
     ```
+- Add resolver (only if you have problems resolving dependencies without it):
+
+    ```
+   resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
+   ``` 
 
 ## As reference:
 
