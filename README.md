@@ -84,9 +84,9 @@ The list is stored in a file given as parameter.
     ```
 - Add resolver (only if you have problems resolving dependencies without it):
 
-    ```
-   resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
-   ``` 
+    ```
+    resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
+    ``` 
 
 ## As reference:
 
