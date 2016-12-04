@@ -77,8 +77,9 @@ The list is stored in a file given as parameter.
     sudo apt-get install protobuf-compiler
     ```
 - Import the library using maven or sbt.
+
     ```
-    libraryDependencies += com.acervera.osm4scala %% osm4scala % 1.0
+    libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "1.0"
     ```
 
 ## As reference:
