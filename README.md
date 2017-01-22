@@ -20,6 +20,8 @@ EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
 ## Performance
 The performance of the first version looks really good.
 
+To have more representative permormance metrics, all examples are using only one thread.
+
 For example, it expends only **32 seconds to iterate over near of 70 millions** of elements that compose Spain. 
 Below the result of few executions of the [Primitives Counter Example](examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) available in the code.
 ~~~~
@@ -42,8 +44,7 @@ Found [2,451] different tags in primitives of type [Way] in /home/angelcervera/p
 ~~~~
 
 And the use of memory is negligible.
-
-It is necessary take into account that this first version is a **single thread** implementation. In the next version, I will work into a paralellization to boost the speed processing.
+All previous performance  metrics are using using a **single thread**. Check examples bellow for parallel processing.
 
 Specs of the computer (laptop) used to execute the test:
 ```
@@ -56,15 +57,51 @@ Intel(R) Core(TM) i7-4712HQ CPU @ 2.30GHz
 ##  Examples:
 In the project, there is a folder called "examples" with few simple examples.
 
-### Counter.
+### Counter (One thread) [Source](examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) .
 
 Count the number of primitives in a pbf file, with he possibility of filter by primitive type.
 
-### Tags extraction.
+### Counter Parallel [Source](examples/counter-parallel/src/main/scala/com/acervera/osm4scala/examples/counterparallel/CounterParallel.scala).
+
+Because the the library implement different iterator tocbe able to iterate aver block and entities, it is really simple to use it in a parallel way.
+
+This example show how to process data in parallel, using only Scala Future.traverse
+
+This is the simple way, but has a big problem: Futures are created parallel but traverse iterate over all blocks and put in memory all in memory.
+**This is ok if you have enough memory** (16GB is enough to manage all US or Europe) but if you want process the full planet
+or heavy memory consume process per block, you will need more that that (Check example with AKKA).
+
+~~~scala
+  val counter = new AtomicLong()
+  def count(pbfIS: InputStream): Long = {
+    val result = Future.traverse(BlobTupleIterator.fromPbf(pbfIS))(tuple => Future {
+      counter.addAndGet( count(tuple._2) )
+    })
+    Await.result(result, Duration.Inf)
+    counter.longValue()
+  }
+~~~
+
+### Ireland and North Ireland
+- Entities: 15,751,251
+- Counter (One thread): 39 sec.
+- Concurrent: 18 sec.
+
+### Spain
+- Entities: 15,751,251
+- Counter (One thread): 39 sec.
+- Concurrent: 18 sec.
+
+### North America (USA and Canada)
+- Entries: 944,721,636
+- Counter (One thread): 514 sec. / 8.5 min.
+- Concurrent: 211 sec. / 3.5  min. (-XX:-UseGCOverheadLimit -Xms14g)
+
+
+### Tags extraction [Source](examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala).
 
 Extract a list of unique tags from a pbf file, with he possibility of filter by primitive type.
 The list is stored in a file given as parameter.
-
 
 ## Requirements:
 
