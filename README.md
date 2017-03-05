@@ -61,15 +61,15 @@ In the project, there is a folder called "examples" with few simple examples.
 
 Count the number of primitives in a pbf file, with he possibility of filter by primitive type.
 
-### Counter Parallel unsig Scala Future.traverse [Source](examples/counter-parallel/src/main/scala/com/acervera/osm4scala/examples/counterparallel/CounterParallel.scala).
+### Counter Parallel using Scala Future.traverse [Source](examples/counter-parallel/src/main/scala/com/acervera/osm4scala/examples/counterparallel/CounterParallel.scala).
 
-Because the library implement different iterator tocbe able to iterate aver block and entities, it is really simple to use it in a parallel way.
+Because the library implements different iterator to be able to iterate over blocks and entities, it is really simple to use it in a parallel way.
 
 This example show how to process data in parallel, using only Scala Future.traverse
 
-This is the simple way, but has a big problem: Futures are created parallel but traverse iterate over all blocks and put in memory all in memory.
-**This is ok if you have enough memory** (16GB is enough to manage all US or Europe) but if you want process the full planet
-or heavy memory consume process per block, you will need more that that (Check example with AKKA).
+This is the simple way, but has a big problem: Futures.traverse create **sequentially** one Future per element in the Iterator and parallel is executing them. That means put all block in memory.
+**This is ok if you have enough memory** (16GB is enough to manage all USA or Europe) but if you want process the full planet
+or heavy memory consume process per block, you will need more than that (Check example with AKKA).
 
 ~~~scala
   val counter = new AtomicLong()
@@ -82,21 +82,34 @@ or heavy memory consume process per block, you will need more that that (Check e
   }
 ~~~
 
-### Ireland and North Ireland
+### Counter Parallel using AKKA [Source](examples/counter-parallel/src/main/scala/com/acervera/osm4scala/examples/counterakka).
+
+This example show how to process data in parallel, using AKKA
+
+The implementation is not complex at all, but it is necessary a little bit (a really little bit) of knowledge about AKKA to understand it.
+Two big advantage respectthe Future.traverse version:
+- The memory used depends directly of the number of actor used, so you can process the full planet with no more of few GB of RAM.
+- It is possible distribute the execution in different nodes.
+
+
+### Councurrent examples comparision.
+#### Ireland and North Ireland
 - Entities: 15,751,251
-- Counter (One thread): 39 sec.
-- Concurrent: 18 sec.
+- Counter (One thread): 8.91 sec.
+- Concurrent Future.traverse: 5.31 sec.
+- Concurrent AKKA 4 cores: 5.89 sec.
 
-### Spain
+#### Spain
 - Entities: 67,976,861
-- Counter (One thread): ?? sec.
-- Concurrent: ?? sec.
+- Counter (One thread): 35.67 sec.
+- Concurrent Future.traverse: 17.33 sec.
+- Concurrent AKKA 4 cores: 16.82 sec.
 
-### North America (USA and Canada)
+#### North America (USA and Canada)
 - Entries: 944,721,636
 - Counter (One thread): 514 sec. / 8.5 min.
-- Concurrent: 211 sec. / 3.5  min. (-XX:-UseGCOverheadLimit -Xms14g)
-
+- Concurrent Future.traverse: 211 sec. / 3.5  min. (-XX:-UseGCOverheadLimit -Xms14g)
+- Concurrent AKKA 4 cores: 256.70 sec. / 4.27 min. -> **But only use 4 cores and 128M of RAM**, so can play "Solitaire" when wait.
 
 ### Tags extraction [Source](examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala).
 

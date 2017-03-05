@@ -117,6 +117,21 @@ lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", bas
     )
   ).dependsOn("core", "examples-common-utilities")
 
+lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file("examples/counter-akka")).
+  settings(commonSettings: _*).
+  settings(
+    Seq(
+      name := "osm4scala-examples-counter-akka",
+      description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel with AKKA",
+      publishArtifact := false, // Don't publish this example in maven. Only the library.
+      libraryDependencies ++= Seq(
+        "com.typesafe.akka" %% "akka-actor" % "2.4.17",
+        "com.github.scopt" %% "scopt" % "3.5.0"
+      )
+    )
+  ).dependsOn("core", "examples-common-utilities")
+
+
 
 lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base = file("examples/tagsextraction")).
   settings(commonSettings: _*).
