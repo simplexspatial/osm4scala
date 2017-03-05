@@ -82,7 +82,7 @@ or heavy memory consume process per block, you will need more than that (Check e
   }
 ~~~
 
-### Counter Parallel using AKKA [Source](examples/counter-parallel/src/main/scala/com/acervera/osm4scala/examples/counterakka).
+### Counter Parallel using AKKA [Source](examples/counter-akka/src/main/scala/com/acervera/osm4scala/examples/counterakka).
 
 This example show how to process data in parallel, using AKKA
 
