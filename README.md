@@ -18,7 +18,7 @@ EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
 ```
 
 ## Performance
-The performance of the first version looks really good.
+The performance of the first version looks really good. You can find a resume in the section [Concurrent examples comparision](#concurrent-examples-comparision)
 
 To have more representative permormance metrics, all metrics in this section are using only one thread.
 
@@ -92,7 +92,7 @@ Two big advantage respectthe Future.traverse version:
 - It is possible distribute the execution in different nodes.
 
 
-### Councurrent examples comparision.
+### Concurrent examples comparision.
 #### Ireland and North Ireland
 - Entities: 15,751,251
 - Counter (One thread): 8.91 sec.
@@ -109,7 +109,7 @@ Two big advantage respectthe Future.traverse version:
 - Entries: 944,721,636
 - Counter (One thread): 514 sec. / 8.5 min.
 - Concurrent Future.traverse: 211 sec. / 3.5  min. (-XX:-UseGCOverheadLimit -Xms14g)
-- Concurrent AKKA 4 cores: 256.70 sec. / 4.27 min. -> **But only use 4 cores and 128M of RAM**, so can play "Solitaire" when wait.
+- Concurrent AKKA 4 cores: 256.70 sec. / 4.27 min. -> **But only use 4 cores and 128M of RAM**, so can play "Solitaire" while you wait.
 
 ### Tags extraction [Source](examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala).
 
