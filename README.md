@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/angelcervera/osm4scala.svg)](https://travis-ci.org/angelcervera/osm4scala)
 [![Coverage Status](https://coveralls.io/repos/github/angelcervera/osm4scala/badge.svg?branch=master)](https://coveralls.io/github/angelcervera/osm4scala?branch=master)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/angelcervera/osm4scala/master/LICENSE.md)
+[ ![Download](https://api.bintray.com/packages/angelcervera/maven/osm4scala/images/download.svg?version=1.0) ](https://bintray.com/angelcervera/maven/osm4scala/1.0/link)
 
 Scala library focus in parse PBF2 Open Street Map files as iterators.
 
@@ -115,6 +116,7 @@ Two big advantage respect the Future.traverse version:
 
 Extract a list of unique tags from a pbf file, with he possibility of filter by primitive type.
 The list is stored in a file given as parameter.
+
 
 ## Requirements:
 
