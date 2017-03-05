@@ -20,7 +20,7 @@ EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
 ## Performance
 The performance of the first version looks really good.
 
-To have more representative permormance metrics, all examples are using only one thread.
+To have more representative permormance metrics, all metrics in this section are using only one thread.
 
 For example, it expends only **32 seconds to iterate over near of 70 millions** of elements that compose Spain. 
 Below the result of few executions of the [Primitives Counter Example](examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) available in the code.
@@ -61,9 +61,9 @@ In the project, there is a folder called "examples" with few simple examples.
 
 Count the number of primitives in a pbf file, with he possibility of filter by primitive type.
 
-### Counter Parallel [Source](examples/counter-parallel/src/main/scala/com/acervera/osm4scala/examples/counterparallel/CounterParallel.scala).
+### Counter Parallel unsig Scala Future.traverse [Source](examples/counter-parallel/src/main/scala/com/acervera/osm4scala/examples/counterparallel/CounterParallel.scala).
 
-Because the the library implement different iterator tocbe able to iterate aver block and entities, it is really simple to use it in a parallel way.
+Because the library implement different iterator tocbe able to iterate aver block and entities, it is really simple to use it in a parallel way.
 
 This example show how to process data in parallel, using only Scala Future.traverse
 
@@ -88,9 +88,9 @@ or heavy memory consume process per block, you will need more that that (Check e
 - Concurrent: 18 sec.
 
 ### Spain
-- Entities: 15,751,251
-- Counter (One thread): 39 sec.
-- Concurrent: 18 sec.
+- Entities: 67,976,861
+- Counter (One thread): ?? sec.
+- Concurrent: ?? sec.
 
 ### North America (USA and Canada)
 - Entries: 944,721,636
