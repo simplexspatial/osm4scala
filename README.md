@@ -87,7 +87,7 @@ or heavy memory consume process per block, you will need more than that (Check e
 This example show how to process data in parallel, using AKKA
 
 The implementation is not complex at all, but it is necessary a little bit (a really little bit) of knowledge about AKKA to understand it.
-Two big advantage respectthe Future.traverse version:
+Two big advantage respect the Future.traverse version:
 - The memory used depends directly of the number of actor used, so you can process the full planet with no more of few GB of RAM.
 - It is possible distribute the execution in different nodes.
 
@@ -109,7 +109,7 @@ Two big advantage respectthe Future.traverse version:
 - Entries: 944,721,636
 - Counter (One thread): 514 sec. / 8.5 min.
 - Concurrent Future.traverse: 211 sec. / 3.5  min. (-XX:-UseGCOverheadLimit -Xms14g)
-- Concurrent AKKA 4 cores: 256.70 sec. / 4.27 min. -> **But only use 4 cores and 128M of RAM**, so can play "Solitaire" while you wait.
+- Concurrent AKKA 4 cores: 256.70 sec. / 4.27 min. -> **But only uses 4 cores and 128M of RAM**, so can play "Solitaire" while you wait.
 
 ### Tags extraction [Source](examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala).
 
