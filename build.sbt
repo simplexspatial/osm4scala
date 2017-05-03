@@ -29,7 +29,7 @@ bintrayEnsureLicenses := false
 
 lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.11.11",
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
 
@@ -59,8 +59,8 @@ lazy val commonSettings = Seq(
   bintrayRelease := false,
 
   libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-    "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+    "org.scalacheck" %% "scalacheck" % "1.13.4" % "test",
     "commons-io" % "commons-io" % "2.5" % "test"
   )
 
