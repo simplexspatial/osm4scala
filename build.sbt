@@ -6,7 +6,7 @@ import sbtrelease.ReleasePlugin.autoImport._
 publishArtifact := false // Avoid publish default artifact
 
 // Release
-crossScalaVersions := Seq("2.10.6", "2.11.8")
+crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2")
 releaseCrossBuild := true
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
