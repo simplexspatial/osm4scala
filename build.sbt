@@ -5,7 +5,7 @@ import sbtrelease.ReleasePlugin.autoImport._
 publishArtifact := false // Avoid publish default artifact
 
 // Release
-crossScalaVersions := Seq(/*"2.10.6", */"2.11.11", "2.12.2")
+crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2")
 releaseCrossBuild := true
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -65,27 +65,19 @@ lazy val commonSettings = Seq(
 
 )
 
-lazy val protobuf = Project(id = "protobuf", base = file("protobuf")).
-  settings(
-    commonSettings,
-    name := "osm4scala-protobuf",
-    description := "Scala Open Street Map Pbf 2 parser. Protobuf parser",
-    PB.targets in Compile := Seq(
-      scalapb.gen() -> (sourceManaged in Compile).value,
-      scalapb.gen(grpc=false) -> (sourceManaged in Compile).value
-    )
-  )
-
 lazy val core = Project(id = "core", base = file("core")).
   settings(
     commonSettings,
     name := "osm4scala-core",
     description := "Scala Open Street Map Pbf 2 parser. Core",
     coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
+    PB.targets in Compile := Seq(
+      scalapb.gen(grpc=false) -> (sourceManaged in Compile).value
+    ),
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.1.7"
     )
-  ).dependsOn("protobuf")
+  )
 
 
 
@@ -128,6 +120,7 @@ lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", bas
 lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file("examples/counter-akka")).
   settings(
     commonSettings,
+    crossScalaVersions := Seq("2.11.11", "2.12.2"),
     name := "osm4scala-examples-counter-akka",
     description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel with AKKA",
     publishArtifact := false, // Don't publish this example in maven. Only the library.
