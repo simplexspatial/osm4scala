@@ -1,4 +1,3 @@
-import com.trueaccord.scalapb.{ScalaPbPlugin => PB}
 import ReleaseTransformations._
 import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport._
@@ -6,7 +5,7 @@ import sbtrelease.ReleasePlugin.autoImport._
 publishArtifact := false // Avoid publish default artifact
 
 // Release
-crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2")
+crossScalaVersions := Seq(/*"2.10.6", */"2.11.11", "2.12.2")
 releaseCrossBuild := true
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -29,7 +28,7 @@ bintrayEnsureLicenses := false
 
 lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
-  scalaVersion := "2.11.11",
+  scalaVersion := "2.12.2",
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
 
@@ -66,112 +65,113 @@ lazy val commonSettings = Seq(
 
 )
 
-lazy val core = Project(id = "core", base = file("core")).
-  settings(commonSettings: _*).
+lazy val protobuf = Project(id = "protobuf", base = file("protobuf")).
   settings(
-    PB.protobufSettings ++ Seq(
-      name := "osm4scala-core",
-      description := "Scala Open Street Map Pbf 2 parser. Core",
-      coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
-      PB.grpc := false,
-      scalaSource in PB.protobufConfig := sourceDirectory.value / "pbf_generated",
-      libraryDependencies ++= Seq(
-        "ch.qos.logback" % "logback-classic" % "1.1.7"
-      )
+    commonSettings,
+    name := "osm4scala-protobuf",
+    description := "Scala Open Street Map Pbf 2 parser. Protobuf parser",
+    PB.targets in Compile := Seq(
+      scalapb.gen() -> (sourceManaged in Compile).value,
+      scalapb.gen(grpc=false) -> (sourceManaged in Compile).value
     )
   )
 
-lazy val commonUtilities = Project(id = "examples-common-utilities", base = file("examples/common-utilities")).
-  settings(commonSettings: _*).
+lazy val core = Project(id = "core", base = file("core")).
   settings(
-    Seq(
-      name := "osm4scala-examples-common-utilities",
-      description := "Utilities shared by all examples",
-      publishArtifact := false // Don't publish this example in maven. Only the library.
+    commonSettings,
+    name := "osm4scala-core",
+    description := "Scala Open Street Map Pbf 2 parser. Core",
+    coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
+    libraryDependencies ++= Seq(
+      "ch.qos.logback" % "logback-classic" % "1.1.7"
     )
+  ).dependsOn("protobuf")
+
+
+
+
+
+
+
+// Examples
+
+lazy val commonUtilities = Project(id = "examples-common-utilities", base = file("examples/common-utilities")).
+  settings(
+    commonSettings,
+    name := "osm4scala-examples-common-utilities",
+    description := "Utilities shared by all examples",
+    publishArtifact := false // Don't publish this example in maven. Only the library.
   )
 
 lazy val examplesCounter = Project(id = "examples-counter", base = file("examples/counter")).
-  settings(commonSettings: _*).
   settings(
-    Seq(
-      name := "osm4scala-examples-counter",
-      description := "Counter of primitives (Way, Node, Relation or All) using osm4scala",
-      publishArtifact := false, // Don't publish this example in maven. Only the library.
-      libraryDependencies ++= Seq(
-        "com.github.scopt" %% "scopt" % "3.5.0"
-      )
+    commonSettings,
+    name := "osm4scala-examples-counter",
+    description := "Counter of primitives (Way, Node, Relation or All) using osm4scala",
+    publishArtifact := false, // Don't publish this example in maven. Only the library.
+    libraryDependencies ++= Seq(
+      "com.github.scopt" %% "scopt" % "3.5.0"
     )
   ).dependsOn("core", "examples-common-utilities")
 
 lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", base = file("examples/counter-parallel")).
-  settings(commonSettings: _*).
   settings(
-    Seq(
-      name := "osm4scala-examples-counter-parallel",
-      description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel threads",
-      publishArtifact := false, // Don't publish this example in maven. Only the library.
-      libraryDependencies ++= Seq(
-        "com.github.scopt" %% "scopt" % "3.5.0"
-      )
+    commonSettings,
+    name := "osm4scala-examples-counter-parallel",
+    description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel threads",
+    publishArtifact := false, // Don't publish this example in maven. Only the library.
+    libraryDependencies ++= Seq(
+      "com.github.scopt" %% "scopt" % "3.5.0"
     )
   ).dependsOn("core", "examples-common-utilities")
 
 lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file("examples/counter-akka")).
-  settings(commonSettings: _*).
   settings(
-    Seq(
-      name := "osm4scala-examples-counter-akka",
-      description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel with AKKA",
-      publishArtifact := false, // Don't publish this example in maven. Only the library.
-      libraryDependencies ++= Seq(
-        "com.typesafe.akka" %% "akka-actor" % "2.4.17",
-        "com.github.scopt" %% "scopt" % "3.5.0"
-      )
+    commonSettings,
+    name := "osm4scala-examples-counter-akka",
+    description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel with AKKA",
+    publishArtifact := false, // Don't publish this example in maven. Only the library.
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-actor" % "2.5.1",
+      "com.github.scopt" %% "scopt" % "3.5.0"
     )
   ).dependsOn("core", "examples-common-utilities")
 
 
 
 lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base = file("examples/tagsextraction")).
-  settings(commonSettings: _*).
   settings(
-    Seq(
-      name := "osm4scala-examples-tags-extraction",
-      description := "Extract all unique tags from the selected primitive type (Way, Node, Relation or All) using osm4scala",
-      publishArtifact := false, // Don't publish this example in maven. Only the library.
-      libraryDependencies ++= Seq(
-        "com.github.scopt" %% "scopt" % "3.5.0"
-      )
+    commonSettings,
+    name := "osm4scala-examples-tags-extraction",
+    description := "Extract all unique tags from the selected primitive type (Way, Node, Relation or All) using osm4scala",
+    publishArtifact := false, // Don't publish this example in maven. Only the library.
+    libraryDependencies ++= Seq(
+      "com.github.scopt" %% "scopt" % "3.5.0"
     )
   ).dependsOn("core", "examples-common-utilities")
 
 
 lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", base = file("examples/blocksextraction")).
-  settings(commonSettings: _*).
   settings(
-    Seq(
-      name := "osm4scala-examples-blocks-extraction",
-      description := "Extract all blocks from the pbf into a folder using osm4scala.",
-      publishArtifact := false, // Don't publish this example in maven. Only the library.
-      libraryDependencies ++= Seq(
-        "com.github.scopt" %% "scopt" % "3.5.0"
-      )
+    commonSettings,
+    name := "osm4scala-examples-blocks-extraction",
+    description := "Extract all blocks from the pbf into a folder using osm4scala.",
+    publishArtifact := false, // Don't publish this example in maven. Only the library.
+    libraryDependencies ++= Seq(
+      "com.github.scopt" %% "scopt" % "3.5.0"
     )
   ).dependsOn("core", "examples-common-utilities")
 
 
 
 lazy val examplesPrimitivesExtraction = Project(id = "examples-primitives-extraction", base = file("examples/primitivesextraction")).
-  settings(commonSettings: _*).
   settings(
-    Seq(
-      name := "osm4scala-examples-primitives-extraction",
-      description := "Extract all primitives from the pbf into a folder using osm4scala.",
-      publishArtifact := false, // Don't publish this example in maven. Only the library.
-      libraryDependencies ++= Seq(
-        "com.github.scopt" %% "scopt" % "3.5.0"
-      )
+    commonSettings,
+    name := "osm4scala-examples-primitives-extraction",
+    description := "Extract all primitives from the pbf into a folder using osm4scala.",
+    publishArtifact := false, // Don't publish this example in maven. Only the library.
+    libraryDependencies ++= Seq(
+      "com.github.scopt" %% "scopt" % "3.5.0"
     )
   ).dependsOn("core", "examples-common-utilities")
 
