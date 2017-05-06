@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.org/angelcervera/osm4scala.svg)](https://travis-ci.org/angelcervera/osm4scala)
 [![Coverage Status](https://coveralls.io/repos/github/angelcervera/osm4scala/badge.svg?branch=master)](https://coveralls.io/github/angelcervera/osm4scala?branch=master)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/angelcervera/osm4scala/master/LICENSE.md)
-[ ![Download](https://api.bintray.com/packages/angelcervera/maven/osm4scala/images/download.svg?version=1.0) ](https://bintray.com/angelcervera/maven/osm4scala/1.0/link)
+[![Download](https://api.bintray.com/packages/angelcervera/maven/osm4scala/images/download.svg?version=1.0.1) ](https://bintray.com/angelcervera/maven/osm4scala/1.0.1/link)
+[![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk)
 
 Scala library focus in parse PBF2 Open Street Map files as iterators.
 
@@ -131,7 +132,7 @@ The list is stored in a file given as parameter.
 - Import the library using maven or sbt.
 
     ```
-    libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "1.0"
+    libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "1.0.1"
     ```
 - Add resolver (only if you have problems resolving dependencies without it):
 
@@ -145,9 +146,9 @@ The list is stored in a file given as parameter.
   - PBF2 Java library: https://github.com/openstreetmap/osmosis/tree/master/osmosis-osm-binary
   - Download whole planet pbf files: http://free.nchc.org.tw/osm.planet/
   - Download country pbf files: http://download.geofabrik.de/index.html
-  - Scala protocol buffer library: https://scalapb.github.io/
+  - Scala protocol buffer library: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
 
 ## Libraries:
 
-  - ScalaPB: https://scalapb.github.io/
+  - ScalaPB: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
   
