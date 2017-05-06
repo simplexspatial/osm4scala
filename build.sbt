@@ -5,7 +5,7 @@ import sbtrelease.ReleasePlugin.autoImport._
 publishArtifact := false // Avoid publish default artifact
 
 // Release
-crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2")
+crossScalaVersions := Seq(/*"2.10.6",*/ "2.11.11", "2.12.2")
 releaseCrossBuild := true
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -130,8 +130,6 @@ lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file
     )
   ).dependsOn("core", "examples-common-utilities")
 
-
-
 lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base = file("examples/tagsextraction")).
   settings(
     commonSettings,
@@ -143,7 +141,6 @@ lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base =
     )
   ).dependsOn("core", "examples-common-utilities")
 
-
 lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", base = file("examples/blocksextraction")).
   settings(
     commonSettings,
@@ -154,8 +151,6 @@ lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", b
       "com.github.scopt" %% "scopt" % "3.5.0"
     )
   ).dependsOn("core", "examples-common-utilities")
-
-
 
 lazy val examplesPrimitivesExtraction = Project(id = "examples-primitives-extraction", base = file("examples/primitivesextraction")).
   settings(
