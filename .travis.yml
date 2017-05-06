@@ -10,6 +10,8 @@ jdk:
 
 matrix:
   exclude:
+    - scala: 2.11.11
+      jdk: oraclejdk8
     - scala: 2.12.2
       jdk: oraclejdk7
 
