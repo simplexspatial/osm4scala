@@ -104,7 +104,7 @@ lazy val examplesCounter = Project(id = "examples-counter", base = file("example
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0"
     )
-  ).dependsOn("core", "examples-common-utilities")
+  ).dependsOn(core, commonUtilities)
 
 lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", base = file("examples/counter-parallel")).
   settings(
@@ -115,7 +115,7 @@ lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", bas
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0"
     )
-  ).dependsOn("core", "examples-common-utilities")
+  ).dependsOn(core, commonUtilities)
 
 lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file("examples/counter-akka")).
   settings(
@@ -128,7 +128,7 @@ lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file
       "com.typesafe.akka" %% "akka-actor" % "2.5.1",
       "com.github.scopt" %% "scopt" % "3.5.0"
     )
-  ).dependsOn("core", "examples-common-utilities")
+  ).dependsOn(core, commonUtilities)
 
 lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base = file("examples/tagsextraction")).
   settings(
@@ -139,7 +139,7 @@ lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base =
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0"
     )
-  ).dependsOn("core", "examples-common-utilities")
+  ).dependsOn(core, commonUtilities)
 
 lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", base = file("examples/blocksextraction")).
   settings(
@@ -150,7 +150,7 @@ lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", b
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0"
     )
-  ).dependsOn("core", "examples-common-utilities")
+  ).dependsOn(core, commonUtilities)
 
 lazy val examplesPrimitivesExtraction = Project(id = "examples-primitives-extraction", base = file("examples/primitivesextraction")).
   settings(
@@ -161,5 +161,5 @@ lazy val examplesPrimitivesExtraction = Project(id = "examples-primitives-extrac
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0"
     )
-  ).dependsOn("core", "examples-common-utilities")
+  ).dependsOn(core, commonUtilities)
 
