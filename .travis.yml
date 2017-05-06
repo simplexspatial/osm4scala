@@ -1,13 +1,24 @@
 language: scala
+
 scala:
-   - 2.10.6
+#   - 2.10.6
    - 2.11.11
    - 2.12.2
 jdk:
-  - oraclejdk7
   - oraclejdk8
+
+git:
+  depth: 3
+
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y protobuf-compiler
-script: "sbt clean coverage test"
-after_success: "sbt coverageReport coveralls"
+
+before_script: # https://github.com/travis-ci/travis-ci/issues/7703
+  - sudo chmod +x /usr/local/bin/sbt
+
+script:
+  - sbt clean coverage test
+
+after_success:
+  - sbt coverageReport coveralls
