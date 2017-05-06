@@ -120,7 +120,6 @@ lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", bas
 lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file("examples/counter-akka")).
   settings(
     commonSettings,
-    crossScalaVersions := Seq("2.11.11", "2.12.2"),
     name := "osm4scala-examples-counter-akka",
     description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel with AKKA",
     publishArtifact := false, // Don't publish this example in maven. Only the library.
