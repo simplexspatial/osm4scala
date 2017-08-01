@@ -33,7 +33,7 @@ Found [63,006,432] primitives of type [Node] in /home/angelcervera/projects/osm/
 Found [130,924] primitives of type [Relation] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.66 sec.
 ~~~~
 
-Other example, iterate over the **full planet (near of 4,000 millions of elements), 40 minutes**, reading the 36GB file from an USB3 drive.
+Other example, iterate over the **full planet (near of 4,000 millions of elements on August 2016), 40 minutes**, reading the 36GB file from an USB3 drive.
 ~~~
 Found [3,976,885,170] primitives in /media/angelcervera/My Passport/osm/planet-latest.osm.pbf in 2,566.11 sec.
 ~~~
@@ -108,7 +108,7 @@ Two big advantage respect the Future.traverse version:
 - Concurrent AKKA 4 cores: 16.82 sec.
 
 #### North America (USA and Canada)
-- Entries: 944,721,636
+- Entities: 944,721,636
 - Counter (One thread): 514 sec. / 8.5 min.
 - Concurrent Future.traverse: 211 sec. / 3.5  min. (-XX:-UseGCOverheadLimit -Xms14g)
 - Concurrent AKKA 4 cores: 256.70 sec. / 4.27 min. -> **But only uses 4 cores and 128M of RAM**, so can play "Solitaire" while you wait.

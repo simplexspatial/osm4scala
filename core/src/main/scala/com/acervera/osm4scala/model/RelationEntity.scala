@@ -29,7 +29,7 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.{Relation, StringTable}
 
 
 /**
-  * Created by angelcervera on 14/06/16.
+  * Entity that represent a OSM relation as https://wiki.openstreetmap.org/wiki/Elements#Relation and https://wiki.openstreetmap.org/wiki/Relation describe
   */
 case class RelationEntity(val id: Long, val relations: Seq[RelationMemberEntity], val tags: Map[String, String]) extends OSMEntity {
 

@@ -28,7 +28,7 @@ package com.acervera.osm4scala.model
 import org.openstreetmap.osmosis.osmbinary.osmformat.{StringTable, Way}
 
 /**
-  * Created by angelcervera on 14/06/16.
+  * Entity that represent a OSM way as https://wiki.openstreetmap.org/wiki/Elements#Way and https://wiki.openstreetmap.org/wiki/Way describe
   */
 case class WayEntity(val id: Long, val nodes: Seq[Long], val tags: Map[String, String]) extends OSMEntity {
 
