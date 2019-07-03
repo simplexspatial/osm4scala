@@ -27,11 +27,9 @@ package com.acervera.osm4scala.examples.primitivesextraction
 
 import java.io._
 import java.nio.file.{Files, Paths}
-import java.util.zip.Inflater
 
 import com.acervera.osm4scala.BlobTupleIterator
 import com.acervera.osm4scala.utilities.{PrimitiveGroupType, Osm4ScalaUtils}
-import com.trueaccord.scalapb.GeneratedMessage
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 import PrimitiveGroupType._
@@ -75,7 +73,7 @@ object PrimitivesExtraction extends App with Osm4ScalaUtils with Benchmarking {
       * @param ext Extenstion used to store the block and used as key in the map of counters.
       * @return Map with counters
       */
-    def writePrimitives(counters: Map[String, Long], primitives: Seq[GeneratedMessage], ext:String) =
+    def writePrimitives(counters: Map[String, Long], primitives: Seq[scalapb.GeneratedMessage], ext:String) =
       primitives.foldLeft(counters)(writePrimitive(_ , _, ext))
 
     /**
@@ -86,7 +84,7 @@ object PrimitivesExtraction extends App with Osm4ScalaUtils with Benchmarking {
       * @param ext Extenstion used to store the block and used as key in the map of counters.
       * @return Map with counters
       */
-    def writePrimitive(counters: Map[String, Long], primitive: GeneratedMessage, ext:String): Map[String, Long] = {
+    def writePrimitive(counters: Map[String, Long], primitive: scalapb.GeneratedMessage, ext:String): Map[String, Long] = {
       val output = new FileOutputStream(s"$outputFolderPath/${counters(ext)}.${ext}")
       primitive writeTo output
       output.close

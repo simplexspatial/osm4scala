@@ -5,7 +5,7 @@ import sbtrelease.ReleasePlugin.autoImport._
 publishArtifact := false // Avoid publish default artifact
 
 // Release
-crossScalaVersions := Seq(/*"2.10.6",*/ "2.11.11", "2.12.2")
+crossScalaVersions := Seq(/*"2.10.6",*/ "2.11.12", "2.12.8", "2.13.0")
 releaseCrossBuild := true
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -28,7 +28,7 @@ bintrayEnsureLicenses := false
 
 lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
-  scalaVersion := "2.12.2",
+  scalaVersion := "2.12.8",
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
 
