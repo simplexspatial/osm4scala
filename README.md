@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/angelcervera/osm4scala.svg)](https://travis-ci.org/angelcervera/osm4scala)
 [![Coverage Status](https://coveralls.io/repos/github/angelcervera/osm4scala/badge.svg?branch=master)](https://coveralls.io/github/angelcervera/osm4scala?branch=master)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/angelcervera/osm4scala/master/LICENSE.md)
 [![Download](https://api.bintray.com/packages/angelcervera/maven/osm4scala/images/download.svg?version=1.0.1) ](https://bintray.com/angelcervera/maven/osm4scala/1.0.1/link)
 [![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/angelcervera/osm4scala/master/LICENSE.md)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala?ref=badge_shield)
 
 Scala library focus in parse PBF2 Open Street Map files as iterators.
