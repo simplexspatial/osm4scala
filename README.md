@@ -8,7 +8,7 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala?ref=badge_shield)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 
-Scala library focus in parse PBF2 Open Street Map files as iterators.
+Scala library focus on parsing PBF2 OpenStreetMap files as iterators.
 
 At the moment, practically all Open Street Map data distribution are published using the osm pbf format because for publishing/distribution it is looking for size save. 
 But because this format has been designed to achieve really good compression, it is really complex to obtain an optimized way to process its content with moderns big data tools.
