@@ -1,6 +1,6 @@
 import ReleaseTransformations._
 import sbt.Keys._
-import sbtrelease.ReleasePlugin.autoImport._
+import sbtrelease.ReleasePlugin.autoImport.{releaseCrossBuild, _}
 
 publishArtifact := false // Avoid publish default artifact
 
@@ -15,24 +15,10 @@ lazy val scalatestVersion = "3.0.8"
 lazy val scalacheckVersion = "1.14.3"
 lazy val commonIOVersion = "2.5"
 lazy val logbackVersion = "1.1.7"
-lazy val scoptVersion = "3.5.0"
+lazy val scoptVersion = "3.7.1"
 
 // crossScalaVersions must be set to Nil on the aggregating project
 crossScalaVersions := Nil
-releaseCrossBuild := true
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  publishArtifacts,
-  setNextVersion,
-  commitNextVersion,
-  pushChanges
-)
 
 // Bintray BUG workaround: https://github.com/softprops/bintray-sbt/issues/93
 bintrayRelease := false
@@ -43,9 +29,7 @@ lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
-  publishArtifact := true, // Enable publish
-  publishMavenStyle := true,
-  publishArtifact in Test := false, // No publish test stuff
+  publishArtifact := false,
   pomExtra :=
     <url>https://github.com/angelcervera/osm4scala</url>
       <scm>
@@ -60,11 +44,6 @@ lazy val commonSettings = Seq(
           <email>angelcervera@silyan.com</email>
         </developer>
       </developers>,
-  // Bintray
-  bintrayRepository := "maven",
-  bintrayPackage := "osm4scala",
-  bintrayReleaseOnPublish := false,
-  bintrayRelease := false,
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % scalatestVersion % "test",
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
@@ -83,7 +62,30 @@ lazy val core = Project(id = "core", base = file("core")).settings(
   ),
   libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % logbackVersion
-  )
+  ),
+  releaseCrossBuild := false,
+  releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    releaseStepCommandAndRemaining("+test"),
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    releaseStepCommandAndRemaining("+publishArtifacts"), //     releaseStepCommandAndRemaining("+publishSigned"),
+    setNextVersion,
+    commitNextVersion,
+    pushChanges
+  ),
+  // Publish
+  publishArtifact := true, // Enable publish
+  publishMavenStyle := true,
+  publishArtifact in Test := false, // No publish test stuff
+  // Bintray
+  bintrayRepository := "maven",
+  bintrayPackage := "osm4scala",
+  bintrayReleaseOnPublish := false,
+  bintrayRelease := false
 )
 
 // Examples
@@ -93,20 +95,20 @@ lazy val commonUtilities = Project(
   base = file("examples/common-utilities")
 ).settings(
   commonSettings,
+  skip in publish := true,
   crossScalaVersions := supportedScalaVersions,
   name := "osm4scala-examples-common-utilities",
   description := "Utilities shared by all examples",
-  publishArtifact := false // Don't publish this example in maven. Only the library.
 )
 
 lazy val examplesCounter =
   Project(id = "examples-counter", base = file("examples/counter"))
     .settings(
       commonSettings,
-      scalaVersion := scala211,
+      skip in publish := true,
+      crossScalaVersions := supportedScalaVersions,
       name := "osm4scala-examples-counter",
       description := "Counter of primitives (Way, Node, Relation or All) using osm4scala",
-      publishArtifact := false, // Don't publish this example in maven. Only the library.
       libraryDependencies ++= Seq("com.github.scopt" %% "scopt" % scoptVersion)
     )
     .dependsOn(core, commonUtilities)
@@ -116,10 +118,10 @@ lazy val examplesCounterParallel = Project(
   base = file("examples/counter-parallel")
 ).settings(
     commonSettings,
-    scalaVersion := scala211,
+    skip in publish := true,
+    crossScalaVersions := supportedScalaVersions,
     name := "osm4scala-examples-counter-parallel",
     description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel threads",
-    publishArtifact := false, // Don't publish this example in maven. Only the library.
     libraryDependencies ++= Seq("com.github.scopt" %% "scopt" % scoptVersion)
   )
   .dependsOn(core, commonUtilities)
@@ -128,12 +130,12 @@ lazy val examplesCounterAkka =
   Project(id = "examples-counter-akka", base = file("examples/counter-akka"))
     .settings(
       commonSettings,
-      scalaVersion := scala211,
+      skip in publish := true,
+      crossScalaVersions := supportedScalaVersions,
       name := "osm4scala-examples-counter-akka",
       description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel with AKKA",
-      publishArtifact := false, // Don't publish this example in maven. Only the library.
       libraryDependencies ++= Seq(
-        "com.typesafe.akka" %% "akka-actor" % "2.5.1",
+        "com.typesafe.akka" %% "akka-actor" % "2.5.31",
         "com.github.scopt" %% "scopt" % scoptVersion
       )
     )
@@ -144,7 +146,7 @@ lazy val examplesTagsExtraction = Project(
   base = file("examples/tagsextraction")
 ).settings(
     commonSettings,
-    scalaVersion := scala211,
+    crossScalaVersions := supportedScalaVersions,
     name := "osm4scala-examples-tags-extraction",
     description := "Extract all unique tags from the selected primitive type (Way, Node, Relation or All) using osm4scala",
     publishArtifact := false, // Don't publish this example in maven. Only the library.
@@ -157,7 +159,7 @@ lazy val examplesBlocksExtraction = Project(
   base = file("examples/blocksextraction")
 ).settings(
     commonSettings,
-    scalaVersion := scala211,
+    crossScalaVersions := supportedScalaVersions,
     name := "osm4scala-examples-blocks-extraction",
     description := "Extract all blocks from the pbf into a folder using osm4scala.",
     publishArtifact := false, // Don't publish this example in maven. Only the library.
@@ -170,7 +172,7 @@ lazy val examplesPrimitivesExtraction = Project(
   base = file("examples/primitivesextraction")
 ).settings(
     commonSettings,
-    scalaVersion := scala211,
+    crossScalaVersions := supportedScalaVersions,
     name := "osm4scala-examples-primitives-extraction",
     description := "Extract all primitives from the pbf into a folder using osm4scala.",
     publishArtifact := false, // Don't publish this example in maven. Only the library.
