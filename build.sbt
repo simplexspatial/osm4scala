@@ -26,23 +26,18 @@ lazy val commonSettings = Seq(
   scmInfo in ThisBuild := Some(
     ScmInfo(
       url("https://github.com/angelcervera/osm4scala"),
-      "git@github.com:angelcervera/osm4scala.git"
+      "scm:git:git://github.com/angelcervera/osm4scala.git",
+      "scm:git:ssh://github.com:angelcervera/osm4scala.git"
     )
   ),
-  pomExtra :=
-    <url>https://github.com/angelcervera/osm4scala</url>
-      <scm>
-        <connection>scm:git:git://github.com/angelcervera/osm4scala.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/angelcervera/osm4scala.git</developerConnection>
-        <url>https://github.com/angelcervera/osm4scala</url>
-      </scm>
-      <developers>
-        <developer>
-          <id>angelcervera</id>
-          <name>Angel Cervera Claudio</name>
-          <email>angelcervera@silyan.com</email>
-        </developer>
-      </developers>,
+  developers in ThisBuild := List(
+    Developer(
+      "angelcervera",
+      "Angel Cervera Claudio",
+      "angelcervera@silyan.com",
+      url("https://www.acervera.com")
+    )
+  ),
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % scalatestVersion % "test",
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
