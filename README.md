@@ -21,6 +21,16 @@ For example, count all node primitives in a file is so simple as:
 EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
 ```
 
+## Dependencies
+- Import the library using maven or sbt.
+    ```
+    libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "<version>"
+    ```
+- Add the resolver (only if you have problems resolving dependencies without it):
+    ```
+    resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
+    ``` 
+ 
 ## Performance
 The performance of the first version looks really good. You can find a resume in the section [Concurrent examples comparision](#concurrent-examples-comparision)
 
@@ -131,16 +141,6 @@ The list is stored in a file given as parameter.
     ```
     sudo apt-get install protobuf-compiler
     ```
-- Import the library using maven or sbt.
-
-    ```
-    libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "1.0.1"
-    ```
-- Add resolver (only if you have problems resolving dependencies without it):
-
-    ```
-    resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
-    ``` 
 
 ## As reference:
 
