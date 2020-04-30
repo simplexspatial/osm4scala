@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/angelcervera/osm4scala/badge.svg?branch=master)](https://coveralls.io/github/angelcervera/osm4scala?branch=master)
  [ ![Download](https://api.bintray.com/packages/angelcervera/maven/osm4scala/images/download.svg?version=1.0.4) ](https://bintray.com/angelcervera/maven/osm4scala/1.0.4/link)
 
-![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fbintray.com%2Fangelcervera%2Fmaven%2Fdownload_file%3Ffile_path%3Dcom%252Facervera%252Fosm4scala%252Fosm4scala-core_2.13%252Fmaven-metadata.xml)
+![Maven Central](https://img.shields.io/maven-central/v/com.acervera/osm4scala)
 
 [![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/angelcervera/osm4scala/master/LICENSE.md)
