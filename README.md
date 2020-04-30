@@ -30,7 +30,14 @@ EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
     ```
     resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
     ``` 
- 
+## Selecting the right Versions
+| osm4scala | Scala | Scalapb |
+|:--------:|:------:|:-------:|
+| 1.0.4 | 2.12, 2.13 | 0.10.2 |
+| 1.0.3 | 2.11, 2.12, 2.13 | 0.9.7 |
+| 1.0.1 | 2.11, 2.12 | 0.5.47 |
+| 1.0 | 2.10, 2.11 | 0.5.47 |
+
 ## Performance
 The performance of the first version looks really good. You can find a resume in the section [Concurrent examples comparision](#concurrent-examples-comparision)
 
