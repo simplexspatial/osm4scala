@@ -1,6 +1,6 @@
 # osm4scala
 
-[![Build Status](https://travis-ci.org/angelcervera/osm4scala.svg)](https://travis-ci.org/angelcervera/osm4scala)
+[![Build Status](https://travis-ci.org/angelcervera/osm4scala.svg?branch=master)](https://travis-ci.org/angelcervera/osm4scala)
 [![Coverage Status](https://coveralls.io/repos/github/angelcervera/osm4scala/badge.svg?branch=master)](https://coveralls.io/github/angelcervera/osm4scala?branch=master)
 [ ![Download](https://api.bintray.com/packages/angelcervera/maven/osm4scala/images/download.svg) ](https://bintray.com/angelcervera/maven/osm4scala/_latestVersion)
 [![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk)
