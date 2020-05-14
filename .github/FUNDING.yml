@@ -1,12 +1,12 @@
 # These are supported funding model platforms
 
-github: # [angelcervera]
+github: angelcervera
 patreon: # Replace with a single Patreon username
 open_collective: # Replace with a single Open Collective username
 ko_fi: # Replace with a single Ko-fi username
 tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/babel
-community_bridge: osm4scala
-liberapay: angelcervera
+community_bridge: # osm4scala => It is configured at https://funding.communitybridge.org/projects/osm4scala
+liberapay: # angelcervera => It is configured at https://liberapay.com/angelcervera
 issuehunt: # Replace with a single IssueHunt username
 otechie: # osm4scala
 custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
