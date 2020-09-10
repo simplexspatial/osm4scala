@@ -8,11 +8,14 @@ lazy val commonIOVersion = "2.5"
 lazy val logbackVersion = "1.1.7"
 lazy val scoptVersion = "3.7.1"
 lazy val akkaVersion = "2.5.31"
+lazy val sparkVersion = "3.0.0"
 
 // Releases versions
 lazy val scala213 = "2.13.2"
 lazy val scala212 = "2.12.11"
 lazy val scalaVersions = List(scala213, scala212)
+
+scapegoatVersion in ThisBuild := "1.4.5"
 
 lazy val commonSettings = Seq(
   crossScalaVersions := scalaVersions,
@@ -61,6 +64,7 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 lazy val root = (project in file("."))
   .aggregate(
     core,
+    spark,
     commonUtilities,
     examplesCounter,
     examplesCounterParallel,
@@ -94,7 +98,7 @@ lazy val core = Project(id = "core", base = file("core")).settings(
   commonSettings,
   enablingPublishingSettings,
   name := "osm4scala-core",
-  description := "Scala Open Street Map Pbf 2 parser. Core",
+  description := "Scala OpenStreetMap Pbf 2 parser. Core",
   bintrayPackage := "osm4scala",
   coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
   PB.targets in Compile := Seq(
@@ -104,6 +108,17 @@ lazy val core = Project(id = "core", base = file("core")).settings(
     "ch.qos.logback" % "logback-classic" % logbackVersion
   )
 )
+
+lazy val spark = Project(id = "spark", base = file("spark")).settings(
+  commonSettings,
+  enablingPublishingSettings,
+  name := "spark-osm-pbf",
+  description := "Spark connector for OpenStreetMap Pbf 2 parser. Core",
+  bintrayPackage := "spark-osm-pbf",
+  libraryDependencies ++= Seq(
+    "org.apache.spark" %% "spark-sql" % sparkVersion
+  )
+).dependsOn(core)
 
 // Examples
 

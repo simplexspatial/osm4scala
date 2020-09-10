@@ -33,5 +33,5 @@ object RelationMemberEntityTypes extends Enumeration {
   val Unrecognized = Value(3)
 }
 
-
+// FIXME: relationTypes should be singular instead plural.
 case class RelationMemberEntity(val id: Long, val relationTypes: RelationMemberEntityTypes.Value, val role: String)
