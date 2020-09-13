@@ -27,9 +27,9 @@ package com.acervera.osm4scala
 
 import java.io.{FileInputStream, InputStream}
 
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class BlobTupleIteratorSpec extends WordSpec {
+class BlobTupleIteratorSpec extends AnyWordSpec {
 
   "The BlobTupleIterator should" should {
     "Read three pairs" in {

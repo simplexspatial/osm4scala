@@ -28,13 +28,13 @@ package com.acervera.osm4scala.model
 import java.io.FileInputStream
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.{StringTable, Way}
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 
 /**
   * Created by angelcervera on 20/06/16.
   */
-class WayEntitySuite extends FunSuite {
+class WayEntitySuite extends AnyFunSuite {
 
   test("read a real osmosis Way.") {
 

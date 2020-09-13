@@ -28,12 +28,12 @@ package com.acervera.osm4scala.model
 import java.io.FileInputStream
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.{Relation, StringTable}
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 /**
   * Created by angelcervera on 23/06/16.
   */
-class RelationEntitySuite extends FunSuite {
+class RelationEntitySuite extends AnyFunSuite {
 
   test("read a real osmosis Relations.") {
 

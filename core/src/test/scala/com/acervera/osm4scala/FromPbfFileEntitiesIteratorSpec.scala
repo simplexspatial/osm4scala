@@ -27,14 +27,15 @@ package com.acervera.osm4scala
 
 import java.io.{FileInputStream, InputStream}
 
-import com.acervera.osm4scala.model.{NodeEntity, RelationEntity, WayEntity}
-import org.scalatest.{Matchers, WordSpec}
 import com.acervera.osm4scala.EntityIterator._
+import com.acervera.osm4scala.model.{NodeEntity, RelationEntity, WayEntity}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by angelcervera on 24/07/16.
   */
-class FromPbfFileEntitiesIteratorSpec extends WordSpec with Matchers {
+class FromPbfFileEntitiesIteratorSpec extends AnyWordSpec with Matchers {
 
   "The FromPbfFileEntitiesIterator should" should {
     "Read X entities" in {
