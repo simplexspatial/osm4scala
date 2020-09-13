@@ -2,7 +2,7 @@ import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport.{releaseCrossBuild, _}
 
 // Dependencies
-lazy val scalatestVersion = "3.0.8"
+lazy val scalatestVersion = "3.2.0"
 lazy val scalacheckVersion = "1.14.3"
 lazy val commonIOVersion = "2.5"
 lazy val logbackVersion = "1.1.7"

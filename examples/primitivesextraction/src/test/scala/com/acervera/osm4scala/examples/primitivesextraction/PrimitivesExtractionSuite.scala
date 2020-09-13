@@ -27,14 +27,15 @@ package com.acervera.osm4scala.examples.primitivesextraction
 
 import java.io.{File, FilenameFilter}
 
-import org.apache.commons.io.FileUtils
-import org.scalatest.{BeforeAndAfter, FunSuite}
 import com.acervera.osm4scala.examples.primitivesextraction.PrimitivesExtraction._
+import org.apache.commons.io.FileUtils
+import org.scalatest.BeforeAndAfter
+import org.scalatest.funsuite.AnyFunSuite
 
 /**
   * Created by angelcervera on 23/06/16.
   */
-class PrimitivesExtractionSuite extends FunSuite with BeforeAndAfter {
+class PrimitivesExtractionSuite extends AnyFunSuite with BeforeAndAfter {
 
   val extractRootFolder = "target/testing/PrimitivesExtractionSuite/"
 

@@ -28,11 +28,12 @@ package com.acervera.osm4scala
 import java.io.{File, FileInputStream}
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.io.Source
 
-class DenseNodesIteratorSpec extends WordSpec with Matchers {
+class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
 
   "The DenseNodesIterator should" should {
     "Read 6432 nodes" in {

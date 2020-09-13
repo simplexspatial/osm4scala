@@ -25,16 +25,17 @@
 
 package com.acervera.osm4scala.examples.blocksextraction
 
-import java.io.{File, FilenameFilter}
+import java.io.File
 
+import com.acervera.osm4scala.examples.blocksextraction.BlocksExtraction._
 import org.apache.commons.io.FileUtils
-import org.scalatest.{BeforeAndAfter, FunSuite}
-import BlocksExtraction._
+import org.scalatest.BeforeAndAfter
+import org.scalatest.funsuite.AnyFunSuite
 
 /**
   * Created by angelcervera on 23/06/16.
   */
-class BlocksExtractionSuite extends FunSuite with BeforeAndAfter {
+class BlocksExtractionSuite extends AnyFunSuite with BeforeAndAfter {
 
   val extractRootFolder = "target/testing/BlocksExtractionSuite/"
 
