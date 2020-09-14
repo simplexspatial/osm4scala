@@ -25,61 +25,133 @@
 
 package com.acervera.osm4scala.spark
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SaveMode, SparkSession, functions => fn}
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class OsmPbfFormatSpec extends AnyWordSpec with Matchers {
+class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
+
+  val cores = 4
+  val sparkSession = SparkSession
+    .builder()
+    .master(s"local[$cores]")
+    .getOrCreate()
+
+  import sparkSession.implicits._
+
+  val sqlContext = sparkSession.sqlContext
+  val madrid = sqlContext.read
+    .format("osm.pbf")
+    .load("core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf")
+    .repartition(cores * 2)
+    .persist
+  madrid.createTempView("madrid")
+
+  override protected def afterAll(): Unit = {
+    sparkSession.close()
+  }
 
   "OsmPbfFormat" should {
-    "parser full file" in {
-      val spark = SparkSession
-        .builder()
-        .master("local[4]")
-        .appName("Testing real spark example")
-        .getOrCreate()
 
-      val sql = spark.sqlContext
-      val madrid = sql.read
-        .format("osm.pbf")
-        .load("core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf")
+    "parser correctly" when {
+      "is parsing nodes" in {
+        val node171946 = madrid.filter("id == 171946").collect()(0)
+        node171946.getAs[Long]("id") shouldBe 171946L
+        node171946.getAs[Byte]("type") shouldBe 0
+        node171946.getAs[Double]("latitude") shouldBe (40.42125 +- 0.001)
+        node171946.getAs[Double]("longitude") shouldBe (-3.68445 +- 0.001)
+        node171946.getAs[Map[String, String]]("tags") shouldBe
+          Map("highway" -> "traffic_signals", "crossing" -> "traffic_signals", "crossing_ref" -> "zebra")
 
-      madrid.select("id", "latitude", "longitude").where("type == 0").show()
-      madrid.select("id", "latitude", "longitude").where("id == 171933").show()
+        node171946.getAs[Seq[Any]]("nodes") shouldBe Seq.empty
+        node171946.getAs[Seq[Any]]("relations") shouldBe Seq.empty
+      }
 
-      madrid.createTempView("madrid")
-      sql.sql( "select count(id) from madrid where type == 0").show()
-      sql.sql( "select count(*) from madrid").show()
+      "is parsing ways" in {
+        val way3996192 = madrid.filter("id == 3996192").collect()(0)
+        way3996192.getAs[Long]("id") shouldBe 3996192L
+        way3996192.getAs[Byte]("type") shouldBe 1
+        way3996192.getAs[AnyRef]("latitude") should be(null)
+        way3996192.getAs[AnyRef]("longitude") should be(null)
+        way3996192.getAs[Map[String, String]]("tags") shouldBe
+          Map("name" -> "Plaza de Grecia",
+              "highway" -> "primary",
+              "lanes" -> "3",
+              "source:name" -> "common knowledge",
+              "junction" -> "roundabout")
 
-      spark.close()
+        way3996192.getAs[Seq[Long]]("nodes") shouldBe Seq(20952914L, 2424952617L)
+        way3996192.getAs[Seq[Any]]("relations") shouldBe Seq.empty
+      }
+
+      "is parsing relations" in {
+        val relation55799 = madrid.filter("id == 55799").collect()(0)
+        relation55799.getAs[Long]("id") shouldBe 55799
+        relation55799.getAs[Byte]("type") shouldBe 2
+        relation55799.getAs[AnyRef]("latitude") should be(null)
+        relation55799.getAs[AnyRef]("longitude") should be(null)
+        relation55799.getAs[Map[String, String]]("tags") shouldBe
+          Map("type" -> "multipolygon", "building" -> "yes")
+
+        relation55799.getAs[Seq[Any]]("nodes") shouldBe Seq.empty
+        relation55799.getAs[Seq[OsmSqlRelation]]("relations") shouldBe Seq(
+          Row(28775036L, 1, "outer"),
+          Row(28775323, 1, "inner"),
+        )
+      }
 
     }
 
     "export to other formats" in {
-      val spark = SparkSession
-        .builder()
-        .master("local[4]")
-        .appName("Testing real spark example")
-        .getOrCreate()
+      val threeExamples = madrid
+        .filter("id == 55799 || id == 3996192 || id == 171946")
+        .orderBy("id")
 
-      val sql = spark.sqlContext
-      sql.read
-        .format("osm.pbf")
-        .load("core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf")
-        .write
+      threeExamples.write
+        .mode(SaveMode.Overwrite)
         .format("orc")
-        .save("target/madrid/all")
+        .save("target/madrid/three")
 
-      sql.read
-        .format("osm.pbf")
-        .load("core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf")
-        .select("id", "latitude", "longitude")
-        .where("type == 0")
-        .write
-        .format("csv")
-        .save("target/madrid/nodes")
+      val readFromOrc = sqlContext.read
+        .format("orc")
+        .load("target/madrid/three")
+        .orderBy("id")
+        .collect()
 
-      spark.close()
+      val readFromPbf = threeExamples.collect();
+
+      readFromOrc should be(readFromPbf)
+
+    }
+
+    "execute complex queries" /*ignore*/ when {
+      "using dsl" should {
+        "count arrays and filter" in {
+          madrid
+            .withColumn("no_of_nodes", fn.size($"nodes"))
+            .withColumn("no_of_relations", fn.size($"relations"))
+            .withColumn("no_of_tags", fn.size($"tags"))
+            .withColumn("both_counter", fn.size($"relations") + fn.size($"tags"))
+            .where("(both_counter < 4) AND (no_of_nodes > 2 OR no_of_relations > 2) ")
+            .show()
+        }
+      }
+      "using SQL" should {
+        "count all zebras" in {
+          sqlContext
+            .sql("select count(*) from madrid where array_contains(map_values(tags), 'zebra')")
+            .show()
+        }
+        "extract all keys used in tags" in {
+          sqlContext
+            .sql("select distinct explode(map_keys(tags)) as tag from madrid where size(tags) > 0 order by tag")
+            .coalesce(1)
+            .write
+            .mode(SaveMode.Overwrite)
+            .csv("target/spark-sql-tmp/tags-tmp")
+        }
+      }
     }
   }
 
