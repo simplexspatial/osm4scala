@@ -25,23 +25,22 @@
 
 package com.acervera.osm4scala.spark
 
-import com.acervera.osm4scala.model.{OSMTypes, RelationMemberEntity, RelationMemberEntityTypes}
-import org.apache.spark.sql.Encoders
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-
-case class OsmSqlEntity(
-    id: Long,
-    `type`: Byte,
-    latitude: Option[Double] = None,
-    longitude: Option[Double] = None,
-    nodes: Seq[Long] = Seq.empty,
-    relations: Seq[OsmSqlRelation] = Seq.empty,
-    tags: Map[String, String] = Map.empty
-)
-
-case class OsmSqlRelation(id: Long, relationType: Byte, role: String)
+import com.acervera.osm4scala.model.{OSMTypes, RelationMemberEntityTypes}
+import org.apache.spark.sql.types.{StructField, StructType, _}
 
 object OsmSqlEntity {
+
+  val FIELD_ID = "id"
+  val FIELD_TYPE = "type"
+  val FIELD_LATITUDE = "latitude"
+  val FIELD_LONGITUDE = "longitude"
+  val FIELD_NODES = "nodes"
+  val FIELD_RELATIONS = "relations"
+  val FIELD_TAGS = "tags"
+  val FIELD_RELATIONS_ID = "id"
+  val FIELD_RELATIONS_TYPE = "relationType"
+  val FIELD_RELATIONS_ROLE = "role"
+
   val ENTITY_TYPE_NODE: Byte = 0
   val ENTITY_TYPE_WAY: Byte = 1
   val ENTITY_TYPE_RELATION: Byte = 2
@@ -64,14 +63,21 @@ object OsmSqlEntity {
     case RelationMemberEntityTypes.Unrecognized => RELATION_UNRECOGNIZED
   }
 
-  def relationFromOsmRelationMemberEntity(relation: RelationMemberEntity): OsmSqlRelation = OsmSqlRelation(
-    relation.id,
-    typeFromOsmRelationEntity(relation.relationTypes),
-    relation.role
+  lazy val relationSchema = StructType(
+    Seq(StructField(FIELD_RELATIONS_ID, LongType, false),
+        StructField(FIELD_RELATIONS_TYPE, ByteType, false),
+        StructField(FIELD_RELATIONS_ROLE, StringType, true))
   )
 
-  lazy val osmEntityEncoder = Encoders.product[OsmSqlEntity]
-  lazy val osmEntityExprEncoder = osmEntityEncoder.asInstanceOf[ExpressionEncoder[OsmSqlEntity]]
-  lazy val serializer = osmEntityExprEncoder.createSerializer()
-  lazy val schema = osmEntityExprEncoder.schema
+  lazy val schema = StructType(
+    Seq(
+      StructField(FIELD_ID, LongType, false), // id
+      StructField(FIELD_TYPE, ByteType, false), // type
+      StructField(FIELD_LATITUDE, DoubleType, true),
+      StructField(FIELD_LONGITUDE, DoubleType, true),
+      StructField(FIELD_NODES, ArrayType(LongType, false), true),
+      StructField(FIELD_RELATIONS, ArrayType(relationSchema, false), true),
+      StructField(FIELD_TAGS, MapType(StringType, StringType, false), true)
+    ))
+
 }

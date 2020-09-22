@@ -65,6 +65,8 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
                                      options: Map[String, String],
                                      hadoopConf: Configuration): PartitionedFile => Iterator[InternalRow] = {
 
+//    TODO: OsmSqlEntity.validateSchema(requiredSchema)
+
     val broadcastedHadoopConf = sparkSession.sparkContext.broadcast(new SerializableConfiguration(hadoopConf))
 
     (file: PartitionedFile) =>
@@ -72,7 +74,7 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
         val path = new Path(new URI(file.filePath))
         val fs = path.getFileSystem(broadcastedHadoopConf.value.value)
         val status = fs.getFileStatus(path)
-        EntityIterator.fromPbf(fs.open(status.getPath)).toInternalRowIterator()
+        EntityIterator.fromPbf(fs.open(status.getPath)).toOsmPbfRowIterator(requiredSchema)
       }
   }
 }

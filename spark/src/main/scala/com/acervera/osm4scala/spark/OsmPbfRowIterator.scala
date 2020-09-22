@@ -25,50 +25,102 @@
 
 package com.acervera.osm4scala.spark
 
-import com.acervera.osm4scala.model.{NodeEntity, OSMEntity, RelationEntity, WayEntity}
+import com.acervera.osm4scala.model._
 import com.acervera.osm4scala.spark.OsmPbfRowIterator._
+import com.acervera.osm4scala.spark.OsmSqlEntity._
 import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.expressions.UnsafeArrayData
+import org.apache.spark.sql.catalyst.util.{ArrayBasedMapData, ArrayData, GenericArrayData, MapData}
+import org.apache.spark.sql.types.{ArrayType, StructField, StructType}
+import org.apache.spark.unsafe.types.UTF8String
 
-class OsmPbfRowIterator(osmEntityIterator: Iterator[OSMEntity]) extends Iterator[InternalRow] {
+class OsmPbfRowIterator(osmEntityIterator: Iterator[OSMEntity], requiredSchema: StructType)
+    extends Iterator[InternalRow] {
 
   override def hasNext: Boolean = osmEntityIterator.hasNext
-  override def next(): InternalRow = osmEntityIterator.next().toInternalRow()
+  override def next(): InternalRow = InternalRow.fromSeq(
+    osmEntityIterator
+      .next()
+      .toSQLTypesSeq(requiredSchema)
+  )
+
 }
 
 object OsmPbfRowIterator {
 
-  implicit class OsmEntityIteratorDecorator(iter: Iterator[OSMEntity]) {
-    def toInternalRowIterator(): Iterator[InternalRow] = new OsmPbfRowIterator(iter)
+  implicit class OsmEntityIterDecorator(osmEntity: Iterator[OSMEntity]) {
+    def toOsmPbfRowIterator(structType: StructType): OsmPbfRowIterator = new OsmPbfRowIterator(osmEntity, structType)
   }
 
   implicit class OsmEntityDecorator(osmEntity: OSMEntity) {
 
-    def toOsmSqlEntity(): OsmSqlEntity = osmEntity match {
-      case NodeEntity(id, latitude, longitude, tags) =>
-        OsmSqlEntity(
-          id,
-          OsmSqlEntity.ENTITY_TYPE_NODE,
-          latitude = Some(latitude),
-          longitude = Some(longitude),
-          tags = tags
-        )
-      case WayEntity(id, nodes, tags) =>
-        OsmSqlEntity(
-          id,
-          OsmSqlEntity.ENTITY_TYPE_WAY,
-          nodes = nodes,
-          tags = tags
-        )
-      case RelationEntity(id, relations, tags) =>
-        OsmSqlEntity(
-          id,
-          OsmSqlEntity.ENTITY_TYPE_RELATION,
-          relations = relations.map(OsmSqlEntity.relationFromOsmRelationMemberEntity),
-          tags = tags
-        )
+    private def calculateTags(tags: Map[String, String]): MapData = ArrayBasedMapData(
+      tags,
+      k => UTF8String.fromString(k.toString),
+      v => UTF8String.fromString(v.toString)
+    )
+
+    private def calculateRelation(relation: RelationMemberEntity, structType: StructType): Seq[Any] =
+      structType.fieldNames.map {
+        case FIELD_RELATIONS_ID   => relation.id
+        case FIELD_RELATIONS_TYPE => typeFromOsmRelationEntity(relation.relationTypes)
+        case FIELD_RELATIONS_ROLE => UTF8String.fromString(relation.role)
+      }
+
+    private def calculateRelations(relations: Seq[RelationMemberEntity], structField: StructField): ArrayData =
+      new GenericArrayData(
+        structField.dataType match {
+          case ArrayType(elementType, _) =>
+            elementType match {
+              case s: StructType => relations.map(r => InternalRow.fromSeq(calculateRelation(r, s)))
+              case s =>
+                throw new UnsupportedOperationException(
+                  s"Schema ${s} isn't supported. Only arrays of StructType are allowed for relations.")
+            }
+          case s =>
+            throw new UnsupportedOperationException(
+              s"Schema ${s} isn't supported. Only arrays of StructType are allowed for relations.")
+        }
+      )
+
+    private def populateNode(entity: NodeEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
+      case FIELD_ID                     => entity.id
+      case FIELD_TYPE                   => ENTITY_TYPE_NODE
+      case OsmSqlEntity.FIELD_LATITUDE  => entity.latitude
+      case OsmSqlEntity.FIELD_LONGITUDE => entity.longitude
+      case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Array.empty[Long])
+      case OsmSqlEntity.FIELD_RELATIONS => new GenericArrayData(Seq.empty)
+      case FIELD_TAGS                   => calculateTags(entity.tags)
     }
 
-    def toInternalRow(): InternalRow = OsmSqlEntity.serializer(osmEntity.toOsmSqlEntity())
+    private def populateWay(entity: WayEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
+      case FIELD_ID                     => entity.id
+      case FIELD_TYPE                   => ENTITY_TYPE_WAY
+      case OsmSqlEntity.FIELD_LATITUDE  => null
+      case OsmSqlEntity.FIELD_LONGITUDE => null
+      case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(entity.nodes.toArray)
+      case OsmSqlEntity.FIELD_RELATIONS => new GenericArrayData(Seq.empty)
+      case FIELD_TAGS                   => calculateTags(entity.tags)
+    }
+
+    private def populateRelation(entity: RelationEntity, structType: StructType): Seq[Any] =
+      structType.fields.map(f =>
+        f.name match {
+          case FIELD_ID                     => entity.id
+          case FIELD_TYPE                   => ENTITY_TYPE_RELATION
+          case OsmSqlEntity.FIELD_LATITUDE  => null
+          case OsmSqlEntity.FIELD_LONGITUDE => null
+          case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Seq.empty[Long].toArray)
+          case OsmSqlEntity.FIELD_RELATIONS => calculateRelations(entity.relations, f)
+          case FIELD_TAGS                   => calculateTags(entity.tags)
+      })
+
+    def toSQLTypesSeq(structType: StructType): Seq[Any] = osmEntity match {
+      case entity: NodeEntity     => populateNode(entity, structType)
+      case entity: WayEntity      => populateWay(entity, structType)
+      case entity: RelationEntity => populateRelation(entity, structType)
+    }
+
   }
 
 }
