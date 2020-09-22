@@ -25,7 +25,8 @@
 
 package com.acervera.osm4scala.spark
 
-import org.apache.spark.sql.{Row, SaveMode, SparkSession, functions => fn}
+import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.{DataFrame, Row, SaveMode, SparkSession, functions => fn}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -33,6 +34,9 @@ import org.scalatest.wordspec.AnyWordSpec
 class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
 
   val cores = 4
+  val madridPath = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
+  val monacoPath = "core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf"
+
   val sparkSession = SparkSession
     .builder()
     .master(s"local[$cores]")
@@ -41,12 +45,15 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
   import sparkSession.implicits._
 
   val sqlContext = sparkSession.sqlContext
-  val madrid = sqlContext.read
-    .format("osm.pbf")
-    .load("core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf")
-    .repartition(cores * 2)
-    .persist
-  madrid.createTempView("madrid")
+
+  def loadOsmPbf(path: String, tableName: Option[String] = None): DataFrame = {
+    val df = sqlContext.read
+      .format("osm.pbf")
+      .load(path)
+      .repartition(cores * 2)
+    tableName.foreach(df.createTempView)
+    df
+  }
 
   override protected def afterAll(): Unit = {
     sparkSession.close()
@@ -56,7 +63,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
 
     "parser correctly" when {
       "is parsing nodes" in {
-        val node171946 = madrid.filter("id == 171946").collect()(0)
+        val node171946 = loadOsmPbf(madridPath).filter("id == 171946").collect()(0)
         node171946.getAs[Long]("id") shouldBe 171946L
         node171946.getAs[Byte]("type") shouldBe 0
         node171946.getAs[Double]("latitude") shouldBe (40.42125 +- 0.001)
@@ -69,7 +76,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
       }
 
       "is parsing ways" in {
-        val way3996192 = madrid.filter("id == 3996192").collect()(0)
+        val way3996192 = loadOsmPbf(madridPath).filter("id == 3996192").collect()(0)
         way3996192.getAs[Long]("id") shouldBe 3996192L
         way3996192.getAs[Byte]("type") shouldBe 1
         way3996192.getAs[AnyRef]("latitude") should be(null)
@@ -86,7 +93,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
       }
 
       "is parsing relations" in {
-        val relation55799 = madrid.filter("id == 55799").collect()(0)
+        val relation55799 = loadOsmPbf(madridPath).filter("id == 55799").collect()(0)
         relation55799.getAs[Long]("id") shouldBe 55799
         relation55799.getAs[Byte]("type") shouldBe 2
         relation55799.getAs[AnyRef]("latitude") should be(null)
@@ -95,7 +102,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
           Map("type" -> "multipolygon", "building" -> "yes")
 
         relation55799.getAs[Seq[Any]]("nodes") shouldBe Seq.empty
-        relation55799.getAs[Seq[OsmSqlRelation]]("relations") shouldBe Seq(
+        relation55799.getAs[InternalRow]("relations") shouldBe Seq(
           Row(28775036L, 1, "outer"),
           Row(28775323, 1, "inner"),
         )
@@ -104,7 +111,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
     }
 
     "export to other formats" in {
-      val threeExamples = madrid
+      val threeExamples = loadOsmPbf(madridPath)
         .filter("id == 55799 || id == 3996192 || id == 171946")
         .orderBy("id")
 
@@ -125,10 +132,10 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
 
     }
 
-    "execute complex queries" /*ignore*/ when {
+    "execute complex queries" when {
       "using dsl" should {
         "count arrays and filter" in {
-          madrid
+          loadOsmPbf(madridPath)
             .withColumn("no_of_nodes", fn.size($"nodes"))
             .withColumn("no_of_relations", fn.size($"relations"))
             .withColumn("no_of_tags", fn.size($"tags"))
@@ -138,19 +145,37 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
         }
       }
       "using SQL" should {
+        loadOsmPbf(madridPath, Some("madrid_shows"))
+        loadOsmPbf(monacoPath, Some("monaco_shows"))
         "count all zebras" in {
           sqlContext
-            .sql("select count(*) from madrid where array_contains(map_values(tags), 'zebra')")
+            .sql("select count(*) from madrid_shows where array_contains(map_values(tags), 'zebra')")
             .show()
         }
         "extract all keys used in tags" in {
           sqlContext
-            .sql("select distinct explode(map_keys(tags)) as tag from madrid where size(tags) > 0 order by tag")
-            .coalesce(1)
-            .write
-            .mode(SaveMode.Overwrite)
-            .csv("target/spark-sql-tmp/tags-tmp")
+            .sql("select distinct explode(map_keys(tags)) as tag from madrid_shows where size(tags) > 0 order by tag")
+            .show()
         }
+
+        "extract unique list of types" in {
+          sqlContext
+            .sql("select distinct(type) as unique_types from monaco_shows order by unique_types")
+            .show()
+        }
+
+        "extract ways with more nodes" in {
+          sqlContext
+            .sql("select id, size(nodes) as size_nodes from monaco_shows where type == 1 order by size_nodes desc")
+            .show()
+        }
+
+        "extract relations" in {
+          sqlContext
+            .sql("select id, relations from monaco_shows where type == 2")
+            .show()
+        }
+
       }
     }
   }

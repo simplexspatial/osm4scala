@@ -25,7 +25,7 @@
 
 package com.acervera.osm4scala.spark
 
-import com.acervera.osm4scala.model.{OSMTypes, RelationMemberEntityTypes}
+import com.acervera.osm4scala.model.RelationMemberEntityTypes
 import org.apache.spark.sql.types.{StructField, StructType, _}
 
 object OsmSqlEntity {
@@ -50,12 +50,6 @@ object OsmSqlEntity {
   val RELATION_RELATION: Byte = 2
   val RELATION_UNRECOGNIZED: Byte = 3
 
-  def typeFromOsmEntity(osmType: OSMTypes.Value): Byte = osmType match {
-    case OSMTypes.Node     => ENTITY_TYPE_NODE
-    case OSMTypes.Way      => ENTITY_TYPE_WAY
-    case OSMTypes.Relation => ENTITY_TYPE_RELATION
-  }
-
   def typeFromOsmRelationEntity(relationType: RelationMemberEntityTypes.Value): Byte = relationType match {
     case RelationMemberEntityTypes.Node         => RELATION_NODE
     case RelationMemberEntityTypes.Way          => RELATION_WAY
@@ -71,8 +65,8 @@ object OsmSqlEntity {
 
   lazy val schema = StructType(
     Seq(
-      StructField(FIELD_ID, LongType, false), // id
-      StructField(FIELD_TYPE, ByteType, false), // type
+      StructField(FIELD_ID, LongType, false),
+      StructField(FIELD_TYPE, ByteType, false),
       StructField(FIELD_LATITUDE, DoubleType, true),
       StructField(FIELD_LONGITUDE, DoubleType, true),
       StructField(FIELD_NODES, ArrayType(LongType, false), true),
