@@ -44,7 +44,8 @@ lazy val commonSettings = Seq(
     "org.scalatest" %% "scalatest" % scalatestVersion % Test,
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % Test,
     "commons-io" % "commons-io" % commonIOVersion % Test
-  )
+  ),
+  test in assembly := {}
 )
 
 lazy val disablingPublishingSettings =

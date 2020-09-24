@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020 Ángel Cervera Claudio
+ * Copyright (c) 2017 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,21 +25,28 @@
 
 package com.acervera.osm4scala.examples.spark
 
-import com.acervera.osm4scala.examples.spark.primitivescounter.PrimitivesCounterParser
-import org.apache.spark.sql.SparkSession
+import com.acervera.osm4scala.examples.spark.primitivescounter.{PrimitiveCounterCfg, PrimitivesCounterParser}
 
-object Driver {
+case class Config(
+    job: String = "none",
+    counterConfig: Option[PrimitiveCounterCfg] = None
+) {
+  def updateCounterCfg(fnt: PrimitiveCounterCfg => PrimitiveCounterCfg): Config =
+    copy(
+      counterConfig = Some(
+        fnt(counterConfig.getOrElse(PrimitiveCounterCfg()))
+      )
+    )
+}
 
-  def main(args: Array[String]): Unit = {
-    implicit val spark = SparkSession
-      .builder()
-      .appName("Spark osm4scala examples")
-      .getOrCreate()
-
-    new OptionsParser().parse(args, Config()) match {
-      case Some(Config(PrimitivesCounterParser.CMD_COUNTER, Some(cfg))) => primitivescounter.Job.run(cfg)
-      case Some(_)                                                      =>
-      case _                                                            =>
+class OptionsParser extends scopt.OptionParser[Config]("osm4scala-spark-utilities") with PrimitivesCounterParser {
+  head("osm4scala-spark-utilities", "Example of utilities processing OSM Pbf files, using Spark and osm4scala")
+  help("help").text("prints this usage text")
+  checkConfig { c =>
+    c match {
+      case Config("none", _)  => failure("No command given.")
+      case Config(command, None) => failure(s"Command $command is not valid.")
+      case _                  => success
     }
   }
 }

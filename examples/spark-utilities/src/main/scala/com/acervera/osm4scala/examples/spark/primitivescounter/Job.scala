@@ -23,46 +23,52 @@
  *
  */
 
-package com.acervera.osm4scala.examples.spark.typecounter
+package com.acervera.osm4scala.examples.spark.primitivescounter
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
-object Job extends ParametersConfig {
+case class PrimitiveCounterCfg(
+    inputPath: String = "",
+    outputPath: String = "",
+    outputFormat: String = "",
+    osmType: Option[Byte] = None
+)
 
-  private def executeQuery(input: String, output: String, outputFormat: String, osmType: Option[Byte])(implicit sparkSession: SparkSession) = {
+object Job {
+
+  def countPrimitives(osmData: DataFrame, osmType: Option[Byte])(implicit sparkSession: SparkSession): DataFrame = {
     import sparkSession.implicits._
-    import org.apache.spark.sql.functions._
-
-    val table = sparkSession
-      .sqlContext
-      .read
-      .format("osm.pbf")
-      .load(input)
-      .createTempView("madrid")
-
-    val noFilter = sparkSession
-      .sqlContext
-      .read
-      .format("osm.pbf")
-      .load(input)
-      .select($"type")
-
+    val noFilter = osmData.select($"type")
     val applyFilter = osmType.map(t => noFilter.filter($"type" === t)).getOrElse(noFilter)
-
     applyFilter
       .groupBy($"type")
-      .agg(count("*"))
+      .agg(count("*") as "count")
+  }
+
+  private def executeQuery(input: String, output: String, outputFormat: String, osmType: Option[Byte])(
+      implicit sparkSession: SparkSession) = {
+
+    val countOfPrimitives = countPrimitives(
+      sparkSession.sqlContext.read.format("osm.pbf").load(input),
+      osmType
+    )
+
+    countOfPrimitives
       .coalesce(1)
       .write
+      .mode(SaveMode.Overwrite)
+      .option("header", "true")
       .format(outputFormat)
       .save(output)
   }
 
-  def run(args: Array[String])(implicit sparkSession: SparkSession): Unit = {
-    parser.parse(args, Config()) match {
-      case Some(Config(inputPath, outputPath, outputFormat, osmType)) => executeQuery(inputPath, outputPath, outputFormat, osmType)
-      case None =>
-    }
-  }
+  def run(cfg: PrimitiveCounterCfg)(implicit sparkSession: SparkSession): Unit =
+    executeQuery(
+      cfg.inputPath,
+      cfg.outputPath,
+      cfg.outputFormat,
+      cfg.osmType
+    )
 
 }
