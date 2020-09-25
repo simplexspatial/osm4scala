@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020 Ángel Cervera Claudio
+ * Copyright (c) 2017 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,24 +23,32 @@
  *
  */
 
-package com.acervera.osm4scala.examples.spark.primitivescounter
+package com.acervera.osm4scala.examples.spark.tagkeys
 
-import com.acervera.osm4scala.examples.spark.Config
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import com.acervera.osm4scala.examples.spark.CommonOptions.{primitiveFromString, primitives}
+import com.acervera.osm4scala.examples.spark.tagkeys.TagKeysParser.CMD_TAG_KEYS
+import com.acervera.osm4scala.examples.spark.{Config, OptionsParser}
 
-object Job {
-  def run(osmData: DataFrame, tableName: String, cfg: Config)(implicit sparkSession: SparkSession): DataFrame = {
-    cfg.counterConfig match {
-      case None =>
-        throw new IllegalArgumentException("Primitive counter called with Primitive counter configuration!!!")
-      case Some(primitiveCounterCfg) =>
-        primitiveCounterCfg.osmType match {
-          case Some(t) =>
-            osmData.sqlContext.sql(s"select count(*) as num_primitives from ${tableName} where type == ${t}")
-          case None =>
-            osmData.sqlContext.sql(s"select type, count(*) as num_primitives from ${tableName} group by type")
+object TagKeysParser {
+  val CMD_TAG_KEYS = "tag_keys"
+}
+
+trait TagKeysParser {
+  this: OptionsParser =>
+
+  cmd(CMD_TAG_KEYS)
+    .action((_, c) => c.copy(job = "counter", tagKeysConfig = Some(TagKeysCfg())))
+    .text("Tags extraction.")
+    .children(
+      opt[String]('t', "type")
+        .optional()
+        .valueName("<type>")
+        .action {
+          case (x, config@Config(_, _, _, _, _, _, Some(tagKeysConfig))) =>
+            config.copy(tagKeysConfig = Some(tagKeysConfig.copy(osmType = Some(primitiveFromString(x)))))
         }
-    }
-
-  }
+        .validate(p =>
+          if (primitives.contains(p)) success else failure(s"Only [${primitives.mkString(", ")}] are supported "))
+        .text(s"primitive type [${primitives.mkString(", ")}] used to filter")
+    )
 }

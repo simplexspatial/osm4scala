@@ -26,9 +26,11 @@
 package com.acervera.osm4scala.examples.spark
 
 import com.acervera.osm4scala.examples.spark.primitivescounter.PrimitivesCounterParser
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 object Driver {
+
+  private val OSM_TABLE_NAME = "osm"
 
   def main(args: Array[String]): Unit = {
     implicit val spark = SparkSession
@@ -37,9 +39,28 @@ object Driver {
       .getOrCreate()
 
     new OptionsParser().parse(args, Config()) match {
-      case Some(Config(PrimitivesCounterParser.CMD_COUNTER, Some(cfg))) => primitivescounter.Job.run(cfg)
-      case Some(_)                                                      =>
-      case _                                                            =>
+      case Some(cfg) if cfg.job == PrimitivesCounterParser.CMD_COUNTER => executeJob(cfg, primitivescounter.Job.run)
+      case _ =>
     }
+  }
+
+  private def executeJob(
+                          cfg: Config,
+                          fnt: (DataFrame, String, Config) => DataFrame
+                        )(implicit sparkSession: SparkSession) = {
+
+    val osmDF = sparkSession.sqlContext.read.format("osm.pbf").load(cfg.inputPath)
+    osmDF.createOrReplaceTempView(OSM_TABLE_NAME)
+
+    val resultDF = fnt(osmDF, OSM_TABLE_NAME, cfg)
+    val afterCoalesceDF = cfg.coalesce match {
+      case None => resultDF
+      case Some(c) => resultDF.coalesce(c)
+    }
+    afterCoalesceDF.write
+      .mode(SaveMode.Overwrite)
+      .option("header", "true")
+      .format(cfg.outputFormat)
+      .save(cfg.outputPath)
   }
 }

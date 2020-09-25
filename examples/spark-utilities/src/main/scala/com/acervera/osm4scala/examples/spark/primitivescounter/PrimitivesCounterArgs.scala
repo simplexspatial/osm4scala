@@ -25,23 +25,16 @@
 
 package com.acervera.osm4scala.examples.spark.primitivescounter
 
-import com.acervera.osm4scala.examples.spark.primitivescounter.PrimitivesCounterParser.{
-  CMD_COUNTER,
-  primitiveFromString,
-  primitives
-}
+import com.acervera.osm4scala.examples.spark.CommonOptions.{primitiveFromString, primitives}
+import com.acervera.osm4scala.examples.spark.primitivescounter.PrimitivesCounterParser.CMD_COUNTER
 import com.acervera.osm4scala.examples.spark.{Config, OptionsParser}
-import com.acervera.osm4scala.spark.OsmSqlEntity.{ENTITY_TYPE_NODE, ENTITY_TYPE_RELATION, ENTITY_TYPE_WAY}
+
+case class PrimitiveCounterCfg(
+                                osmType: Option[Byte] = None
+                              )
 
 object PrimitivesCounterParser {
   val CMD_COUNTER = "counter"
-
-  val primitives = Seq("Node", "Way", "Relation")
-  def primitiveFromString(osmType: String): Byte = osmType match {
-    case "Node"     => ENTITY_TYPE_NODE
-    case "Way"      => ENTITY_TYPE_WAY
-    case "Relation" => ENTITY_TYPE_RELATION
-  }
 }
 
 trait PrimitivesCounterParser {
@@ -51,39 +44,16 @@ trait PrimitivesCounterParser {
     .action((_, c) => c.copy(job = "counter", counterConfig = Some(PrimitiveCounterCfg())))
     .text("Primitives counter.")
     .children(
-      opt[String]('i', "input")
-        .required()
-        .valueName("<file/files>")
-        .action {
-          case (x, config @ Config(_, Some(counterCfg))) =>
-            config.copy(counterConfig = Some(counterCfg.copy(inputPath = x)))
-        }
-        .text("input is a required pbf2 format set of files"),
-      opt[String]('o', "output")
-        .required()
-        .valueName("<path>")
-        .action {
-          case (x, config @ Config(_, Some(counterCfg))) =>
-            config.copy(counterConfig = Some(counterCfg.copy(outputPath = x)))
-        }
-        .text("output is a required path to store the result"),
-      opt[String]('f', "outputFormat")
-        .required()
-        .valueName("[csv, orc, parquet, etc.]")
-        .action {
-          case (x, config @ Config(_, Some(counterCfg))) =>
-            config.copy(counterConfig = Some(counterCfg.copy(outputFormat = x)))
-        }
-        .text("format that spark will used to store the result"),
       opt[String]('t', "type")
         .optional()
         .valueName("<type>")
         .action {
-          case (x, config @ Config(_, Some(counterCfg))) =>
+          case (x, config@Config(_, _, _, _, _, Some(counterCfg), _)) =>
             config.copy(counterConfig = Some(counterCfg.copy(osmType = Some(primitiveFromString(x)))))
         }
-        .validate(p => if (primitives.contains(p)) success else failure("Only [Way, Node, Relation] are supported "))
-        .text("primitive type [Way, Node, Relation] used to filter")
+        .validate(p =>
+          if (primitives.contains(p)) success else failure(s"Only [${primitives.mkString(", ")}] are supported "))
+        .text(s"primitive type [${primitives.mkString(", ")}] used to filter")
     )
 
 }

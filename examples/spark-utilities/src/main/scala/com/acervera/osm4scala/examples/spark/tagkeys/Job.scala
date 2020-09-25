@@ -23,24 +23,10 @@
  *
  */
 
-package com.acervera.osm4scala.examples.spark.primitivescounter
+package com.acervera.osm4scala.examples.spark.tagkeys
 
-import com.acervera.osm4scala.examples.spark.Config
-import org.apache.spark.sql.{DataFrame, SparkSession}
+case class TagKeysCfg(
+                       osmType: Option[Byte] = None
+                     )
 
-object Job {
-  def run(osmData: DataFrame, tableName: String, cfg: Config)(implicit sparkSession: SparkSession): DataFrame = {
-    cfg.counterConfig match {
-      case None =>
-        throw new IllegalArgumentException("Primitive counter called with Primitive counter configuration!!!")
-      case Some(primitiveCounterCfg) =>
-        primitiveCounterCfg.osmType match {
-          case Some(t) =>
-            osmData.sqlContext.sql(s"select count(*) as num_primitives from ${tableName} where type == ${t}")
-          case None =>
-            osmData.sqlContext.sql(s"select type, count(*) as num_primitives from ${tableName} group by type")
-        }
-    }
-
-  }
-}
+object Job {}
