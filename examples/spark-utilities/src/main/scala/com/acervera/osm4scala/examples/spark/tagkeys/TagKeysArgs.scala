@@ -44,7 +44,7 @@ trait TagKeysParser {
         .optional()
         .valueName("<type>")
         .action {
-          case (x, config@Config(_, _, _, _, _, _, Some(tagKeysConfig))) =>
+          case (x, config @ Config(_, _, _, _, _, _, Some(tagKeysConfig))) =>
             config.copy(tagKeysConfig = Some(tagKeysConfig.copy(osmType = Some(primitiveFromString(x)))))
         }
         .validate(p =>

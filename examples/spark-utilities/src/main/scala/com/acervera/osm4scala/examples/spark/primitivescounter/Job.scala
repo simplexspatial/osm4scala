@@ -36,9 +36,9 @@ object Job {
       case Some(primitiveCounterCfg) =>
         primitiveCounterCfg.osmType match {
           case Some(t) =>
-            osmData.sqlContext.sql(s"select count(*) as num_primitives from ${tableName} where type == ${t}")
+            sparkSession.sql(s"select count(*) as num_primitives from ${tableName} where type == ${t}")
           case None =>
-            osmData.sqlContext.sql(s"select type, count(*) as num_primitives from ${tableName} group by type")
+            sparkSession.sql(s"select type, count(*) as num_primitives from ${tableName} group by type")
         }
     }
 

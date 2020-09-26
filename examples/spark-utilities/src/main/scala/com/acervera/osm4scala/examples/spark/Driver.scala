@@ -40,21 +40,21 @@ object Driver {
 
     new OptionsParser().parse(args, Config()) match {
       case Some(cfg) if cfg.job == PrimitivesCounterParser.CMD_COUNTER => executeJob(cfg, primitivescounter.Job.run)
-      case _ =>
+      case _                                                           =>
     }
   }
 
   private def executeJob(
-                          cfg: Config,
-                          fnt: (DataFrame, String, Config) => DataFrame
-                        )(implicit sparkSession: SparkSession) = {
+      cfg: Config,
+      fnt: (DataFrame, String, Config) => DataFrame
+  )(implicit sparkSession: SparkSession) = {
 
     val osmDF = sparkSession.sqlContext.read.format("osm.pbf").load(cfg.inputPath)
     osmDF.createOrReplaceTempView(OSM_TABLE_NAME)
 
     val resultDF = fnt(osmDF, OSM_TABLE_NAME, cfg)
     val afterCoalesceDF = cfg.coalesce match {
-      case None => resultDF
+      case None    => resultDF
       case Some(c) => resultDF.coalesce(c)
     }
     afterCoalesceDF.write

@@ -30,8 +30,8 @@ import com.acervera.osm4scala.examples.spark.primitivescounter.PrimitivesCounter
 import com.acervera.osm4scala.examples.spark.{Config, OptionsParser}
 
 case class PrimitiveCounterCfg(
-                                osmType: Option[Byte] = None
-                              )
+    osmType: Option[Byte] = None
+)
 
 object PrimitivesCounterParser {
   val CMD_COUNTER = "counter"
@@ -48,7 +48,7 @@ trait PrimitivesCounterParser {
         .optional()
         .valueName("<type>")
         .action {
-          case (x, config@Config(_, _, _, _, _, Some(counterCfg), _)) =>
+          case (x, config @ Config(_, _, _, _, _, Some(counterCfg), _)) =>
             config.copy(counterConfig = Some(counterCfg.copy(osmType = Some(primitiveFromString(x)))))
         }
         .validate(p =>

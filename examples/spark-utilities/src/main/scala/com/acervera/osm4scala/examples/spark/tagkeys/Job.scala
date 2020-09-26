@@ -26,7 +26,7 @@
 package com.acervera.osm4scala.examples.spark.tagkeys
 
 case class TagKeysCfg(
-                       osmType: Option[Byte] = None
-                     )
+    osmType: Option[Byte] = None
+)
 
 object Job {}
