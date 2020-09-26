@@ -26,6 +26,7 @@
 package com.acervera.osm4scala.examples.spark
 
 import com.acervera.osm4scala.examples.spark.primitivescounter.PrimitivesCounterParser
+import com.acervera.osm4scala.examples.spark.tagkeys.TagKeysParser
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 object Driver {
@@ -40,6 +41,7 @@ object Driver {
 
     new OptionsParser().parse(args, Config()) match {
       case Some(cfg) if cfg.job == PrimitivesCounterParser.CMD_COUNTER => executeJob(cfg, primitivescounter.Job.run)
+      case Some(cfg) if cfg.job == TagKeysParser.CMD_TAG_KEYS          => executeJob(cfg, tagkeys.Job.run)
       case _                                                           =>
     }
   }

@@ -29,7 +29,7 @@ import com.acervera.osm4scala.examples.spark.Config
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object Job {
-  def run(osmData: DataFrame, tableName: String, cfg: Config)(implicit sparkSession: SparkSession): DataFrame = {
+  def run(osmData: DataFrame, tableName: String, cfg: Config)(implicit sparkSession: SparkSession): DataFrame =
     cfg.counterConfig match {
       case None =>
         throw new IllegalArgumentException("Primitive counter called with Primitive counter configuration!!!")
@@ -41,6 +41,4 @@ object Job {
             sparkSession.sql(s"select type, count(*) as num_primitives from ${tableName} group by type")
         }
     }
-
-  }
 }

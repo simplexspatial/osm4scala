@@ -25,19 +25,11 @@
 
 package com.acervera.osm4scala.examples.spark.primitivescounter
 
-import com.acervera.osm4scala.examples.spark.Config
-import org.apache.spark.sql.{Row, SparkSession}
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.matchers.should.Matchers
+import com.acervera.osm4scala.examples.spark.{Config, SparkSuites}
+import org.apache.spark.sql.Row
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class JobSpec extends AnyWordSpecLike with BeforeAndAfterAll with Matchers {
-
-  implicit val spark = SparkSession.builder().master("local[4]").getOrCreate()
-  val monaco =
-    spark.sqlContext.read.format("osm.pbf").load("core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf")
-
-  override protected def afterAll(): Unit = spark.stop()
+class JobSpec extends AnyWordSpecLike with SparkSuites {
 
   "PrimitiveCounter" should {
     "count without filter" in {
@@ -52,8 +44,8 @@ class JobSpec extends AnyWordSpecLike with BeforeAndAfterAll with Matchers {
     }
 
     "count filtering by nodes" in {
-      monaco.createOrReplaceTempView("primitive_counter_no_filter")
-      val result = Job.run(monaco, "primitive_counter_no_filter", Config(counterConfig = Some(PrimitiveCounterCfg(osmType = Some(0)))))
+      monaco.createOrReplaceTempView("primitive_counter_node_filter")
+      val result = Job.run(monaco, "primitive_counter_node_filter", Config(counterConfig = Some(PrimitiveCounterCfg(osmType = Some(0)))))
         .collect()
 
       result.size shouldBe 1
@@ -61,8 +53,8 @@ class JobSpec extends AnyWordSpecLike with BeforeAndAfterAll with Matchers {
     }
 
     "count filtering by ways" in {
-      monaco.createOrReplaceTempView("primitive_counter_no_filter")
-      val result = Job.run(monaco, "primitive_counter_no_filter", Config(counterConfig = Some(PrimitiveCounterCfg(osmType = Some(1)))))
+      monaco.createOrReplaceTempView("primitive_counter_way_filter")
+      val result = Job.run(monaco, "primitive_counter_way_filter", Config(counterConfig = Some(PrimitiveCounterCfg(osmType = Some(1)))))
         .collect()
 
       result.size shouldBe 1
@@ -70,8 +62,8 @@ class JobSpec extends AnyWordSpecLike with BeforeAndAfterAll with Matchers {
     }
 
     "count filtering by relations" in {
-      monaco.createOrReplaceTempView("primitive_counter_no_filter")
-      val result = Job.run(monaco, "primitive_counter_no_filter", Config(counterConfig = Some(PrimitiveCounterCfg(osmType = Some(2)))))
+      monaco.createOrReplaceTempView("primitive_counter_relations_filter")
+      val result = Job.run(monaco, "primitive_counter_relations_filter", Config(counterConfig = Some(PrimitiveCounterCfg(osmType = Some(2)))))
         .collect()
 
       result.size shouldBe 1

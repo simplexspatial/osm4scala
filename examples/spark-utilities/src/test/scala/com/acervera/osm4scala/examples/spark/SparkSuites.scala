@@ -23,24 +23,19 @@
  *
  */
 
-package com.acervera.osm4scala.examples.spark.tagkeys
+package com.acervera.osm4scala.examples.spark
 
+import org.apache.spark.sql.SparkSession
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.{BeforeAndAfterAll, Suite}
 
+trait SparkSuites extends BeforeAndAfterAll with Matchers{
+  this: Suite =>
 
-import com.acervera.osm4scala.examples.spark.Config
-import org.apache.spark.sql.{DataFrame, SparkSession}
+  protected implicit val spark = SparkSession.builder().master("local[4]").getOrCreate()
+  protected val monaco =
+    spark.sqlContext.read.format("osm.pbf").load("core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf")
 
-object Job {
-  def run(osmData: DataFrame, tableName: String, cfg: Config)(implicit sparkSession: SparkSession): DataFrame =
-    cfg.tagKeysConfig match {
-      case None =>
-        throw new IllegalArgumentException("Tag keys extraction called with Tag keys extraction configuration!!!")
-      case Some(tagKeysCfg) =>
-        tagKeysCfg.osmType match {
-          case Some(t) =>
-            sparkSession.sql(s"select distinct(explode(map_keys(tags))) as tag_key from ${tableName} where type == ${t}")
-          case None =>
-            sparkSession.sql(s"select distinct(explode(map_keys(tags))) as tag_key from ${tableName}")
-        }
-    }
+  override protected def afterAll(): Unit = spark.stop()
+
 }

@@ -33,11 +33,15 @@ object TagKeysParser {
   val CMD_TAG_KEYS = "tag_keys"
 }
 
+case class TagKeysCfg(
+    osmType: Option[Byte] = None
+)
+
 trait TagKeysParser {
   this: OptionsParser =>
 
   cmd(CMD_TAG_KEYS)
-    .action((_, c) => c.copy(job = "counter", tagKeysConfig = Some(TagKeysCfg())))
+    .action((_, c) => c.copy(job = CMD_TAG_KEYS, tagKeysConfig = Some(TagKeysCfg())))
     .text("Tags extraction.")
     .children(
       opt[String]('t', "type")
@@ -48,7 +52,7 @@ trait TagKeysParser {
             config.copy(tagKeysConfig = Some(tagKeysConfig.copy(osmType = Some(primitiveFromString(x)))))
         }
         .validate(p =>
-          if (primitives.contains(p)) success else failure(s"Only [${primitives.mkString(", ")}] are supported "))
-        .text(s"primitive type [${primitives.mkString(", ")}] used to filter")
+          if (primitives.contains(p)) success else failure(s"Only [${primitives.mkString(", ")}] are supported."))
+        .text(s"Primitive type [${primitives.mkString(", ")}] used to filter.")
     )
 }

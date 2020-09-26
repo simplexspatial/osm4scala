@@ -41,7 +41,7 @@ trait PrimitivesCounterParser {
   this: OptionsParser =>
 
   cmd(CMD_COUNTER)
-    .action((_, c) => c.copy(job = "counter", counterConfig = Some(PrimitiveCounterCfg())))
+    .action((_, c) => c.copy(job = CMD_COUNTER, counterConfig = Some(PrimitiveCounterCfg())))
     .text("Primitives counter.")
     .children(
       opt[String]('t', "type")
@@ -52,8 +52,8 @@ trait PrimitivesCounterParser {
             config.copy(counterConfig = Some(counterCfg.copy(osmType = Some(primitiveFromString(x)))))
         }
         .validate(p =>
-          if (primitives.contains(p)) success else failure(s"Only [${primitives.mkString(", ")}] are supported "))
-        .text(s"primitive type [${primitives.mkString(", ")}] used to filter")
+          if (primitives.contains(p)) success else failure(s"Only [${primitives.mkString(", ")}] are supported."))
+        .text(s"Primitive type [${primitives.mkString(", ")}] used to filter.")
     )
 
 }

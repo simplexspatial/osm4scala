@@ -59,19 +59,19 @@ trait CommonOptions {
     .required()
     .valueName("<file/files>")
     .action { case (x, cfg) => cfg.copy(inputPath = x) }
-    .text("input is a required pbf2 format set of files.")
+    .text("Input is a required pbf2 format set of files.")
 
   opt[String]('o', "output")
     .required()
     .valueName("<path>")
     .action { case (x, cfg) => cfg.copy(outputPath = x) }
-    .text("output is a required path to store the result.")
+    .text("Output is a required path to store the result.")
 
   opt[String]('f', "outputFormat")
     .required()
     .valueName("[csv, orc, parquet, etc.]")
     .action { case (x, cfg) => cfg.copy(outputFormat = x) }
-    .text("format that spark will used to store the result.")
+    .text("Format that spark will used to store the result.")
 
   opt[Int]('c', "coalesce")
     .optional()
