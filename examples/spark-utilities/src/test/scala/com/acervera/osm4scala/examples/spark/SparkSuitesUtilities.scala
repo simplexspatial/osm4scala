@@ -25,17 +25,17 @@
 
 package com.acervera.osm4scala.examples.spark
 
-import org.apache.spark.sql.SparkSession
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.{BeforeAndAfterAll, Suite}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
-trait SparkSuites extends BeforeAndAfterAll with Matchers{
-  this: Suite =>
+object SparkSuitesUtilities {
+  implicit val spark = SparkSession.builder()
+    .appName("Testing")
+    .config("spark.sql.warehouse.dir", "target/spark-warehouse")
+    .master("local[4]")
+    .getOrCreate()
 
-  protected implicit val spark = SparkSession.builder().master("local[4]").getOrCreate()
-  protected val monaco =
-    spark.sqlContext.read.format("osm.pbf").load("core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf")
-
-  override protected def afterAll(): Unit = spark.stop()
-
+  def monaco: DataFrame = spark.sqlContext.read
+    .format("osm.pbf")
+    .load("core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf")
 }
+

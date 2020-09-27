@@ -25,11 +25,13 @@
 
 package com.acervera.osm4scala.examples.spark.primitivescounter
 
-import com.acervera.osm4scala.examples.spark.{Config, SparkSuites}
+import com.acervera.osm4scala.examples.spark.Config
+import com.acervera.osm4scala.examples.spark.SparkSuitesUtilities._
 import org.apache.spark.sql.Row
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class JobSpec extends AnyWordSpecLike with SparkSuites {
+class JobSpec extends AnyWordSpecLike with Matchers {
 
   "PrimitiveCounter" should {
     "count without filter" in {

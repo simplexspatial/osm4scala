@@ -25,10 +25,12 @@
 
 package com.acervera.osm4scala.examples.spark.tagkeys
 
-import com.acervera.osm4scala.examples.spark.{Config, SparkSuites}
+import com.acervera.osm4scala.examples.spark.SparkSuitesUtilities._
+import com.acervera.osm4scala.examples.spark.{Config, SparkSuitesUtilities}
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class JobSpec extends AnyWordSpecLike with SparkSuites {
+class JobSpec extends AnyWordSpecLike with Matchers {
 
   "TagKeys" should {
     "extracting keys without filter" in {
