@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2020 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,22 @@
  *
  */
 
-package com.acervera.osm4scala.model
+package com.acervera.osm4scala.examples.spark.primitivescounter
 
-object RelationMemberEntityTypes extends Enumeration {
-  type RelationMemberEntityTypes = Value
-  val Node = Value(0)
-  val Way = Value(1)
-  val Relation = Value(2)
-  val Unrecognized = Value(3)
+import com.acervera.osm4scala.examples.spark.Config
+import org.apache.spark.sql.{DataFrame, SparkSession}
+
+object Job {
+  def run(osmData: DataFrame, tableName: String, cfg: Config)(implicit sparkSession: SparkSession): DataFrame =
+    cfg.counterConfig match {
+      case None =>
+        throw new IllegalArgumentException("Primitive counter called with Primitive counter configuration!!!")
+      case Some(primitiveCounterCfg) =>
+        primitiveCounterCfg.osmType match {
+          case Some(t) =>
+            sparkSession.sql(s"select count(*) as num_primitives from ${tableName} where type == ${t}")
+          case None =>
+            sparkSession.sql(s"select type, count(*) as num_primitives from ${tableName} group by type")
+        }
+    }
 }
-
-// FIXME: relationTypes should be singular instead plural.
-case class RelationMemberEntity(val id: Long, val relationTypes: RelationMemberEntityTypes.Value, val role: String)

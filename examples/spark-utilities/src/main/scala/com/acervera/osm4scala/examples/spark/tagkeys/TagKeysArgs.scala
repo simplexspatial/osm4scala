@@ -23,15 +23,36 @@
  *
  */
 
-package com.acervera.osm4scala.model
+package com.acervera.osm4scala.examples.spark.tagkeys
 
-object RelationMemberEntityTypes extends Enumeration {
-  type RelationMemberEntityTypes = Value
-  val Node = Value(0)
-  val Way = Value(1)
-  val Relation = Value(2)
-  val Unrecognized = Value(3)
+import com.acervera.osm4scala.examples.spark.CommonOptions.{primitiveFromString, primitives}
+import com.acervera.osm4scala.examples.spark.tagkeys.TagKeysParser.CMD_TAG_KEYS
+import com.acervera.osm4scala.examples.spark.{Config, OptionsParser}
+
+object TagKeysParser {
+  val CMD_TAG_KEYS = "tag_keys"
 }
 
-// FIXME: relationTypes should be singular instead plural.
-case class RelationMemberEntity(val id: Long, val relationTypes: RelationMemberEntityTypes.Value, val role: String)
+case class TagKeysCfg(
+    osmType: Option[Byte] = None
+)
+
+trait TagKeysParser {
+  this: OptionsParser =>
+
+  cmd(CMD_TAG_KEYS)
+    .action((_, c) => c.copy(job = CMD_TAG_KEYS, tagKeysConfig = Some(TagKeysCfg())))
+    .text("Tags extraction.")
+    .children(
+      opt[String]('t', "type")
+        .optional()
+        .valueName("<type>")
+        .action {
+          case (x, config @ Config(_, _, _, _, _, _, Some(tagKeysConfig))) =>
+            config.copy(tagKeysConfig = Some(tagKeysConfig.copy(osmType = Some(primitiveFromString(x)))))
+        }
+        .validate(p =>
+          if (primitives.contains(p)) success else failure(s"Only [${primitives.mkString(", ")}] are supported."))
+        .text(s"Primitive type [${primitives.mkString(", ")}] used to filter.")
+    )
+}

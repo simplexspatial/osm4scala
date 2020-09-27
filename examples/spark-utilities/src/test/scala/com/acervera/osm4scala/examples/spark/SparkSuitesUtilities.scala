@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2020 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,19 @@
  *
  */
 
-package com.acervera.osm4scala.model
+package com.acervera.osm4scala.examples.spark
 
-object RelationMemberEntityTypes extends Enumeration {
-  type RelationMemberEntityTypes = Value
-  val Node = Value(0)
-  val Way = Value(1)
-  val Relation = Value(2)
-  val Unrecognized = Value(3)
+import org.apache.spark.sql.{DataFrame, SparkSession}
+
+object SparkSuitesUtilities {
+  implicit val spark = SparkSession.builder()
+    .appName("Testing")
+    .config("spark.sql.warehouse.dir", "target/spark-warehouse")
+    .master("local[4]")
+    .getOrCreate()
+
+  def monaco: DataFrame = spark.sqlContext.read
+    .format("osm.pbf")
+    .load("core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf")
 }
 
-// FIXME: relationTypes should be singular instead plural.
-case class RelationMemberEntity(val id: Long, val relationTypes: RelationMemberEntityTypes.Value, val role: String)
