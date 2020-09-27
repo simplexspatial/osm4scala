@@ -19,35 +19,45 @@ This library achieves two different goals:
 - [Spark Connector](#spark-connector): Polyglot (Scala, Python, SQL or R) Spark connector to query OSM Pbf files.
 
 ## Core library
-With Osm4scala, you can forget about complexity of the osm.obf format and think about a **scala iterators of primitives** (nodes, ways and relations) or blob blocks.
+With Osm4scala, you can forget about complexity of the osm.obf format and think about a **scala iterators of primitives**
+(nodes, ways and relations) or blob blocks.
 
 For example, counting all node primitives in a file is so simple as:
 ```scala
 EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
 ```
 
-This is a simple example, but because the iterator nature, you can use it for more complex task and with more complex patterns,
-to process data at the same time your are reading without near zero memory use, for example.
+This is a simple example, but because the iterator nature, you can use it for more complex tasks and patterns,
+to process data at the same time you are reading with near zero memory usage, for example.
 
-The library allows to read the pbf file on three different ways:
-- Entity per entity as an `EntityIterator`, from any of the `EntityIterator` factories. This method allows you to iterate
-  over OSMEntity traits, that could be any of the following: `NodeEntity`, `WayEntity` or `WayEntity` 
+The library allows to read the pbf file on two different ways:
+- Entity per entity as an `EntityIterator`, using any of the `EntityIterator` factories. This method allows you to iterate
+  over `OSMEntity` trait objects, that could be any of the following: `NodeEntity`, `WayEntity` or `WayEntity` 
 - Blob per blob as an `BlobIterator`, from any of the `BlobIterator` factories.
 
 ### Dependencies
-- Import the library using maven or sbt.
+- Import the library using sbt.
     ```
     libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "<version>"
     ```
-- Add the resolver **only if you have problems resolving dependencies without it**:
+- Import the library using maven.
+    ```
+    <dependency>
+        <groupId>com.acervera.osm4scala</groupId>
+        <artifactId>osm4scala-core_${scala-version}</artifactId>
+        <version>${version}</version>
+    </dependency>
+    ```
+
+- **Only if you have problems resolving dependencies without it**, add my bintray repo:
     ```
     resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
     ```
 
 ## Spark Connector
 
-With the Osm4scala Spark connector, is possible to manage OSM Pbf file as other datasource, from Spark, Python, SQL or R,
-on the same way that other datasources but using the format name **"osm.pbf"**
+With the Osm4scala Spark connector, is possible to read OSM Pbf file from Spark, Python, SQL or R, using the format name **"osm.pbf"**
+So nothing weird!
 
 ### Schema
 Next, the schema exposed:
