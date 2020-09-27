@@ -117,9 +117,9 @@ lazy val spark = Project(id = "spark", base = file("spark"))
     commonSettings,
     crossScalaVersions := Seq(scala212),
     enablingPublishingSettings,
-    name := "spark-osm-pbf",
+    name := "osm4scala-spark",
     description := "Spark connector for OpenStreetMap Pbf 2 parser.",
-    bintrayPackage := "spark-osm-pbf",
+    bintrayPackage := "osm4scala-spark",
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-sql" % sparkVersion % Provided
     ),
@@ -137,15 +137,15 @@ lazy val spark = Project(id = "spark", base = file("spark"))
   .dependsOn(core)
 
 
-lazy val sparkFatShaded = Project(id = "spark-shaded-publisher", base = file("spark-shaded-publisher"))
+lazy val sparkFatShaded = Project(id = "osm4scala-spark-shaded", base = file("osm4scala-spark-shaded"))
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
     crossScalaVersions := Seq(scala212),
     enablingPublishingSettings,
-    name := "spark-osm-pbf-shaded",
+    name := "osm4scala-spark-shaded",
     description := "Spark connector for OpenStreetMap Pbf 2 parser as shaded fat jar.",
-    bintrayPackage := "spark-osm-pbf-shaded",
+    bintrayPackage := "osm4scala-spark-shaded",
     packageBin in Compile := (assembly in (spark, Compile)).value
   )
 
