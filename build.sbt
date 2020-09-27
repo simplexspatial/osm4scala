@@ -105,7 +105,7 @@ lazy val core = Project(id = "core", base = file("core"))
     enablingPublishingSettings,
     name := "osm4scala-core",
     description := "Scala OpenStreetMap Pbf 2 parser. Core",
-    bintrayPackage := "osm4scala",
+    bintrayPackage := "osm4scala-core",
     PB.targets in Compile := Seq(
       scalapb.gen(grpc = false) -> (sourceManaged in Compile).value
     )

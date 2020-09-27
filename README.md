@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/angelcervera/osm4scala.svg?branch=master)](https://travis-ci.org/angelcervera/osm4scala)
 [![Coverage Status](https://coveralls.io/repos/github/angelcervera/osm4scala/badge.svg?branch=master)](https://coveralls.io/github/angelcervera/osm4scala?branch=master)
-[ ![Download](https://api.bintray.com/packages/angelcervera/maven/osm4scala/images/download.svg) ](https://bintray.com/angelcervera/maven/osm4scala/_latestVersion)
 [![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/angelcervera/osm4scala/master/LICENSE.md)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala?ref=badge_shield)
@@ -36,7 +35,7 @@ The library allows to read the pbf file on two different ways:
   over `OSMEntity` trait objects, that could be any of the following: `NodeEntity`, `WayEntity` or `WayEntity` 
 - Blob per blob as an `BlobIterator`, from any of the `BlobIterator` factories.
 
-### Dependencies
+### Dependencies: [ ![Download Core](https://api.bintray.com/packages/angelcervera/maven/osm4scala-core/images/download.svg) ](https://bintray.com/angelcervera/maven/osm4scala-core/_latestVersion)
 - Import the library using sbt.
     ```scala
     libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "<version>"
@@ -264,7 +263,8 @@ StructType(
     +----+--------------+
     ```
 
-### Dependencies
+### Dependencies [ ![Download Spark Shaded](https://api.bintray.com/packages/angelcervera/maven/osm4scala-spark-shaded/images/download.svg) ](https://bintray.com/angelcervera/maven/osm4scala-spark-shaded/_latestVersion)
+
 The simplest way to add the library to the job, is using the shaded flat jar.
 - Import the library using maven or sbt.
     ```
