@@ -16,7 +16,8 @@ Because this format has been designed to achieve good compression, it is really 
 ## Goals
 This library achieves two different goals:
 - [Core library](#core-library): High performance Scala library to read OSM Pbf files as iterators.
-- [Spark Connector](#spark-connector): Polyglot (Scala, Python, SQL or R) Spark connector to query OSM Pbf files.
+- [Spark Connector](#spark-connector): Polyglot ([Scala](#examples-from-spark-shell), [Python](#examples-from-pyspark),
+  [SQL](#examples-from-spark-sql) or R) Spark connector to query OSM Pbf files.
 
 ## Core library
 With Osm4scala, you can forget about complexity of the osm.obf format and think about a **scala iterators of primitives**
