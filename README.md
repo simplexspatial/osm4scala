@@ -37,11 +37,11 @@ The library allows to read the pbf file on two different ways:
 
 ### Dependencies
 - Import the library using sbt.
-    ```
+    ```scala
     libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "<version>"
     ```
 - Import the library using maven.
-    ```
+    ```xml
     <dependency>
         <groupId>com.acervera.osm4scala</groupId>
         <artifactId>osm4scala-core_${scala-version}</artifactId>
@@ -50,7 +50,7 @@ The library allows to read the pbf file on two different ways:
     ```
 
 - **Only if you have problems resolving dependencies without it**, add my bintray repo:
-    ```
+    ```scala
     resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
     ```
 
