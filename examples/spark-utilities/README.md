@@ -24,8 +24,7 @@ Tags extraction.
 
 ```shell script
 bin/spark-submit \
-    --packages 'com.github.scopt:scopt_2.12:3.7.1' \
-    --jars 'spark-osm-pbf-shaded_2.12.jar' \
+    --packages 'com.github.scopt:scopt_2.12:3.7.1,com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5' \
     --class com.acervera.osm4scala.examples.spark.Driver \
     "osm4scala-examples-spark-utilities_2.12-1.0.5-SNAPSHOT.jar" \
     counter \
@@ -35,8 +34,7 @@ bin/spark-submit \
     -f csv
 
 bin/spark-submit \
-    --packages 'com.github.scopt:scopt_2.12:3.7.1' \
-    --jars 'spark-osm-pbf-shaded_2.12.jar' \
+    --packages 'com.github.scopt:scopt_2.12:3.7.1,com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5' \
     --class com.acervera.osm4scala.examples.spark.Driver \
     "osm4scala-examples-spark-utilities_2.12-1.0.5-SNAPSHOT.jar" \
     tag_keys \
