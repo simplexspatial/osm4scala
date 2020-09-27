@@ -233,6 +233,7 @@ lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base =
   .settings(
     commonSettings,
     disablingPublishingSettings,
+    crossScalaVersions := Seq(scala212),
     name := "osm4scala-examples-spark-utilities",
     description := "Example of different utilities using osm4scala and Spark.",
     libraryDependencies ++= Seq(
