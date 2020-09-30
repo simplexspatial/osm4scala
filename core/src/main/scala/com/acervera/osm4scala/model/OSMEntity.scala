@@ -37,5 +37,3 @@ trait OSMEntity {
   val tags: Map[String, String]
 
 }
-
-

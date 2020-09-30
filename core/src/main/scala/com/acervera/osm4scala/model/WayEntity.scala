@@ -48,8 +48,9 @@ object WayEntity {
     val nodes = osmosisWay.refs.scanLeft(0L) { _ + _ }.drop(1)
 
     // Calculate tags using the StringTable.
-    val tags = (osmosisWay.keys, osmosisWay.vals).zipped.map { (k, v) => osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8") }.toMap
-
+    val tags = (osmosisWay.keys, osmosisWay.vals).zipped.map { (k, v) =>
+      osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8")
+    }.toMap
 
     new WayEntity(osmosisWay.id, nodes, tags)
   }
