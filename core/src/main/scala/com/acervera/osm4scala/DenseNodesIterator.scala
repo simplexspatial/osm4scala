@@ -30,7 +30,7 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
 
 object DenseNodesIterator {
 
-  def apply(osmosisStringTable: StringTable, osmosisDenseNode: DenseNodes) =
+  def apply(osmosisStringTable: StringTable, osmosisDenseNode: DenseNodes): DenseNodesIterator =
     new DenseNodesIterator(osmosisStringTable, osmosisDenseNode)
 
 }
@@ -52,16 +52,16 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
                          granularity: Int = 100)
     extends Iterator[NodeEntity] {
 
-  if (osmosisDenseNode.denseinfo.isDefined && !osmosisDenseNode.denseinfo.get.visible.isEmpty) {
+  if (osmosisDenseNode.denseinfo.isDefined && osmosisDenseNode.denseinfo.get.visible.nonEmpty) {
     throw new Exception("Only visible nodes are implemented.")
   }
 
-  var idIterator = osmosisDenseNode.id.toIterator
-  var lonIterator = osmosisDenseNode.lon.toIterator
-  var latIterator = osmosisDenseNode.lat.toIterator
-  var tagsIterator = osmosisDenseNode.keysVals.toIterator
+  private val idIterator = osmosisDenseNode.id.toIterator
+  private val lonIterator = osmosisDenseNode.lon.toIterator
+  private val latIterator = osmosisDenseNode.lat.toIterator
+  private val tagsIterator = osmosisDenseNode.keysVals.toIterator
 
-  var lastNode: NodeEntity = NodeEntity(0, 0, 0, Map())
+  private var lastNode: NodeEntity = NodeEntity(0, 0, 0, Map())
 
   override def hasNext: Boolean = idIterator.hasNext
 
@@ -73,9 +73,9 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
     val longitude =
       decompressCoord(lonOffset, lonIterator.next(), lastNode.longitude)
     val tags = tagsIterator
-      .takeWhile(_ != 0l)
+      .takeWhile(_ != 0L)
       .grouped(2)
-      .map { (tag) =>
+      .map { tag =>
         osmosisStringTable.s(tag.head).toString("UTF-8") -> osmosisStringTable
           .s(tag.last)
           .toString("UTF-8")
@@ -96,7 +96,7 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
     * @param currentValue
     * @return
     */
-  def decompressCoord(offSet: Long, delta: Long, currentValue: Double) = {
+  def decompressCoord(offSet: Long, delta: Long, currentValue: Double): Double = {
     (.000000001 * (offSet + (granularity * delta))) + currentValue
   }
 

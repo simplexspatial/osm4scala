@@ -28,7 +28,6 @@ package com.acervera.osm4scala.model
 /**
   * Entity that represent a OSM node as https://wiki.openstreetmap.org/wiki/Elements#Node and https://wiki.openstreetmap.org/wiki/Node describe
   */
-case class NodeEntity(val id: Long, val latitude: Double, val longitude: Double, val tags: Map[String, String]) extends OSMEntity {
+case class NodeEntity(id: Long, latitude: Double, longitude: Double, tags: Map[String, String]) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Node
 }
-

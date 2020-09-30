@@ -37,7 +37,7 @@ object BlobTupleIterator {
     * @param pbfInputStream Opened InputStream that contains the pbf
     * @return
     */
-  def fromPbf(pbfInputStream: InputStream) = new BlobTupleIterator(pbfInputStream)
+  def fromPbf(pbfInputStream: InputStream): BlobTupleIterator = new BlobTupleIterator(pbfInputStream)
 
 }
 
@@ -57,7 +57,7 @@ class BlobTupleIterator(pbfInputStream: InputStream) extends Iterator[(BlobHeade
   var nextBlockLength: Option[Int] = None
 
   // Read the length of the next block
-  readNextBlockLength
+  readNextBlockLength()
 
   override def hasNext: Boolean = nextBlockLength.isDefined
 
@@ -76,7 +76,7 @@ class BlobTupleIterator(pbfInputStream: InputStream) extends Iterator[(BlobHeade
     val blob = Blob parseFrom bufferBlob
 
     // Move to the next pair.
-    readNextBlockLength
+    readNextBlockLength()
 
     (blobHeader, blob)
 
@@ -85,14 +85,11 @@ class BlobTupleIterator(pbfInputStream: InputStream) extends Iterator[(BlobHeade
   /**
     * Read the next osm pbf block
     */
-  private def readNextBlockLength() = {
-
+  private def readNextBlockLength(): Unit =
     try {
       nextBlockLength = Some(pbfStream.readInt)
     } catch {
       case _: EOFException => nextBlockLength = None
     }
-
-  }
 
 }

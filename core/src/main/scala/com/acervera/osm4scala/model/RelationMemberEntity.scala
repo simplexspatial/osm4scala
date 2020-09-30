@@ -34,4 +34,4 @@ object RelationMemberEntityTypes extends Enumeration {
 }
 
 // FIXME: relationTypes should be singular instead plural.
-case class RelationMemberEntity(val id: Long, val relationTypes: RelationMemberEntityTypes.Value, val role: String)
+case class RelationMemberEntity(id: Long, relationTypes: RelationMemberEntityTypes.Value, role: String)

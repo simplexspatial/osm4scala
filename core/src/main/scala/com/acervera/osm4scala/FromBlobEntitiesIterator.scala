@@ -26,8 +26,8 @@
 package com.acervera.osm4scala
 
 import com.acervera.osm4scala.model.{OSMEntity, RelationEntity, WayEntity}
-import com.acervera.osm4scala.utilities.PrimitiveGroupType._
 import com.acervera.osm4scala.utilities.Osm4ScalaUtils
+import com.acervera.osm4scala.utilities.PrimitiveGroupType._
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 
@@ -38,11 +38,11 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
 class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with Osm4ScalaUtils {
 
   // Read the input stream using DataInputStream to access easily to Int and raw fields. The source could be compressed.
-  val primitiveBlock = PrimitiveBlock parseFrom dataInputStreamBlob(blob)
+  private val primitiveBlock = PrimitiveBlock parseFrom dataInputStreamBlob(blob)
 
-  var primitiveGroupIdx = 0
-  var osmEntityIdx = 0
-  var denseNodesIterator : Option[DenseNodesIterator] = None
+  private var primitiveGroupIdx = 0
+  private var osmEntityIdx = 0
+  private var denseNodesIterator: Option[DenseNodesIterator] = None
 
   override def hasNext: Boolean = primitiveBlock.primitivegroup.size != primitiveGroupIdx
 
@@ -53,7 +53,7 @@ class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with Osm4Scala
     /**
       * Move to the next primitive group.
       */
-    def nextPrimitiveGroup() = {
+    def nextPrimitiveGroup(): Unit = {
       primitiveGroupIdx += 1
       osmEntityIdx = 0
     }
@@ -65,7 +65,7 @@ class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with Osm4Scala
       val currentRelation = currentPrimitiveGroup.relations(osmEntityIdx)
 
       osmEntityIdx += 1
-      if (currentPrimitiveGroup.relations.size == osmEntityIdx) nextPrimitiveGroup
+      if (currentPrimitiveGroup.relations.size == osmEntityIdx) nextPrimitiveGroup()
 
       RelationEntity(primitiveBlock.stringtable, currentRelation)
     }
@@ -77,7 +77,7 @@ class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with Osm4Scala
       val currentWay = currentPrimitiveGroup.ways(osmEntityIdx)
 
       osmEntityIdx += 1
-      if (currentPrimitiveGroup.ways.size == osmEntityIdx) nextPrimitiveGroup
+      if (currentPrimitiveGroup.ways.size == osmEntityIdx) nextPrimitiveGroup()
 
       WayEntity(primitiveBlock.stringtable, currentWay)
     }
@@ -87,16 +87,16 @@ class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with Osm4Scala
       */
     def extractDenseNodePrimitiveGroup() = {
       // If it is the first time, create the iterator.
-      if(!denseNodesIterator.isDefined) {
-        denseNodesIterator = Some( DenseNodesIterator(primitiveBlock.stringtable, currentPrimitiveGroup.dense.get) )
+      if (denseNodesIterator.isEmpty) {
+        denseNodesIterator = Some(DenseNodesIterator(primitiveBlock.stringtable, currentPrimitiveGroup.dense.get))
       }
 
       // At least, one element.
-      val node = denseNodesIterator.get.next
+      val node = denseNodesIterator.get.next()
 
-      if(!denseNodesIterator.get.hasNext) {
+      if (!denseNodesIterator.get.hasNext) {
         denseNodesIterator = None
-        nextPrimitiveGroup
+        nextPrimitiveGroup()
       }
 
       node
@@ -104,12 +104,12 @@ class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with Osm4Scala
 
     // Only one type per primitive group.
     detectType(currentPrimitiveGroup) match {
-      case Relations => extractRelationPrimitiveGroup
-      case Nodes => throw new NotImplementedError("Nodes does not implemented yet.")
-      case Ways =>  extractWayPrimitiveGroup
+      case Relations  => extractRelationPrimitiveGroup
+      case Nodes      => throw new NotImplementedError("Nodes does not implemented yet.")
+      case Ways       => extractWayPrimitiveGroup()
       case ChangeSets => throw new NotImplementedError("Changeset does not implemented yet")
-      case DenseNodes => extractDenseNodePrimitiveGroup
-      case _ => throw new Exception("Unknown primitive group found.")
+      case DenseNodes => extractDenseNodePrimitiveGroup()
+      case _          => throw new Exception("Unknown primitive group found.")
     }
 
   }
