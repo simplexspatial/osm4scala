@@ -44,7 +44,7 @@ class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
         "core/src/test/resources/com/acervera/osm4scala/osmblock/denses/7875/0.dense"
       )
       var counter = 0
-      DenseNodesIterator(strTable, osmosisDense).foreach(x => counter += 1)
+      DenseNodesIterator(strTable, osmosisDense).foreach(_ => counter += 1)
       assert(counter == 6432, "There are 6432 nodes!")
     }
 

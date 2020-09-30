@@ -27,11 +27,10 @@ package com.acervera.osm4scala.model
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.{Relation, StringTable}
 
-
 /**
   * Entity that represent a OSM relation as https://wiki.openstreetmap.org/wiki/Elements#Relation and https://wiki.openstreetmap.org/wiki/Relation describe
   */
-case class RelationEntity(val id: Long, val relations: Seq[RelationMemberEntity], val tags: Map[String, String]) extends OSMEntity {
+case class RelationEntity(id: Long, relations: Seq[RelationMemberEntity], tags: Map[String, String]) extends OSMEntity {
 
   override val osmModel: OSMTypes.Value = OSMTypes.Relation
 
@@ -39,19 +38,22 @@ case class RelationEntity(val id: Long, val relations: Seq[RelationMemberEntity]
 
 object RelationEntity {
 
-  def apply(osmosisStringTable: StringTable, osmosisRelation: Relation) = {
+  def apply(osmosisStringTable: StringTable, osmosisRelation: Relation): RelationEntity = {
 
     // Calculate tags using the StringTable.
-    val tags = (osmosisRelation.keys, osmosisRelation.vals).zipped.map { (k, v) => osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8") }.toMap
+    val tags = (osmosisRelation.keys, osmosisRelation.vals).zipped.map { (k, v) =>
+      osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8")
+    }.toMap
 
     // Decode members references in stored in delta compression.
-    val members = osmosisRelation.memids.scanLeft(0l) { _ + _ }.drop(1)
+    val members = osmosisRelation.memids.scanLeft(0L) { _ + _ }.drop(1)
 
     // Calculate relations
-    val relations = (members, osmosisRelation.types, osmosisRelation.rolesSid).zipped.map { (m,t,r) => RelationMemberEntity(m,RelationMemberEntityTypes(t.value),osmosisStringTable.s(r).toString("UTF-8")) }
+    val relations = (members, osmosisRelation.types, osmosisRelation.rolesSid).zipped.map { (m, t, r) =>
+      RelationMemberEntity(m, RelationMemberEntityTypes(t.value), osmosisStringTable.s(r).toString("UTF-8"))
+    }
 
     new RelationEntity(osmosisRelation.id, relations, tags)
   }
 
 }
-

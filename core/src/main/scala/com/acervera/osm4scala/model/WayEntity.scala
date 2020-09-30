@@ -30,7 +30,7 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.{StringTable, Way}
 /**
   * Entity that represent a OSM way as https://wiki.openstreetmap.org/wiki/Elements#Way and https://wiki.openstreetmap.org/wiki/Way describe
   */
-case class WayEntity(val id: Long, val nodes: Seq[Long], val tags: Map[String, String]) extends OSMEntity {
+case class WayEntity(id: Long, nodes: Seq[Long], tags: Map[String, String]) extends OSMEntity {
 
   override val osmModel: OSMTypes.Value = OSMTypes.Way
 
@@ -42,14 +42,15 @@ case class WayEntity(val id: Long, val nodes: Seq[Long], val tags: Map[String, S
 
 object WayEntity {
 
-  def apply(osmosisStringTable: StringTable, osmosisWay: Way) = {
+  def apply(osmosisStringTable: StringTable, osmosisWay: Way): WayEntity = {
 
     // Calculate nodes references in stored in delta compression.
-    val nodes = osmosisWay.refs.scanLeft(0l) { _ + _ }.drop(1)
+    val nodes = osmosisWay.refs.scanLeft(0L) { _ + _ }.drop(1)
 
     // Calculate tags using the StringTable.
-    val tags = (osmosisWay.keys, osmosisWay.vals).zipped.map { (k, v) => osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8") }.toMap
-
+    val tags = (osmosisWay.keys, osmosisWay.vals).zipped.map { (k, v) =>
+      osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8")
+    }.toMap
 
     new WayEntity(osmosisWay.id, nodes, tags)
   }

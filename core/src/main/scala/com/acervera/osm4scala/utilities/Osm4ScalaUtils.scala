@@ -41,7 +41,6 @@ object PrimitiveGroupType extends Enumeration {
   */
 trait Osm4ScalaUtils {
 
-
   import PrimitiveGroupType._
 
   /**
@@ -50,13 +49,13 @@ trait Osm4ScalaUtils {
     * @param group PrimitiveGroup object too be analysed.
     * @return Group detected ot Unknown if it is Unknown.
     */
-  def detectType(group: PrimitiveGroup) : PrimitiveGroupType = group match {
-    case _ if group.relations.nonEmpty => Relations
-    case _ if group.nodes.nonEmpty => Nodes
-    case _ if group.ways.nonEmpty => Ways
+  def detectType(group: PrimitiveGroup): PrimitiveGroupType = group match {
+    case _ if group.relations.nonEmpty  => Relations
+    case _ if group.nodes.nonEmpty      => Nodes
+    case _ if group.ways.nonEmpty       => Ways
     case _ if group.changesets.nonEmpty => ChangeSets
-    case _ if group.dense.isDefined => DenseNodes
-    case _ => Unknown
+    case _ if group.dense.isDefined     => DenseNodes
+    case _                              => Unknown
   }
 
   /**
@@ -70,8 +69,8 @@ trait Osm4ScalaUtils {
     * @return A DataInputStream ready to read.
     */
   def dataInputStreamBlob(blob: Blob): DataInputStream = blob match {
-    case _ if blob.raw.isDefined => new DataInputStream(new ByteArrayInputStream(blob.raw.get.toByteArray))
-    case _ if blob.zlibData.isDefined => {
+    case _ if blob.raw.isDefined      => new DataInputStream(new ByteArrayInputStream(blob.raw.get.toByteArray))
+    case _ if blob.zlibData.isDefined =>
       // Uncompress
       val inflater = new Inflater()
       val decompressedData = new Array[Byte](blob.rawSize.get)
@@ -80,7 +79,6 @@ trait Osm4ScalaUtils {
       inflater.end()
 
       new DataInputStream(new ByteArrayInputStream(decompressedData))
-    }
     case _ => throw new Exception("Data not found even compressed.")
   }
 }
