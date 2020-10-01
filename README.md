@@ -282,25 +282,34 @@ For example:
     ```
 
 - Using in a Spark shell:
-
+    ```shell script
+    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5' .....
+    ```
   
 - Using in a Spark SQL shell:
+    ```shell script
+    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5' .....
+    ```
 
-  
-- Uni
-bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5-SNAPSHOT'
+- Using in a Spark R shell:
+    ```
+    bin/sparkR --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5'
+    ```
+
+- Using in a PySpark shell:
+    ```
+    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5'
+    ```
 
 
-> Why osm4scala-spark-shaded is available as fat shaded library?
->
-> osm4scala has a transitive dependency with Java Google Protobuf library. Spark, Hadoop and other libraries in the
-> ecosystem are using an old version of the same library (currently v2.5.0 from Mar, 2013) that is not compatible.
->
-> To solve the conflict, I published the library in to fashion:
-> - Fat and Shaded as `osm4scala-spark-shaded` that solves `com.google.protobuf.**` conflicts.
-> - Don't shaded as `osm4scala-spark`, so you can solve the conflict on your way.
->
+### Why osm4scala-spark-shaded is available as fat shaded library?
 
+Osm4scala has a transitive dependency with Java Google Protobuf library. Spark, Hadoop and other libraries in the
+ecosystem are using an old version of the same library (currently v2.5.0 from Mar, 2013) that is not compatible.
+
+To solve the conflict, I published the library in to fashion:
+- Fat and Shaded as `osm4scala-spark-shaded` that solves `com.google.protobuf.**` conflicts.
+- Don't shaded as `osm4scala-spark`, so you can solve the conflict on your way.
 
 
 
