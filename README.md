@@ -18,6 +18,25 @@ This library achieves two different goals:
 - [Spark Connector](#spark-connector): Polyglot ([Scala](#examples-from-spark-shell), [Python](#examples-from-pyspark),
   [SQL](#examples-from-spark-sql) or R) Spark connector to query OSM Pbf files.
 
+
+## Selecting the right Versions
+It is important to choose the right version depending of your Scala version.
+
+| osm4scala | Scala | Scalapb | Spark |
+|:--------:|:------:|:-------:|:-----:|
+| 1.0.5 | 2.12, 2.13 | 0.10.2 | 3.0.* |
+| 1.0.4 | 2.12, 2.13 | 0.10.2 | NA |
+| 1.0.3 | 2.11, 2.12, 2.13 | 0.9.7 | NA |
+| 1.0.1 | 2.11, 2.12 | 0.5.47 | NA |
+| 1.0 | 2.10, 2.11 | 0.5.47 | NA |
+
+> Why osm4scala is not available for all Scala version?
+>
+> osm4scala use ScalaPB library for Google Protobuf parsing. This library is not supporting Scala 2.11 in the more recent
+> versions. Branch 1.0.3 will be update with all new functionalities, like latest 1.0.* version.
+>  
+
+
 ## Core library
 With Osm4scala, you can forget about complexity of the osm.obf format and think about a **scala iterators of primitives**
 (nodes, ways and relations) or blob blocks.
@@ -310,26 +329,6 @@ ecosystem are using an old version of the same library (currently v2.5.0 from Ma
 To solve the conflict, I published the library in to fashion:
 - Fat and Shaded as `osm4scala-spark-shaded` that solves `com.google.protobuf.**` conflicts.
 - Don't shaded as `osm4scala-spark`, so you can solve the conflict on your way.
-
-
-
-## Selecting the right Versions
-It is important to choose the right version depending of your Scala version.
-
-| osm4scala | Scala | Scalapb | Spark |
-|:--------:|:------:|:-------:|:-----:|
-| 1.0.5 | 2.12, 2.13 | 0.10.2 | 3.0.* |
-| 1.0.4 | 2.12, 2.13 | 0.10.2 | NA |
-| 1.0.3 | 2.11, 2.12, 2.13 | 0.9.7 | NA |
-| 1.0.1 | 2.11, 2.12 | 0.5.47 | NA |
-| 1.0 | 2.10, 2.11 | 0.5.47 | NA |
-
-> Why osm4scala is not available for all Scala version?
->
-> osm4scala use ScalaPB library for Google Protobuf parsing. This library is not supporting Scala 2.11 in the more recent
-> versions. Branch 1.0.3 will be update with all new functionalities, like latest 1.0.* version.
->  
-
 
 
 
