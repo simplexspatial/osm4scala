@@ -19,7 +19,7 @@ This library achieves two different goals:
   [SQL](#examples-from-spark-sql) or R) Spark connector to query OSM Pbf files.
 
 
-## Selecting the right Versions
+## Selecting the right Version
 It is important to choose the right version depending of your Scala version.
 
 | osm4scala | Scala | Scalapb | Spark |
