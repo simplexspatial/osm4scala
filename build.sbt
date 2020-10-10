@@ -11,11 +11,9 @@ lazy val akkaVersion = "2.5.31"
 lazy val sparkVersion = "3.0.1"
 
 // Releases versions
-lazy val scala213 = "2.13.2"
-lazy val scala212 = "2.12.11"
+lazy val scala213 = "2.13.3"
+lazy val scala212 = "2.12.12"
 lazy val scalaVersions = List(scala213, scala212)
-
-scapegoatVersion in ThisBuild := "1.4.5"
 
 lazy val commonSettings = Seq(
   crossScalaVersions := scalaVersions,
@@ -112,7 +110,6 @@ lazy val core = Project(id = "core", base = file("core"))
     enablingPublishingSettings,
     enablingCoverage,
     coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
-    coverageMinimum := 70,
     name := "osm4scala-core",
     description := "Scala OpenStreetMap Pbf 2 parser. Core",
     bintrayPackage := "osm4scala-core",
