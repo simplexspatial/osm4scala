@@ -11,11 +11,9 @@ lazy val akkaVersion = "2.5.31"
 lazy val sparkVersion = "3.0.1"
 
 // Releases versions
-lazy val scala213 = "2.13.2"
-lazy val scala212 = "2.12.11"
+lazy val scala213 = "2.13.3"
+lazy val scala212 = "2.12.12"
 lazy val scalaVersions = List(scala213, scala212)
-
-scapegoatVersion in ThisBuild := "1.4.5"
 
 lazy val commonSettings = Seq(
   crossScalaVersions := scalaVersions,
@@ -61,6 +59,13 @@ lazy val enablingPublishingSettings = Seq(
   bintrayVcsUrl := Some("https://github.com/simplexspatial/osm4scala.git")
 )
 
+lazy val disablingCoverage = Seq(coverageEnabled := false)
+
+lazy val enablingCoverage =
+  Seq(coverageEnabled := true, coverageMinimum := 80, coverageFailOnMinimum := true)
+
+lazy val exampleSettings = disablingPublishingSettings ++ disablingCoverage
+
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 lazy val root = (project in file("."))
   .disablePlugins(AssemblyPlugin)
@@ -103,6 +108,8 @@ lazy val core = Project(id = "core", base = file("core"))
   .settings(
     commonSettings,
     enablingPublishingSettings,
+    enablingCoverage,
+    coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
     name := "osm4scala-core",
     description := "Scala OpenStreetMap Pbf 2 parser. Core",
     bintrayPackage := "osm4scala-core",
@@ -117,6 +124,7 @@ lazy val spark = Project(id = "spark", base = file("spark"))
     commonSettings,
     crossScalaVersions := Seq(scala212),
     enablingPublishingSettings,
+    enablingCoverage,
     name := "osm4scala-spark",
     description := "Spark connector for OpenStreetMap Pbf 2 parser.",
     bintrayPackage := "osm4scala-spark",
@@ -136,19 +144,18 @@ lazy val spark = Project(id = "spark", base = file("spark"))
   )
   .dependsOn(core)
 
-
 lazy val sparkFatShaded = Project(id = "osm4scala-spark-shaded", base = file("osm4scala-spark-shaded"))
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
     crossScalaVersions := Seq(scala212),
     enablingPublishingSettings,
+    disablingCoverage,
     name := "osm4scala-spark-shaded",
     description := "Spark connector for OpenStreetMap Pbf 2 parser as shaded fat jar.",
     bintrayPackage := "osm4scala-spark-shaded",
     packageBin in Compile := (assembly in (spark, Compile)).value
   )
-
 
 // Examples
 
@@ -156,6 +163,7 @@ lazy val commonUtilities = Project(id = "examples-common-utilities", base = file
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
+    exampleSettings,
     skip in publish := true,
     name := "osm4scala-examples-common-utilities",
     description := "Utilities shared by all examples",
@@ -168,7 +176,7 @@ lazy val examplesCounter =
     .disablePlugins(AssemblyPlugin)
     .settings(
       commonSettings,
-      disablingPublishingSettings,
+      exampleSettings,
       name := "osm4scala-examples-counter",
       description := "Counter of primitives (Way, Node, Relation or All) using osm4scala"
     )
@@ -178,7 +186,7 @@ lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", bas
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
-    disablingPublishingSettings,
+    exampleSettings,
     name := "osm4scala-examples-counter-parallel",
     description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel threads"
   )
@@ -188,7 +196,7 @@ lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
-    disablingPublishingSettings,
+    exampleSettings,
     name := "osm4scala-examples-counter-akka",
     description := "Counter of primitives (Way, Node, Relation or All) using osm4scala in parallel with AKKA",
     libraryDependencies ++= Seq(
@@ -201,7 +209,7 @@ lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base =
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
-    disablingPublishingSettings,
+    exampleSettings,
     name := "osm4scala-examples-tags-extraction",
     description := "Extract all unique tags from the selected primitive type (Way, Node, Relation or All) using osm4scala"
   )
@@ -211,7 +219,7 @@ lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", b
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
-    disablingPublishingSettings,
+    exampleSettings,
     name := "osm4scala-examples-blocks-extraction",
     description := "Extract all blocks from the pbf into a folder using osm4scala."
   )
@@ -222,7 +230,7 @@ lazy val examplesPrimitivesExtraction =
     .disablePlugins(AssemblyPlugin)
     .settings(
       commonSettings,
-      disablingPublishingSettings,
+      exampleSettings,
       name := "osm4scala-examples-primitives-extraction",
       description := "Extract all primitives from the pbf into a folder using osm4scala."
     )
@@ -232,7 +240,7 @@ lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base =
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
-    disablingPublishingSettings,
+    exampleSettings,
     crossScalaVersions := Seq(scala212),
     name := "osm4scala-examples-spark-utilities",
     description := "Example of different utilities using osm4scala and Spark.",
