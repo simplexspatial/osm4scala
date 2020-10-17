@@ -55,7 +55,7 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
       s"write is not supported for spark-osm-pbf files. If you need it, please create a issue and try to support the project."
     )
 
-  override def isSplitable(sparkSession: SparkSession, options: Map[String, String], path: Path): Boolean = false
+  override def isSplitable(sparkSession: SparkSession, options: Map[String, String], path: Path): Boolean = true
 
   override protected def buildReader(sparkSession: SparkSession,
                                      dataSchema: StructType,
@@ -71,6 +71,8 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
 
     (file: PartitionedFile) =>
       {
+        //
+
         val path = new Path(new URI(file.filePath))
         val fs = path.getFileSystem(broadcastedHadoopConf.value.value)
         val status = fs.getFileStatus(path)
