@@ -28,10 +28,12 @@ package com.acervera.osm4scala.spark
 import java.net.URI
 
 import com.acervera.osm4scala.EntityIterator
+import com.acervera.osm4scala.spark.OSMDataFinder._
 import com.acervera.osm4scala.spark.OsmPbfRowIterator._
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileStatus, Path}
+import org.apache.hadoop.fs.{FSDataInputStream, FileStatus, Path}
 import org.apache.hadoop.mapreduce.Job
+import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.execution.datasources.{FileFormat, OutputWriterFactory, PartitionedFile}
@@ -39,7 +41,7 @@ import org.apache.spark.sql.sources.{DataSourceRegister, Filter}
 import org.apache.spark.sql.types._
 import org.apache.spark.util.SerializableConfiguration
 
-class OsmPbfFormat extends FileFormat with DataSourceRegister {
+class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
 
   override def shortName(): String = "osm.pbf"
 
@@ -71,12 +73,27 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
 
     (file: PartitionedFile) =>
       {
-        //
-
         val path = new Path(new URI(file.filePath))
         val fs = path.getFileSystem(broadcastedHadoopConf.value.value)
         val status = fs.getFileStatus(path)
-        EntityIterator.fromPbf(fs.open(status.getPath)).toOsmPbfRowIterator(requiredSchema)
+
+        def firstBlockOffset(): Long = {
+          var pbfIS: FSDataInputStream = null
+          try {
+            pbfIS = fs.open(status.getPath)
+            pbfIS.seek(file.start)
+            pbfIS.firstBlockIndex()
+          } finally {
+            if (pbfIS != null) pbfIS.close()
+          }
+        }
+
+        val offset = firstBlockOffset()
+        val atFirstBlock = fs.open(status.getPath)
+        atFirstBlock.seek(file.start + offset)
+        EntityIterator.fromPbf(atFirstBlock).toOsmPbfRowIterator(requiredSchema)
+
       }
   }
+
 }

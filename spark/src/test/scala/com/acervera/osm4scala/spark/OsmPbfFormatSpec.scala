@@ -61,6 +61,11 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
 
   "OsmPbfFormat" should {
 
+    "parsing all only one time" in {
+      val entitiesCount = loadOsmPbf(madridPath).count()
+      entitiesCount shouldBe 2677227
+    }
+
     "parser correctly" when {
       "is parsing nodes" in {
         val node171946 = loadOsmPbf(madridPath).filter("id == 171946").collect()(0)
