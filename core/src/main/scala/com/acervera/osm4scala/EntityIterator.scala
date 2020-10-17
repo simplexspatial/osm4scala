@@ -46,7 +46,16 @@ object EntityIterator {
     * @param pbfInputStream InputStream object to process
     * @return Iterator
     */
-  def fromPbf(pbfInputStream: InputStream): EntityIterator = new FromPbfFileEntitiesIterator(pbfInputStream)
+  def fromPbf(pbfInputStream: InputStream): EntityIterator =
+    new FromPbfFileEntitiesIterator(new DefaultInputStreamSentinel(pbfInputStream))
+
+  /**
+    * Create an iterator to iterate over all entities in the InputStream.
+    *
+    * @param pbfInputStream InputStream object to process
+    * @return Iterator
+    */
+  def fromPbf(pbfInputStream: InputStreamSentinel): EntityIterator = new FromPbfFileEntitiesIterator(pbfInputStream)
 
   /**
     * Create an iterator to iterate over all entities in th Blob.

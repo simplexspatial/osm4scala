@@ -23,38 +23,14 @@
  *
  */
 
-package com.acervera.osm4scala.spark
+package com.acervera.osm4scala
 
-import java.io.InputStream
+import java.io.{FilterInputStream, InputStream}
 
-import scala.annotation.tailrec
+trait InputStreamSentinel extends InputStream {
+  def continueReading(): Boolean
+}
 
-object OSMDataFinder {
-  val pattern = Array[Byte](0x0A, 0x07, 0x4F, 0x53, 0x4D, 0x44, 0x61, 0x74, 0x61)
-  val blobHeaderLengthSize = 4
-
-  implicit class InputStreamEnricher(in: InputStream) {
-
-    /**
-      * Search the first block. Neive search for this first PoC.
-      * If it work, let's try with KMP Algorithm
-      *
-      */
-    def firstBlockIndex(): Long = {
-      in.readNBytes(blobHeaderLengthSize) // Ignore length header.
-
-      @tailrec
-      def rec(idx: Long, current: Array[Byte]): Long =
-        if (current.sameElements(pattern) && !isFalsePositive()) idx else rec(idx + 1, current.drop(1) ++ in.readNBytes(1))
-
-      /**
-        * Check that It's OSMData string and a true block as well.
-        * @return
-        */
-      def isFalsePositive(): Boolean = false // TODO: Need implementation.
-
-      rec(0, in.readNBytes(pattern.size))
-    }
-
-  }
+class DefaultInputStreamSentinel(in: InputStream) extends FilterInputStream(in) with InputStreamSentinel {
+  override def continueReading(): Boolean = true
 }

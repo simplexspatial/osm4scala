@@ -25,8 +25,6 @@
 
 package com.acervera.osm4scala
 
-import java.io.InputStream
-
 import com.acervera.osm4scala.model.OSMEntity
 
 /**
@@ -36,7 +34,7 @@ import com.acervera.osm4scala.model.OSMEntity
   * @param pbfInputStream Input stream that will be used to read all entities.
   * @author angelcervera
   */
-class FromPbfFileEntitiesIterator(pbfInputStream: InputStream) extends EntityIterator {
+class FromPbfFileEntitiesIterator(pbfInputStream: InputStreamSentinel) extends EntityIterator {
 
   // Iterator over OSMData blocks
   private val blobIterator = BlobTupleIterator
