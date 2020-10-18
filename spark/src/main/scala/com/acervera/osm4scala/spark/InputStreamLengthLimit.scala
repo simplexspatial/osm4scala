@@ -48,12 +48,6 @@ class InputStreamLengthLimit(in: InputStream, lengthLimit: Long)
     result
   }
 
-  override def read(b: Array[Byte]): Int = {
-    val result = super.read(b)
-    if (result != -1) counter += result
-    result
-  }
-
   override def read(b: Array[Byte], off: Int, len: Int): Int = {
     val result = super.read(b, off, len)
     if (result != -1) counter += result
@@ -66,11 +60,11 @@ class InputStreamLengthLimit(in: InputStream, lengthLimit: Long)
     skipped
   }
 
-  override def mark(readlimit: Int): Unit = new UnsupportedOperationException(
+  override def mark(readlimit: Int): Unit = throw new UnsupportedOperationException(
     "mark operation is not supported when is wrapped."
   )
 
-  override def reset(): Unit = new UnsupportedOperationException(
+  override def reset(): Unit = throw new UnsupportedOperationException(
     "mark operation is not supported when is wrapped."
   )
 
