@@ -91,7 +91,7 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
         val offset = firstBlockOffset()
         val atFirstBlock = fs.open(status.getPath)
         atFirstBlock.seek(file.start + offset)
-        EntityIterator.fromPbf(new InputStreamLengthLimit(atFirstBlock, file.length)).toOsmPbfRowIterator(requiredSchema)
+        EntityIterator.fromPbf(new InputStreamLengthLimit(atFirstBlock, file.length - offset)).toOsmPbfRowIterator(requiredSchema)
 
       }
   }
