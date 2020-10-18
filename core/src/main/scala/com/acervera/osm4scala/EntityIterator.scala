@@ -50,9 +50,10 @@ object EntityIterator {
     new FromPbfFileEntitiesIterator(new DefaultInputStreamSentinel(pbfInputStream))
 
   /**
-    * Create an iterator to iterate over all entities in the InputStream.
+    * Create an iterator to iterate over all entities in the InputStream,
+    * until the end of the stream or until the Sentinel stop it.
     *
-    * @param pbfInputStream InputStream object to process
+    * @param pbfInputStream InputStream object to process with sentinel logic.
     * @return Iterator
     */
   def fromPbf(pbfInputStream: InputStreamSentinel): EntityIterator = new FromPbfFileEntitiesIterator(pbfInputStream)

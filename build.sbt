@@ -43,7 +43,26 @@ lazy val commonSettings = Seq(
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % Test,
     "commons-io" % "commons-io" % commonIOVersion % Test
   ),
-  test in assembly := {}
+  test in assembly := {},
+  scalacOptions ++= Seq(
+    "-target:jvm-1.8",
+    "-encoding",
+    "utf8",
+    "-deprecation",
+    "-unchecked",
+    "-feature",
+    "-language:_",
+    "-Xlint",
+    "-Xlog-reflective-calls"
+  ),
+  javacOptions ++= Seq(
+    "-Xlint:all",
+    "-source",
+    "1.8",
+    "-target",
+    "1.8",
+    "-parameters"
+  )
 )
 
 lazy val disablingPublishingSettings =

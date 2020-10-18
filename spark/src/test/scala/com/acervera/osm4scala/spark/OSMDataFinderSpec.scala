@@ -25,7 +25,7 @@
 
 package com.acervera.osm4scala.spark
 
-import java.io.{FileInputStream, InputStream}
+import java.io.{ByteArrayInputStream, FileInputStream, InputStream}
 
 import com.acervera.osm4scala.spark.OSMDataFinder._
 import org.scalatest.matchers.should.Matchers
@@ -33,6 +33,24 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 class OSMDataFinderSpec extends AnyWordSpecLike with Matchers {
   "OSMDataFinder" should {
+    "don't find the block" when {
+      "file is empty" in {
+        val idx = new ByteArrayInputStream(Array.emptyByteArray).firstBlockIndex()
+        idx shouldBe None
+      }
+      "file is length block size" in {
+        val idx = new ByteArrayInputStream(Array.fill[Byte](4)(0)).firstBlockIndex()
+        idx shouldBe None
+      }
+      "file is smaller than pattern" in {
+        val idx = new ByteArrayInputStream(Array.fill[Byte](8)(0)).firstBlockIndex()
+        idx shouldBe None
+      }
+      "file does not contain the pattern" in {
+        val idx = new ByteArrayInputStream(Array.fill[Byte](1024 * 10)(0)).firstBlockIndex()
+        idx shouldBe None
+      }
+    }
     "find the block" when {
       "it is the starting chunk" in {
         val testFile = "spark/src/test/resources/com/acervera/osm4scala/spark/splitted/madrid_00"
@@ -40,7 +58,7 @@ class OSMDataFinderSpec extends AnyWordSpecLike with Matchers {
         try {
           pbfIS = new FileInputStream(testFile)
           val idx = pbfIS.firstBlockIndex()
-          assert(idx == 132)
+          idx shouldBe Some(132)
         } finally {
           if (pbfIS != null) pbfIS.close()
         }
@@ -51,7 +69,7 @@ class OSMDataFinderSpec extends AnyWordSpecLike with Matchers {
         try {
           pbfIS = new FileInputStream(testFile)
           val idx = pbfIS.firstBlockIndex()
-          assert(idx == 34858)
+          idx shouldBe Some(34858)
         } finally {
           if (pbfIS != null) pbfIS.close()
         }

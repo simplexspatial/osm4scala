@@ -30,8 +30,8 @@ import java.io.InputStream
 import scala.annotation.tailrec
 
 object OSMDataFinder {
-  val pattern = Array[Byte](0x0A, 0x07, 0x4F, 0x53, 0x4D, 0x44, 0x61, 0x74, 0x61)
-  val blobHeaderLengthSize = 4
+  private val pattern = Array[Byte](0x0A, 0x07, 0x4F, 0x53, 0x4D, 0x44, 0x61, 0x74, 0x61)
+  private val blobHeaderLengthSize = 4
 
   implicit class InputStreamEnricher(in: InputStream) {
 
@@ -40,12 +40,18 @@ object OSMDataFinder {
       * If it work, let's try with KMP Algorithm
       *
       */
-    def firstBlockIndex(): Long = {
-      in.readNBytes(blobHeaderLengthSize) // Ignore length header.
+    def firstBlockIndex(): Option[Long] = {
 
       @tailrec
-      def rec(idx: Long, current: Array[Byte]): Long =
-        if (current.sameElements(pattern) && !isFalsePositive()) idx else rec(idx + 1, current.drop(1) ++ in.readNBytes(1))
+      def rec(idx: Long, current: Array[Byte]): Option[Long] =
+        if (current.sameElements(pattern) && !isFalsePositive()) {
+          Some(idx)
+        } else {
+          in.read() match {
+            case -1 => None
+            case i => rec(idx + 1, current.drop(1) :+ i.byteValue())
+          }
+        }
 
       /**
         * Check that It's OSMData string and a true block as well.
@@ -53,7 +59,21 @@ object OSMDataFinder {
         */
       def isFalsePositive(): Boolean = false // TODO: Need implementation.
 
-      rec(0, in.readNBytes(pattern.size))
+      /**
+        * Read next n bytes from the stream. If are not enough, return None.
+        * @param length Length to read.
+        * @return Array of bytes with the content, or None if no enough data to fill the buffer.
+        */
+      def readNBytes(length: Int): Option[Array[Byte]] = {
+        val buffer = Array.fill[Byte](length)(0)
+        val read = in.read(buffer)
+        if (read < length) None else Some(buffer)
+      }
+
+      readNBytes(blobHeaderLengthSize) // Ignore length header.
+        .flatMap(_ => readNBytes(pattern.length)) // Take the first possible BlockHeader
+        .flatMap(firstPossibleBlock => rec(0, firstPossibleBlock))
+
     }
 
   }

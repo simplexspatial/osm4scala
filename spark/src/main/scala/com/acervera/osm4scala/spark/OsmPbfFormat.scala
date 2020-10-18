@@ -77,7 +77,7 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
         val fs = path.getFileSystem(broadcastedHadoopConf.value.value)
         val status = fs.getFileStatus(path)
 
-        def firstBlockOffset(): Long = {
+        def firstBlockOffset(): Option[Long] = {
           var pbfIS: FSDataInputStream = null
           try {
             pbfIS = fs.open(status.getPath)
@@ -88,10 +88,13 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
           }
         }
 
-        val offset = firstBlockOffset()
-        val atFirstBlock = fs.open(status.getPath)
-        atFirstBlock.seek(file.start + offset)
-        EntityIterator.fromPbf(new InputStreamLengthLimit(atFirstBlock, file.length - offset)).toOsmPbfRowIterator(requiredSchema)
+        firstBlockOffset() match {
+          case None => Iterator.empty
+          case Some(offset) =>
+            val atFirstBlock = fs.open(status.getPath)
+            atFirstBlock.seek(file.start + offset)
+            EntityIterator.fromPbf(new InputStreamLengthLimit(atFirstBlock, file.length - offset)).toOsmPbfRowIterator(requiredSchema)
+        }
 
       }
   }

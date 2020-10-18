@@ -32,7 +32,8 @@ import org.openstreetmap.osmosis.osmbinary.fileformat.{Blob, BlobHeader}
 object BlobTupleIterator {
 
   /**
-    * Create a new BlobTupleIterator iterator from a IntputStream pbf format.
+    * Create a new BlobTupleIterator iterator to iterate over all Blobs,
+    * until the end of the stream.
     *
     * @param pbfInputStream Opened InputStream that contains the pbf
     * @return
@@ -40,9 +41,10 @@ object BlobTupleIterator {
   def fromPbf(pbfInputStream: InputStream): BlobTupleIterator = new BlobTupleIterator(new DefaultInputStreamSentinel(pbfInputStream))
 
   /**
-    * Create a new BlobTupleIterator iterator from a IntputStream pbf format.
+    * Create a new BlobTupleIterator iterator to iterate over all Blobs,
+    * until the end of the stream or until the Sentinel stop it.
     *
-    * @param pbfInputStream Opened InputStream that contains the pbf
+    * @param pbfInputStream InputStream object to process with sentinel logic.
     * @return
     */
   def fromPbf(pbfInputStream: InputStreamSentinel): BlobTupleIterator = new BlobTupleIterator(pbfInputStream)
@@ -59,7 +61,7 @@ object BlobTupleIterator {
 class BlobTupleIterator(pbfInputStream: InputStreamSentinel) extends Iterator[(BlobHeader, Blob)] {
 
   // Read the input stream using DataInputStream to access easily to Int and raw fields.
-  val pbfStream = new DataInputStream(pbfInputStream)
+  private val pbfStream = new DataInputStream(pbfInputStream)
 
   // Store the next block length. None if there are not more to read.
   var nextBlockLength: Option[Int] = None
