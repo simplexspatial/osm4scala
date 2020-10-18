@@ -25,18 +25,16 @@
 
 package com.acervera.osm4scala
 
-import java.io.InputStream
-
 import com.acervera.osm4scala.model.OSMEntity
 
 /**
-  * Iterator over all entities in a pbf file.
+  * Iterator over all entities in a pbf file, or until the Sentinel stop it.
   * Every item is a OSMEntity object.
   *
-  * @param pbfInputStream Input stream that will be used to read all entities.
+  * @param pbfInputStream Input stream with Sentinel logic.
   * @author angelcervera
   */
-class FromPbfFileEntitiesIterator(pbfInputStream: InputStream) extends EntityIterator {
+class FromPbfFileEntitiesIterator(pbfInputStream: InputStreamSentinel) extends EntityIterator {
 
   // Iterator over OSMData blocks
   private val blobIterator = BlobTupleIterator

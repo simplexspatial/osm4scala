@@ -32,12 +32,22 @@ import org.openstreetmap.osmosis.osmbinary.fileformat.{Blob, BlobHeader}
 object BlobTupleIterator {
 
   /**
-    * Create a new BlobTupleIterator iterator from a IntputStream pbf format.
+    * Create a new BlobTupleIterator iterator to iterate over all Blobs,
+    * until the end of the stream.
     *
     * @param pbfInputStream Opened InputStream that contains the pbf
     * @return
     */
-  def fromPbf(pbfInputStream: InputStream): BlobTupleIterator = new BlobTupleIterator(pbfInputStream)
+  def fromPbf(pbfInputStream: InputStream): BlobTupleIterator = new BlobTupleIterator(new DefaultInputStreamSentinel(pbfInputStream))
+
+  /**
+    * Create a new BlobTupleIterator iterator to iterate over all Blobs,
+    * until the end of the stream or until the Sentinel stop it.
+    *
+    * @param pbfInputStream InputStream object to process with sentinel logic.
+    * @return
+    */
+  def fromPbf(pbfInputStream: InputStreamSentinel): BlobTupleIterator = new BlobTupleIterator(pbfInputStream)
 
 }
 
@@ -48,10 +58,10 @@ object BlobTupleIterator {
   * @param pbfInputStream Input stream that will be used to read the fileblock
   * @author angelcervera
   */
-class BlobTupleIterator(pbfInputStream: InputStream) extends Iterator[(BlobHeader, Blob)] {
+class BlobTupleIterator(pbfInputStream: InputStreamSentinel) extends Iterator[(BlobHeader, Blob)] {
 
   // Read the input stream using DataInputStream to access easily to Int and raw fields.
-  val pbfStream = new DataInputStream(pbfInputStream)
+  private val pbfStream = new DataInputStream(pbfInputStream)
 
   // Store the next block length. None if there are not more to read.
   var nextBlockLength: Option[Int] = None
@@ -59,7 +69,7 @@ class BlobTupleIterator(pbfInputStream: InputStream) extends Iterator[(BlobHeade
   // Read the length of the next block
   readNextBlockLength()
 
-  override def hasNext: Boolean = nextBlockLength.isDefined
+  override def hasNext: Boolean = pbfInputStream.continueReading() && nextBlockLength.isDefined
 
   override def next(): (BlobHeader, Blob) = {
 
