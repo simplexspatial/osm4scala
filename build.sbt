@@ -46,14 +46,10 @@ lazy val commonSettings = Seq(
   test in assembly := {},
   scalacOptions ++= Seq(
     "-target:jvm-1.8",
-    "-encoding",
-    "utf8",
+    "-encoding", "utf8",
     "-deprecation",
     "-unchecked",
-    "-feature",
-    "-language:_",
-    "-Xlint",
-    "-Xlog-reflective-calls"
+    "-Xlint"
   ),
   javacOptions ++= Seq(
     "-Xlint:all",
