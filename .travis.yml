@@ -20,7 +20,7 @@ before_script: # https://github.com/travis-ci/travis-ci/issues/7703
   - sbt clean
 
 script:
-  - sbt clean "++$TRAVIS_SCALA_VERSION test" coverageAggregate
+  - sbt clean coverage "++$TRAVIS_SCALA_VERSION test" coverageAggregate
 
 after_success:
   - sbt coveralls

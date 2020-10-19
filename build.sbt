@@ -76,8 +76,8 @@ lazy val enablingPublishingSettings = Seq(
 
 lazy val disablingCoverage = Seq(coverageEnabled := false)
 
-lazy val enablingCoverage =
-  Seq(coverageEnabled := true, coverageMinimum := 80, coverageFailOnMinimum := true)
+lazy val coverageConfig =
+  Seq(coverageMinimum := 80, coverageFailOnMinimum := true)
 
 lazy val exampleSettings = disablingPublishingSettings ++ disablingCoverage
 
@@ -123,7 +123,7 @@ lazy val core = Project(id = "core", base = file("core"))
   .settings(
     commonSettings,
     enablingPublishingSettings,
-    enablingCoverage,
+    coverageConfig,
     coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
     name := "osm4scala-core",
     description := "Scala OpenStreetMap Pbf 2 parser. Core",
@@ -139,7 +139,7 @@ lazy val spark = Project(id = "spark", base = file("spark"))
     commonSettings,
     crossScalaVersions := Seq(scala212),
     enablingPublishingSettings,
-    enablingCoverage,
+    coverageConfig,
     name := "osm4scala-spark",
     description := "Spark connector for OpenStreetMap Pbf 2 parser.",
     bintrayPackage := "osm4scala-spark",
