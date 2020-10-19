@@ -24,7 +24,7 @@ It is important to choose the right version depending of your Scala version.
 
 | osm4scala | Scala | Scalapb | Spark |
 |:--------:|:------:|:-------:|:-----:|
-| 1.0.5 | 2.12, 2.13 | 0.10.2 | 3.0.* |
+| 1.0.6 | 2.12, 2.13 | 0.10.2 | 3.0.* |
 | 1.0.4 | 2.12, 2.13 | 0.10.2 | NA |
 | 1.0.3 | 2.11, 2.12, 2.13 | 0.9.7 | NA |
 | 1.0.1 | 2.11, 2.12 | 0.5.47 | NA |
@@ -100,7 +100,7 @@ StructType(
 
 1. Start the shell:
     ```shell script
-    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5'
+    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
     ```
 2. Load the data set and execute queries:
     ```scala
@@ -233,7 +233,7 @@ StructType(
 ### Examples from spark-sql
 1. Start the shell:
     ```shell script
-    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5'
+    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
     ```
 2. Load the data set and execute queries:
     ``` sql
@@ -264,7 +264,7 @@ StructType(
 ### Examples from pyspark
 1. Start the shell:
     ```shell script
-    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5'
+    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
     ```
 2. Load the data set and execute queries:
     ```python
@@ -297,27 +297,27 @@ The simplest way to add the library to the job, is using the shaded flat jar.
 For example:
 - Submitting a job:
     ```shell script
-    bin/spark-submit --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5' .....
+    bin/spark-submit --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6' .....
     ```
 
 - Using in a Spark shell:
     ```shell script
-    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5' .....
+    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6' .....
     ```
   
 - Using in a Spark SQL shell:
     ```shell script
-    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5' .....
+    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6' .....
     ```
 
 - Using in a Spark R shell:
     ```
-    bin/sparkR --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5'
+    bin/sparkR --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
     ```
 
 - Using in a PySpark shell:
     ```
-    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.5'
+    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
     ```
 
 
