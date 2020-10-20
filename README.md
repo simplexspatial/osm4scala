@@ -7,9 +7,9 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala?ref=badge_shield)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 
-**Scala library** and **Spark Connector** focus on parsing PBF2 OpenStreetMap files as iterators.
+**Scala library** and **Spark Connector** focus on parsing [PBF2 OpenStreetMap files](https://wiki.openstreetmap.org/wiki/PBF_Format) as iterators.
 
-At the moment, practically all OpenStreetMap data distribution are published using the osm pbf format because for publishing/distribution it is looking for size save. 
+At the moment, practically all OpenStreetMap data distribution are published using the osm pbf format because for publishing/distribution it is looking for size save.
 Because this format has been designed to achieve good compression, it is really complex to obtain an optimized way to process its content.
 
 ## Goals
@@ -34,11 +34,11 @@ It is important to choose the right version depending of your Scala version.
 >
 > osm4scala use ScalaPB library for Google Protobuf parsing. This library is not supporting Scala 2.11 in the more recent
 > versions. Branch 1.0.3 will be update with all new functionalities, like latest 1.0.* version.
->  
+>
 
 
 ## Core library
-With Osm4scala, you can forget about complexity of the osm.obf format and think about a **scala iterators of primitives**
+With Osm4scala, you can forget about complexity of the `osm.pbf` format and think about a **scala iterators of primitives**
 (nodes, ways and relations) or blob blocks.
 
 For example, counting all node primitives in a file is so simple as:
@@ -51,7 +51,7 @@ to process data at the same time you are reading with near zero memory usage, fo
 
 The library allows to read the pbf file on two different ways:
 - Entity per entity as an `EntityIterator`, using any of the `EntityIterator` factories. This method allows you to iterate
-  over `OSMEntity` trait objects, that could be any of the following: `NodeEntity`, `WayEntity` or `WayEntity` 
+  over `OSMEntity` trait objects, that could be any of the following: `NodeEntity`, `WayEntity` or `WayEntity`
 - Blob per blob as an `BlobIterator`, from any of the `BlobIterator` factories.
 
 ### Dependencies: [ ![Download Core](https://api.bintray.com/packages/angelcervera/maven/osm4scala-core/images/download.svg) ](https://bintray.com/angelcervera/maven/osm4scala-core/_latestVersion)
@@ -106,20 +106,20 @@ StructType(
     ```scala
     scala> val osmDF = spark.sqlContext.read.format("osm.pbf").load("<osm files path here>")
     osmDF: org.apache.spark.sql.DataFrame = [id: bigint, type: tinyint ... 5 more fields]
-    
+
     scala> osmDF.createOrReplaceTempView("osm")
-    
+
     scala> spark.sql("select type, count(*) as num_primitives from osm group by type").show()
-    +----+--------------+                                                           
+    +----+--------------+
     |type|num_primitives|
     +----+--------------+
     |   1|        338795|
     |   2|         10357|
     |   0|       2328075|
     +----+--------------+
-    
+
     scala> spark.sql("select distinct(explode(map_keys(tags))) as tag_key from osm order by tag_key asc").show()
-    +------------------+                                                            
+    +------------------+
     |           tag_key|
     +------------------+
     |             Calle|
@@ -144,7 +144,7 @@ StructType(
     |abandoned:building|
     +------------------+
     only showing top 20 rows
-    
+
     scala> spark.sql("select id, latitude, longitude, tags from osm where type = 0").show()
     +--------+------------------+-------------------+--------------------+
     |      id|          latitude|          longitude|                tags|
@@ -171,10 +171,10 @@ StructType(
     |20952895| 40.42967000000001|-3.5972300000000006|                  []|
     +--------+------------------+-------------------+--------------------+
     only showing top 20 rows
-    
-    
+
+
     scala> spark.sql("select id, nodes, tags from osm where type = 1").show()
-    +-------+--------------------+--------------------+                             
+    +-------+--------------------+--------------------+
     |     id|               nodes|                tags|
     +-------+--------------------+--------------------+
     |3996189|[23002322, 230022...|[name -> M-40, in...|
@@ -199,10 +199,10 @@ StructType(
     |4004281|[25530614, 297977...|[name -> Calle de...|
     +-------+--------------------+--------------------+
     only showing top 20 rows
-    
-    
+
+
     scala> spark.sql("select id, relations, tags from osm where type = 2").show()
-    +-----+--------------------+--------------------+                               
+    +-----+--------------------+--------------------+
     |   id|           relations|                tags|
     +-----+--------------------+--------------------+
     |11331|[[2609596233, 0, ...|[network -> Cerca...|
@@ -227,7 +227,7 @@ StructType(
     |56791|[[32218973, 0, st...|[network -> Metro...|
     +-----+--------------------+--------------------+
     only showing top 20 rows
-    
+
     ```
 
 ### Examples from spark-sql
@@ -273,7 +273,7 @@ StructType(
     DataFrame[id: bigint, type: tinyint, latitude: double, longitude: double, nodes: array<bigint>, relations: array<struct<id:bigint,relationType:tinyint,role:string>>, tags: map<string,string>]
     >>> osmDF.createOrReplaceTempView("osm")
     >>> spark.sql("select type, count(*) as num_primitives from osm group by type").show()
-    +----+--------------+                                                           
+    +----+--------------+
     |type|num_primitives|
     +----+--------------+
     |   1|        338795|
@@ -293,7 +293,7 @@ The simplest way to add the library to the job, is using the shaded flat jar.
     ```
     resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
     ```
-  
+
 For example:
 - Submitting a job:
     ```shell script
@@ -304,7 +304,7 @@ For example:
     ```shell script
     bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6' .....
     ```
-  
+
 - Using in a Spark SQL shell:
     ```shell script
     bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6' .....
@@ -347,7 +347,7 @@ Intel(R) Core(TM) i7-4712HQ CPU @ 2.30GHz
 
 To have more representative performance metrics, all metrics in this section are using only one thread.
 
-For example, it expends only **32 seconds to iterate over near of 70 millions** of elements that compose Spain. 
+For example, it expends only **32 seconds to iterate over near of 70 millions** of elements that compose Spain.
 Below the result of few executions of the [Primitives Counter Example](examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) available in the code.
 ~~~~
 Found [67,976,861] primitives in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.44 sec.
@@ -439,9 +439,9 @@ The list is stored in a file given as parameter.
 ## Requirements:
 
 - Protobuf compiler (only if you want build the library):
-    
+
     Every OS has a different installation process. Has been tested with version 2.6.1
-    
+
     Install in Ubuntu:
     ```
     sudo apt-get install protobuf-compiler
@@ -458,4 +458,4 @@ The list is stored in a file given as parameter.
 ## Libraries:
 
   - ScalaPB: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
-  
+
