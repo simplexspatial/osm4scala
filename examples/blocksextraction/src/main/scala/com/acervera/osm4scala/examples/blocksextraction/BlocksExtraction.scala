@@ -29,10 +29,10 @@ import java.io._
 import java.nio.file.{Files, Paths}
 
 import com.acervera.osm4scala.BlobTupleIterator
+import com.acervera.osm4scala.examples.blocksextraction.ParametersConfig._
+import com.acervera.osm4scala.examples.utilities.Benchmarking
 import com.acervera.osm4scala.utilities.Osm4ScalaUtils
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
-import ParametersConfig._
-import com.acervera.osm4scala.examples.utilities.Benchmarking
 
 /**
   * Low level example about how to uncompress and extract all data blocks to a folder.
@@ -49,7 +49,7 @@ object BlocksExtraction extends App with Osm4ScalaUtils with Benchmarking {
     try {
       pbfIS = new FileInputStream(pbfFilePath)
       Files.createDirectories(Paths.get(extractRootFolder))
-      var x = BlobTupleIterator.fromPbf(pbfIS).foldLeft(0L)((counter,x) => x match {
+      val x = BlobTupleIterator.fromPbf(pbfIS).foldLeft(0L)((counter,x) => x match {
         case _ if (x._1.`type` == "OSMData") => {
           writeBlob(x._2, extractRootFolder, counter)
         }

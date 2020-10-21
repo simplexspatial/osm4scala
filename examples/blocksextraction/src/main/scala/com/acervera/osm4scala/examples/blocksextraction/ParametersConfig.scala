@@ -25,10 +25,6 @@
 
 package com.acervera.osm4scala.examples.blocksextraction
 
-import java.io.File
-
-import com.acervera.osm4scala.model.OSMTypes
-
 /**
   * Command line arguments parser.
   */
