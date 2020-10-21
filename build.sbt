@@ -158,7 +158,7 @@ lazy val root = (project in file("."))
     examplesCounterAkka,
     examplesTagsExtraction,
     examplesPrimitivesExtraction,
-//    exampleSparkUtilities
+    exampleSparkUtilities
   )
   .settings(
     name := "osm4scala-root",
@@ -199,84 +199,6 @@ lazy val core = Project(id = "core", base = file("core"))
 
 
 
-
-//lazy val spark2 = Project(id = "spark2", base = file("spark2"))
-//  .enablePlugins(AssemblyPlugin)
-//  .settings(
-//    commonSettings,
-//    crossScalaVersions := Seq(scala212),
-//    enablingPublishingSettings,
-//    coverageConfig,
-//    name := "osm4scala-spark3",
-//    description := "Spark 2 connector for OpenStreetMap Pbf parser.",
-//    bintrayPackage := "osm4scala-spark2",
-//    libraryDependencies ++= Seq(
-//      "org.apache.spark" %% "spark-sql" % spark2Version % Provided
-//    ),
-//    assemblyOption in assembly := (assemblyOption in assembly).value.copy(
-//      includeScala = false,
-//      cacheUnzip = false,
-//      cacheOutput = false
-//    ),
-//    assemblyShadeRules in assembly := Seq(
-//      ShadeRule
-//        .rename("com.google.protobuf.**" -> "shadeproto.@1")
-//        .inAll
-//    )
-//  )
-//  .dependsOn(core)
-//
-//lazy val spark2FatShaded = Project(id = "osm4scala-spark2-shaded", base = file("osm4scala-spark2-shaded"))
-//  .disablePlugins(AssemblyPlugin)
-//  .settings(
-//    commonSettings,
-//    crossScalaVersions := Seq(scala212),
-//    enablingPublishingSettings,
-//    disablingCoverage,
-//    name := "osm4scala-spark2-shaded",
-//    description := "Spark 2 connector for OpenStreetMap Pbf parser as shaded fat jar.",
-//    bintrayPackage := "osm4scala-spark2-shaded",
-//    packageBin in Compile := (assembly in (spark2, Compile)).value
-//  )
-
-//lazy val spark3 = Project(id = "spark3", base = file("spark3"))
-//  .enablePlugins(AssemblyPlugin)
-//  .settings(
-//    commonSettings,
-//    crossScalaVersions := Seq(scala212),
-//    enablingPublishingSettings,
-//    coverageConfig,
-//    name := "osm4scala-spark3",
-//    description := "Spark 3 connector for OpenStreetMap Pbf parser.",
-//    bintrayPackage := "osm4scala-spark3",
-//    libraryDependencies ++= Seq(
-//      "org.apache.spark" %% "spark-sql" % spark3Version % Provided
-//    ),
-//    assemblyOption in assembly := (assemblyOption in assembly).value.copy(
-//      includeScala = false,
-//      cacheUnzip = false,
-//      cacheOutput = false
-//    ),
-//    assemblyShadeRules in assembly := Seq(
-//      ShadeRule
-//        .rename("com.google.protobuf.**" -> "shadeproto.@1")
-//        .inAll
-//    )
-//  )
-//  .dependsOn(core)
-//
-//lazy val spark3FatShaded = Project(id = "osm4scala-spark3-shaded", base = file("osm4scala-spark3-shaded"))
-//  .disablePlugins(AssemblyPlugin)
-//  .settings(
-//    commonSettings,
-//    crossScalaVersions := Seq(scala212),
-//    enablingPublishingSettings,
-//    disablingCoverage,
-//    name := "osm4scala-spark3-shaded",
-//    description := "Spark 3 connector for OpenStreetMap Pbf parser as shaded fat jar.",
-//    bintrayPackage := "osm4scala-spark3-shaded",
-//    packageBin in Compile := (assembly in (spark3, Compile)).value
-//  )
 
 // Examples
 
@@ -357,16 +279,16 @@ lazy val examplesPrimitivesExtraction =
     )
     .dependsOn(core, commonUtilities)
 
-//lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base = file("examples/spark-utilities"))
-//  .disablePlugins(AssemblyPlugin)
-//  .settings(
-//    commonSettings,
-//    exampleSettings,
-//    crossScalaVersions := Seq(scala212),
-//    name := "osm4scala-examples-spark-utilities",
-//    description := "Example of different utilities using osm4scala and Spark.",
-//    libraryDependencies ++= Seq(
-//      "org.apache.spark" %% "spark-sql" % spark3Version % Provided
-//    )
-//  )
-//  .dependsOn(spark3, commonUtilities)
+lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base = file("examples/spark-utilities"))
+  .disablePlugins(AssemblyPlugin)
+  .settings(
+    commonSettings,
+    exampleSettings,
+    crossScalaVersions := Seq(scala212),
+    name := "osm4scala-examples-spark-utilities",
+    description := "Example of different utilities using osm4scala and Spark.",
+    libraryDependencies ++= Seq(
+      "org.apache.spark" %% "spark-sql" % spark3Version % Provided
+    )
+  )
+  .dependsOn(spark3, commonUtilities)
