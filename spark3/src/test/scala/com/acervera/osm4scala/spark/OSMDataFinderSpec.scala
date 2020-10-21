@@ -53,7 +53,7 @@ class OSMDataFinderSpec extends AnyWordSpecLike with Matchers {
     }
     "find the block" when {
       "it is the starting chunk" in {
-        val testFile = "spark/src/test/resources/com/acervera/osm4scala/spark/splitted/madrid_00"
+        val testFile = "spark3/src/test/resources/com/acervera/osm4scala/spark/splitted/madrid_00"
         var pbfIS: InputStream = null
         try {
           pbfIS = new FileInputStream(testFile)
@@ -64,7 +64,7 @@ class OSMDataFinderSpec extends AnyWordSpecLike with Matchers {
         }
       }
       "it is not the starting chunk" in {
-        val testFile = "spark/src/test/resources/com/acervera/osm4scala/spark/splitted/madrid_01"
+        val testFile = "spark3/src/test/resources/com/acervera/osm4scala/spark/splitted/madrid_01"
         var pbfIS: InputStream = null
         try {
           pbfIS = new FileInputStream(testFile)

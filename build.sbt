@@ -86,8 +86,8 @@ lazy val root = (project in file("."))
   .disablePlugins(AssemblyPlugin)
   .aggregate(
     core,
-    spark,
-    sparkFatShaded,
+    spark3,
+    spark3FatShaded,
     commonUtilities,
     examplesCounter,
     examplesCounterParallel,
@@ -133,16 +133,16 @@ lazy val core = Project(id = "core", base = file("core"))
     )
   )
 
-lazy val spark = Project(id = "spark", base = file("spark"))
+lazy val spark3 = Project(id = "spark3", base = file("spark3"))
   .enablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
     crossScalaVersions := Seq(scala212),
     enablingPublishingSettings,
     coverageConfig,
-    name := "osm4scala-spark",
-    description := "Spark connector for OpenStreetMap Pbf 2 parser.",
-    bintrayPackage := "osm4scala-spark",
+    name := "osm4scala-spark3",
+    description := "Spark 3 connector for OpenStreetMap Pbf 2 parser.",
+    bintrayPackage := "osm4scala-spark3",
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-sql" % sparkVersion % Provided
     ),
@@ -159,17 +159,17 @@ lazy val spark = Project(id = "spark", base = file("spark"))
   )
   .dependsOn(core)
 
-lazy val sparkFatShaded = Project(id = "osm4scala-spark-shaded", base = file("osm4scala-spark-shaded"))
+lazy val spark3FatShaded = Project(id = "osm4scala-spark3-shaded", base = file("osm4scala-spark3-shaded"))
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
     crossScalaVersions := Seq(scala212),
     enablingPublishingSettings,
     disablingCoverage,
-    name := "osm4scala-spark-shaded",
-    description := "Spark connector for OpenStreetMap Pbf 2 parser as shaded fat jar.",
-    bintrayPackage := "osm4scala-spark-shaded",
-    packageBin in Compile := (assembly in (spark, Compile)).value
+    name := "osm4scala-spark3-shaded",
+    description := "Spark 3 connector for OpenStreetMap Pbf 2 parser as shaded fat jar.",
+    bintrayPackage := "osm4scala-spark3-shaded",
+    packageBin in Compile := (assembly in (spark3, Compile)).value
   )
 
 // Examples
@@ -263,4 +263,4 @@ lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base =
       "org.apache.spark" %% "spark-sql" % sparkVersion % Provided
     )
   )
-  .dependsOn(spark, commonUtilities)
+  .dependsOn(spark3, commonUtilities)
