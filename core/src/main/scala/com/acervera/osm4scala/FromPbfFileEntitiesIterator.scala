@@ -60,7 +60,7 @@ class FromPbfFileEntitiesIterator(pbfInputStream: InputStreamSentinel) extends E
   /**
     * Read the next osm pbf block
     */
-  private def readNextBlock() =
+  private def readNextBlock(): Option[EntityIterator] =
     if (blobIterator.hasNext) {
       Some(EntityIterator.fromBlob(blobIterator.next()._2))
     } else {

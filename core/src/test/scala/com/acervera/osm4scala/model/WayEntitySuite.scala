@@ -43,7 +43,7 @@ class WayEntitySuite extends AnyFunSuite {
     val osmosisWay = Way parseFrom new FileInputStream("core/src/test/resources/com/acervera/osm4scala/osmblock/ways/8133/280.way")
 
     // Test
-    val way = WayEntity(strTable, osmosisWay)
+    val way = WayEntity(osmosisStringTable = strTable, osmosisWay = osmosisWay)
     assert(way.id === 199785422)
     assert(way.nodes === List(2097786485L, 2097786450L, 2097786416L, 2097786358L))
     assert(way.tags == Map("source" -> "PNOA", "highway" -> "path", "surface" -> "ground"))

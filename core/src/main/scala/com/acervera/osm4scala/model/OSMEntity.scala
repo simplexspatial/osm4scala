@@ -30,10 +30,16 @@ object OSMTypes extends Enumeration {
   val Way, Node, Relation = Value
 }
 
-trait OSMEntity {
+trait OSMEntity extends Product with Serializable {
 
   val osmModel: OSMTypes.Value
   val id: Long
   val tags: Map[String, String]
+  val version: Option[Int]
+  val timestamp: Option[Long]
+  val changeset: Option[Long]
+  val uid: Option[Int]
+  val user_sid: Option[Int]
+  val visible: Option[Boolean]
 
 }

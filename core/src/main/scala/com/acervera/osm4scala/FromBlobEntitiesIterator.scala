@@ -25,11 +25,11 @@
 
 package com.acervera.osm4scala
 
-import com.acervera.osm4scala.model.{OSMEntity, RelationEntity, WayEntity}
+import com.acervera.osm4scala.model.{NodeEntity, OSMEntity, RelationEntity, WayEntity}
 import com.acervera.osm4scala.utilities.Osm4ScalaUtils
 import com.acervera.osm4scala.utilities.PrimitiveGroupType._
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
-import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
+import org.openstreetmap.osmosis.osmbinary.osmformat.{PrimitiveBlock, PrimitiveGroup}
 
 /**
   * Iterate over all OSMEntities in a FileBlock.
@@ -46,69 +46,86 @@ class FromBlobEntitiesIterator(blob: Blob) extends EntityIterator with Osm4Scala
 
   override def hasNext: Boolean = primitiveBlock.primitivegroup.size != primitiveGroupIdx
 
+  /**
+    * Move to the next primitive group.
+    */
+  def nextPrimitiveGroup(): Unit = {
+    primitiveGroupIdx += 1
+    osmEntityIdx = 0
+  }
+
+  /**
+    * Extract one relation from the primitive group.
+    */
+  def extractRelationPrimitiveGroup(currentPrimitiveGroup: PrimitiveGroup): RelationEntity = {
+    val currentRelation = currentPrimitiveGroup.relations(osmEntityIdx)
+
+    osmEntityIdx += 1
+    if (currentPrimitiveGroup.relations.size == osmEntityIdx) nextPrimitiveGroup()
+
+    RelationEntity(
+      currentRelation,
+      primitiveBlock.stringtable,
+      primitiveBlock.dateGranularity
+    )
+  }
+
+  /**
+    * Extract one way from the primitive group.
+    */
+  def extractWayPrimitiveGroup(currentPrimitiveGroup: PrimitiveGroup): WayEntity = {
+    val currentWay = currentPrimitiveGroup.ways(osmEntityIdx)
+
+    osmEntityIdx += 1
+    if (currentPrimitiveGroup.ways.size == osmEntityIdx) nextPrimitiveGroup()
+
+    WayEntity(
+      currentWay,
+      primitiveBlock.stringtable,
+      primitiveBlock.dateGranularity
+    )
+  }
+
+  /**
+    * Extract one node from the dense nodes primitive group.
+    */
+  def extractDenseNodePrimitiveGroup(currentPrimitiveGroup: PrimitiveGroup): NodeEntity = {
+    // If it is the first time, create the iterator.
+    if (denseNodesIterator.isEmpty) {
+      denseNodesIterator = Some(
+        DenseNodesIterator(
+          primitiveBlock.stringtable,
+          currentPrimitiveGroup.dense.get,
+          primitiveBlock.latOffset,
+          primitiveBlock.lonOffset,
+          primitiveBlock.granularity,
+          primitiveBlock.dateGranularity
+        )
+      )
+    }
+
+    // At least, one element.
+    val node = denseNodesIterator.get.next()
+
+    if (!denseNodesIterator.get.hasNext) {
+      denseNodesIterator = None
+      nextPrimitiveGroup()
+    }
+
+    node
+  }
+
   override def next(): OSMEntity = {
 
-    val currentPrimitiveGroup = primitiveBlock.primitivegroup(primitiveGroupIdx)
-
-    /**
-      * Move to the next primitive group.
-      */
-    def nextPrimitiveGroup(): Unit = {
-      primitiveGroupIdx += 1
-      osmEntityIdx = 0
-    }
-
-    /**
-      * Extract one relation from the primitive group.
-      */
-    def extractRelationPrimitiveGroup: RelationEntity = {
-      val currentRelation = currentPrimitiveGroup.relations(osmEntityIdx)
-
-      osmEntityIdx += 1
-      if (currentPrimitiveGroup.relations.size == osmEntityIdx) nextPrimitiveGroup()
-
-      RelationEntity(primitiveBlock.stringtable, currentRelation)
-    }
-
-    /**
-      * Extract one way from the primitive group.
-      */
-    def extractWayPrimitiveGroup() = {
-      val currentWay = currentPrimitiveGroup.ways(osmEntityIdx)
-
-      osmEntityIdx += 1
-      if (currentPrimitiveGroup.ways.size == osmEntityIdx) nextPrimitiveGroup()
-
-      WayEntity(primitiveBlock.stringtable, currentWay)
-    }
-
-    /**
-      * Extract one node from the densde nodes primitive group.
-      */
-    def extractDenseNodePrimitiveGroup() = {
-      // If it is the first time, create the iterator.
-      if (denseNodesIterator.isEmpty) {
-        denseNodesIterator = Some(DenseNodesIterator(primitiveBlock.stringtable, currentPrimitiveGroup.dense.get))
-      }
-
-      // At least, one element.
-      val node = denseNodesIterator.get.next()
-
-      if (!denseNodesIterator.get.hasNext) {
-        denseNodesIterator = None
-        nextPrimitiveGroup()
-      }
-
-      node
-    }
+    val currentPrimitiveGroup: PrimitiveGroup = primitiveBlock.primitivegroup(primitiveGroupIdx)
 
     // Only one type per primitive group.
     detectType(currentPrimitiveGroup) match {
-      case Relations  => extractRelationPrimitiveGroup
+      case Relations  => extractRelationPrimitiveGroup(currentPrimitiveGroup)
       case Nodes      => throw new NotImplementedError("Nodes does not implemented yet.")
-      case Ways       => extractWayPrimitiveGroup()
+      case Ways       => extractWayPrimitiveGroup(currentPrimitiveGroup)
       case ChangeSets => throw new NotImplementedError("Changeset does not implemented yet")
-      case DenseNodes => extractDenseNodePrimitiveGroup()
+      case DenseNodes => extractDenseNodePrimitiveGroup(currentPrimitiveGroup)
       case _          => throw new Exception("Unknown primitive group found.")
     }
 

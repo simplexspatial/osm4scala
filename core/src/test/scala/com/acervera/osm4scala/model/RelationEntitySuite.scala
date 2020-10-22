@@ -42,8 +42,7 @@ class RelationEntitySuite extends AnyFunSuite {
     val osmosisRelation = Relation parseFrom new FileInputStream("core/src/test/resources/com/acervera/osm4scala/osmblock/relations/8486/7954.relation")
 
     // Test
-    val relation = RelationEntity(strTable, osmosisRelation)
-
+    val relation = RelationEntity(osmosisStringTable = strTable, osmosisRelation = osmosisRelation)
     assert(relation.id === 2898444)
     assert(relation.relations === List(RelationMemberEntity(219042667,RelationMemberEntityTypes.Way,"inner"),RelationMemberEntity(219042634,RelationMemberEntityTypes.Way,"outer")))
     assert(relation.tags == Map("type" -> "multipolygon"))

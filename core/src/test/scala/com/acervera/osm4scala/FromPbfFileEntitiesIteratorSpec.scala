@@ -25,7 +25,7 @@
 
 package com.acervera.osm4scala
 
-import java.io.{FileInputStream, InputStream}
+import java.io.{FileInputStream, FileOutputStream, InputStream, ObjectOutputStream}
 
 import com.acervera.osm4scala.EntityIterator._
 import com.acervera.osm4scala.model.{NodeEntity, RelationEntity, WayEntity}
@@ -65,6 +65,24 @@ class FromPbfFileEntitiesIteratorSpec extends AnyWordSpec with Matchers {
       assert(relationsCounter == 10357, "There are 10.357 relations in Madrid!")
       assert(othersCounter == 0, "No different type of entities!")
 
+    }
+
+    "Read Entities correctly" in {
+      val testFile = "core/src/test/resources/com/acervera/osm4scala/delaware-latest.osm.pbf"
+      var pbfIS: InputStream = null
+      try {
+        pbfIS = new FileInputStream(testFile)
+        val readFile: EntityIterator = fromPbf(pbfIS)
+        val out = new ObjectOutputStream(new FileOutputStream("core/src/test/resources/com/acervera/osm4scala/delaware-latest.txt"))
+        readFile.foreach(x =>
+          out.writeObject(x.toString)
+        )
+        out.close()
+
+
+      } finally {
+        if (pbfIS != null) pbfIS.close()
+      }
     }
   }
 

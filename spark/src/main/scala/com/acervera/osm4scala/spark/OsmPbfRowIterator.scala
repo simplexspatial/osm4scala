@@ -91,6 +91,12 @@ object OsmPbfRowIterator {
       case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Array.empty[Long])
       case OsmSqlEntity.FIELD_RELATIONS => new GenericArrayData(Seq.empty)
       case FIELD_TAGS                   => calculateTags(entity.tags)
+      case FIELD_VERSION                => entity.version.getOrElse[Int](-1)
+      case FIELD_TIMESTAMP              => entity.timestamp.getOrElse[Long](-1)
+      case FIELD_CHANGESET              => entity.changeset.getOrElse[Long](-1)
+      case FIELD_UID                    => entity.uid.getOrElse[Int](-1)
+      case FIELD_USER_SID               => entity.user_sid.getOrElse[Int](-1)
+      case FIELD_VISIBLE                => entity.visible.getOrElse[Boolean](true)
     }
 
     private def populateWay(entity: WayEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
@@ -101,6 +107,12 @@ object OsmPbfRowIterator {
       case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(entity.nodes.toArray)
       case OsmSqlEntity.FIELD_RELATIONS => new GenericArrayData(Seq.empty)
       case FIELD_TAGS                   => calculateTags(entity.tags)
+      case FIELD_VERSION                => entity.version.getOrElse[Int](-1)
+      case FIELD_TIMESTAMP              => entity.timestamp.getOrElse[Long](-1)
+      case FIELD_CHANGESET              => entity.changeset.getOrElse[Long](-1)
+      case FIELD_UID                    => entity.uid.getOrElse[Int](-1)
+      case FIELD_USER_SID               => entity.user_sid.getOrElse[Int](-1)
+      case FIELD_VISIBLE                => entity.visible.getOrElse[Boolean](true)
     }
 
     private def populateRelation(entity: RelationEntity, structType: StructType): Seq[Any] =
@@ -113,6 +125,12 @@ object OsmPbfRowIterator {
           case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Seq.empty[Long].toArray)
           case OsmSqlEntity.FIELD_RELATIONS => calculateRelations(entity.relations, f)
           case FIELD_TAGS                   => calculateTags(entity.tags)
+          case FIELD_VERSION                => entity.version.getOrElse[Int](-1)
+          case FIELD_TIMESTAMP              => entity.timestamp.getOrElse[Long](-1)
+          case FIELD_CHANGESET              => entity.changeset.getOrElse[Long](-1)
+          case FIELD_UID                    => entity.uid.getOrElse[Int](-1)
+          case FIELD_USER_SID               => entity.user_sid.getOrElse[Int](-1)
+          case FIELD_VISIBLE                => entity.visible.getOrElse[Boolean](true)
       })
 
     def toSQLTypesSeq(structType: StructType): Seq[Any] = osmEntity match {

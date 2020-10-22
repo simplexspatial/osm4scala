@@ -40,6 +40,13 @@ object OsmSqlEntity {
   val FIELD_RELATIONS_ID = "id"
   val FIELD_RELATIONS_TYPE = "relationType"
   val FIELD_RELATIONS_ROLE = "role"
+  //Common Option Field
+  val FIELD_VERSION = "version"
+  val FIELD_TIMESTAMP = "timestamp"
+  val FIELD_CHANGESET = "changeset"
+  val FIELD_UID = "uid"
+  val FIELD_USER_SID = "user_sid"
+  val FIELD_VISIBLE = "visible"
 
   val ENTITY_TYPE_NODE: Byte = 0
   val ENTITY_TYPE_WAY: Byte = 1
@@ -57,13 +64,15 @@ object OsmSqlEntity {
     case RelationMemberEntityTypes.Unrecognized => RELATION_UNRECOGNIZED
   }
 
-  lazy val relationSchema = StructType(
-    Seq(StructField(FIELD_RELATIONS_ID, LongType, false),
-        StructField(FIELD_RELATIONS_TYPE, ByteType, false),
-        StructField(FIELD_RELATIONS_ROLE, StringType, true))
+  lazy val relationSchema: StructType = StructType(
+    Seq(
+      StructField(FIELD_RELATIONS_ID, LongType, false),
+      StructField(FIELD_RELATIONS_TYPE, ByteType, false),
+      StructField(FIELD_RELATIONS_ROLE, StringType, true)
+    )
   )
 
-  lazy val schema = StructType(
+  lazy val schema: StructType = StructType(
     Seq(
       StructField(FIELD_ID, LongType, false),
       StructField(FIELD_TYPE, ByteType, false),
@@ -71,7 +80,13 @@ object OsmSqlEntity {
       StructField(FIELD_LONGITUDE, DoubleType, true),
       StructField(FIELD_NODES, ArrayType(LongType, false), true),
       StructField(FIELD_RELATIONS, ArrayType(relationSchema, false), true),
-      StructField(FIELD_TAGS, MapType(StringType, StringType, false), true)
+      StructField(FIELD_TAGS, MapType(StringType, StringType, false), true),
+      StructField(FIELD_VERSION, IntegerType, true),
+      StructField(FIELD_TIMESTAMP, LongType, true),
+      StructField(FIELD_CHANGESET, LongType, true),
+      StructField(FIELD_UID, IntegerType, true),
+      StructField(FIELD_USER_SID, IntegerType, true),
+      StructField(FIELD_VISIBLE, BooleanType, true)
     ))
 
 }

@@ -28,6 +28,35 @@ package com.acervera.osm4scala.model
 /**
   * Entity that represent a OSM node as https://wiki.openstreetmap.org/wiki/Elements#Node and https://wiki.openstreetmap.org/wiki/Node describe
   */
-case class NodeEntity(id: Long, latitude: Double, longitude: Double, tags: Map[String, String]) extends OSMEntity {
+case class NodeEntity(id: Long,
+                      latitude: Double,
+                      longitude: Double,
+                      tags: Map[String, String],
+                      version: Option[Int],
+                      timestamp: Option[Long],
+                      changeset: Option[Long],
+                      uid: Option[Int],
+                      user_sid: Option[Int],
+                      visible: Option[Boolean]) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Node
+
+  def apply(id: Long,
+            latitude: Double,
+            longitude: Double,
+            tags: Map[String, String]): NodeEntity = {
+    NodeEntity(id, latitude, longitude, tags,
+      None, None, None, None, None, None)
+  }
+
+  override def toString: String = {
+    s"Node id: ${id}, " +
+      s"coordinate: (${latitude}, ${latitude}), " +
+      s"tags: ${tags.toList}, " +
+      s"version: ${version.getOrElse("None")}," +
+      s"timestamp: ${timestamp.getOrElse("None")}, " +
+      s"changeset: ${changeset.getOrElse("None")}, " +
+      s"uid: ${uid.getOrElse("None")}, " +
+      s"user_sid: ${user_sid.getOrElse("None")}, " +
+      s"visible: ${visible.getOrElse("True")}\n"
+  }
 }
