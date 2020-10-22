@@ -39,7 +39,6 @@ import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.execution.datasources.{FileFormat, OutputWriterFactory, PartitionedFile}
 import org.apache.spark.sql.sources.{DataSourceRegister, Filter}
 import org.apache.spark.sql.types._
-import org.apache.spark.util.SerializableConfiguration
 
 class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
 
