@@ -1,10 +1,7 @@
 language: scala
 
 scala:
-#   - 2.10.6
-#  - 2.11.12
-  - 2.12.12
-  - 2.13.3
+  - 2.11.12
 jdk:
   - openjdk8
 
@@ -20,7 +17,5 @@ before_script: # https://github.com/travis-ci/travis-ci/issues/7703
   - sbt clean
 
 script:
-  - sbt clean coverage "++$TRAVIS_SCALA_VERSION test" coverageAggregate
+  - sbt clean test
 
-after_success:
-  - sbt coveralls

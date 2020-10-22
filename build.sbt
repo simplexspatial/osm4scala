@@ -1,5 +1,5 @@
 import sbt.Keys._
-import sbtrelease.ReleasePlugin.autoImport.{releaseCrossBuild, _}
+import sbtrelease.ReleasePlugin.autoImport._
 
 // Dependencies
 lazy val scalatestVersion = "3.2.0"
@@ -8,17 +8,14 @@ lazy val commonIOVersion = "2.5"
 lazy val logbackVersion = "1.1.7"
 lazy val scoptVersion = "3.7.1"
 lazy val akkaVersion = "2.5.31"
-lazy val spark3Version = "3.0.1"
 lazy val spark2Version = "2.4.7"
-lazy val sparkDefaultVersion = spark3Version
+lazy val sparkDefaultVersion = spark2Version
 
 // Releases versions
-lazy val scala213 = "2.13.3"
-lazy val scala212 = "2.12.12"
-lazy val scalaVersions = List(scala213, scala212)
+lazy val scala211 = "2.11.12"
 
 lazy val commonSettings = Seq(
-  crossScalaVersions := scalaVersions,
+  scalaVersion := scala211,
   organization := "com.acervera.osm4scala",
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
@@ -76,12 +73,7 @@ lazy val enablingPublishingSettings = Seq(
   bintrayVcsUrl := Some("https://github.com/simplexspatial/osm4scala.git")
 )
 
-lazy val disablingCoverage = Seq(coverageEnabled := false)
-
-lazy val coverageConfig =
-  Seq(coverageMinimum := 80, coverageFailOnMinimum := true)
-
-lazy val exampleSettings = disablingPublishingSettings ++ disablingCoverage
+lazy val exampleSettings = disablingPublishingSettings
 
 
 def generateSparkFatShadedModule(sparkVersion: String, sparkPrj: Project): Project =
@@ -92,9 +84,7 @@ def generateSparkFatShadedModule(sparkVersion: String, sparkPrj: Project): Proje
       .disablePlugins(AssemblyPlugin)
       .settings(
         commonSettings,
-        crossScalaVersions := Seq(scala212),
         enablingPublishingSettings,
-        disablingCoverage,
         name := s"osm4scala-spark${sparkVersion.head}-shaded",
         description := "Spark 2 connector for OpenStreetMap Pbf parser as shaded fat jar.",
         bintrayPackage := s"osm4scala-spark${sparkVersion.head}-shaded",
@@ -115,9 +105,7 @@ def generateSparkModule(sparkVersion: String): Project = {
     commonSettings,
     scalaSource in Compile := baseDirectory.value / ".." / "spark" / "src" / "main" / "scala",
     scalaSource in Test := baseDirectory.value / ".." / "spark" / "src" / "test" / "scala",
-    crossScalaVersions := Seq(scala212),
     enablingPublishingSettings,
-    coverageConfig,
     name := s"osm4scala-spark${sparkVersion.head}",
     description := "Spark 2 connector for OpenStreetMap Pbf parser.",
     bintrayPackage := s"osm4scala-spark${sparkVersion.head}",
@@ -140,8 +128,6 @@ def generateSparkModule(sparkVersion: String): Project = {
 
 lazy val spark2 = generateSparkModule(spark2Version)
 lazy val spark2FatShaded = generateSparkFatShadedModule(spark2Version, spark2)
-lazy val spark3 = generateSparkModule(spark3Version)
-lazy val spark3FatShaded = generateSparkFatShadedModule(spark3Version, spark3)
 
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 lazy val root = (project in file("."))
@@ -150,8 +136,6 @@ lazy val root = (project in file("."))
     core,
     spark2,
     spark2FatShaded,
-    spark3,
-    spark3FatShaded,
     commonUtilities,
     examplesCounter,
     examplesCounterParallel,
@@ -162,11 +146,7 @@ lazy val root = (project in file("."))
   )
   .settings(
     name := "osm4scala-root",
-    // crossScalaVersions must be set to Nil on the aggregating project
-    crossScalaVersions := Nil,
     publish / skip := true,
-    // don't use sbt-release's cross facility
-    releaseCrossBuild := false,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
@@ -187,8 +167,6 @@ lazy val core = Project(id = "core", base = file("core"))
   .settings(
     commonSettings,
     enablingPublishingSettings,
-    coverageConfig,
-    coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
     name := "osm4scala-core",
     description := "Scala OpenStreetMap Pbf 2 parser. Core",
     bintrayPackage := "osm4scala-core",
@@ -284,11 +262,10 @@ lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base =
   .settings(
     commonSettings,
     exampleSettings,
-    crossScalaVersions := Seq(scala212),
     name := "osm4scala-examples-spark-utilities",
     description := "Example of different utilities using osm4scala and Spark.",
     libraryDependencies ++= Seq(
-      "org.apache.spark" %% "spark-sql" % spark3Version % Provided
+      "org.apache.spark" %% "spark-sql" % spark2Version % Provided
     )
   )
-  .dependsOn(spark3, commonUtilities)
+  .dependsOn(spark2, commonUtilities)

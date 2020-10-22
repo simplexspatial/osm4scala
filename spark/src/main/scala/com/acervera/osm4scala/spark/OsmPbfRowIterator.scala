@@ -56,8 +56,8 @@ object OsmPbfRowIterator {
 
     private def calculateTags(tags: Map[String, String]): MapData = ArrayBasedMapData(
       tags,
-      k => UTF8String.fromString(k.toString),
-      v => UTF8String.fromString(v.toString)
+      (k:Any) => UTF8String.fromString(k.toString),
+      (v:Any) => UTF8String.fromString(v.toString)
     )
 
     private def calculateRelation(relation: RelationMemberEntity, structType: StructType): Seq[Any] =
