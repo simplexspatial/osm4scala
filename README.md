@@ -100,7 +100,7 @@ StructType(
 
 1. Start the shell:
     ```shell script
-    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
+    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
     ```
 2. Load the data set and execute queries:
     ```scala
@@ -233,7 +233,7 @@ StructType(
 ### Examples from spark-sql
 1. Start the shell:
     ```shell script
-    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
+    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
     ```
 2. Load the data set and execute queries:
     ``` sql
@@ -264,7 +264,7 @@ StructType(
 ### Examples from pyspark
 1. Start the shell:
     ```shell script
-    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
+    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
     ```
 2. Load the data set and execute queries:
     ```python
@@ -282,12 +282,12 @@ StructType(
     +----+--------------+
     ```
 
-### Dependencies [ ![Download Spark Shaded](https://api.bintray.com/packages/angelcervera/maven/osm4scala-spark-shaded/images/download.svg) ](https://bintray.com/angelcervera/maven/osm4scala-spark-shaded/_latestVersion)
+### Dependencies [ ![Download Spark Shaded](https://api.bintray.com/packages/angelcervera/maven/osm4scala-spark3-shaded/images/download.svg) ](https://bintray.com/angelcervera/maven/osm4scala-spark3-shaded/_latestVersion)
 
 The simplest way to add the library to the job, is using the shaded flat jar.
 - Import the library using maven or sbt.
     ```
-    libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-spark-shaded" % "<version>"
+    libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-spark3-shaded" % "<version>"
     ```
 - Add the resolver **only if you have problems resolving dependencies without it**:
     ```
@@ -297,27 +297,27 @@ The simplest way to add the library to the job, is using the shaded flat jar.
 For example:
 - Submitting a job:
     ```shell script
-    bin/spark-submit --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6' .....
+    bin/spark-submit --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6' .....
     ```
 
 - Using in a Spark shell:
     ```shell script
-    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6' .....
+    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6' .....
     ```
 
 - Using in a Spark SQL shell:
     ```shell script
-    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6' .....
+    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6' .....
     ```
 
 - Using in a Spark R shell:
     ```
-    bin/sparkR --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
+    bin/sparkR --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
     ```
 
 - Using in a PySpark shell:
     ```
-    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark-shaded_2.12:1.0.6'
+    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
     ```
 
 
@@ -326,9 +326,9 @@ For example:
 Osm4scala has a transitive dependency with Java Google Protobuf library. Spark, Hadoop and other libraries in the
 ecosystem are using an old version of the same library (currently v2.5.0 from Mar, 2013) that is not compatible.
 
-To solve the conflict, I published the library in to fashion:
-- Fat and Shaded as `osm4scala-spark-shaded` that solves `com.google.protobuf.**` conflicts.
-- Don't shaded as `osm4scala-spark`, so you can solve the conflict on your way.
+To solve the conflict, I published the library in two fashion:
+- Fat and Shaded as `osm4scala-spark3-shaded` that solves `com.google.protobuf.**` conflicts.
+- Don't shaded as `osm4scala-spark3`, so you can solve the conflict on your way.
 
 
 
@@ -436,17 +436,6 @@ Extract a list of unique tags from an osm.pbf file, optionally filtering by prim
 The list is stored in a file given as parameter.
 
 
-## Requirements:
-
-- Protobuf compiler (only if you want build the library):
-
-    Every OS has a different installation process. Has been tested with version 2.6.1
-
-    Install in Ubuntu:
-    ```
-    sudo apt-get install protobuf-compiler
-    ```
-
 ## As reference:
 
   - PBF2 Documentation: http://wiki.openstreetmap.org/wiki/PBF_Format
@@ -459,3 +448,20 @@ The list is stored in a file given as parameter.
 
   - ScalaPB: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
 
+
+## DEV
+
+### Prepare environment
+The only special requiriment is to execute `sbt compile` to generate the protobuf source code.
+```shell script
+sbt compile
+```
+
+### Release process
+```shell script
+git checkout master
+PATCH_211=false sbt release
+
+git checkout v1.*.*
+PATCH_211=true sbt clean +publish
+```
