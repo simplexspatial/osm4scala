@@ -1,5 +1,8 @@
 import sbt.Keys._
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport.{releaseCrossBuild, _}
+
+def isPatch211Enable(): Boolean = sys.env.getOrElse("PATCH_211", "false").toBoolean
 
 // Dependencies
 lazy val scalatestVersion = "3.2.0"
@@ -12,10 +15,11 @@ lazy val spark3Version = "3.0.1"
 lazy val spark2Version = "2.4.7"
 lazy val sparkDefaultVersion = spark3Version
 
-// Releases versions
 lazy val scala213 = "2.13.3"
 lazy val scala212 = "2.12.12"
-lazy val scalaVersions = List(scala213, scala212)
+lazy val scala211 = "2.11.12"
+lazy val scalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(scala213, scala212)
+lazy val sparkScalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(scala212)
 
 lazy val commonSettings = Seq(
   crossScalaVersions := scalaVersions,
@@ -48,7 +52,8 @@ lazy val commonSettings = Seq(
   test in assembly := {},
   scalacOptions ++= Seq(
     "-target:jvm-1.8",
-    "-encoding", "utf8",
+    "-encoding",
+    "utf8",
     "-deprecation",
     "-unchecked",
     "-Xlint"
@@ -83,59 +88,59 @@ lazy val coverageConfig =
 
 lazy val exampleSettings = disablingPublishingSettings ++ disablingCoverage
 
-
 def generateSparkFatShadedModule(sparkVersion: String, sparkPrj: Project): Project =
-    Project(
-      id = s"osm4scala-spark${sparkVersion.head}-shaded",
-      base = file(s"target/osm4scala-spark${sparkVersion.head}-shaded")
+  Project(
+    id = s"osm4scala-spark${sparkVersion.head}-shaded",
+    base = file(s"target/osm4scala-spark${sparkVersion.head}-shaded")
+  ).disablePlugins(AssemblyPlugin)
+    .settings(
+      commonSettings,
+      crossScalaVersions := sparkScalaVersions,
+      enablingPublishingSettings,
+      disablingCoverage,
+      name := s"osm4scala-spark${sparkVersion.head}-shaded",
+      description := "Spark 2 connector for OpenStreetMap Pbf parser as shaded fat jar.",
+      bintrayPackage := s"osm4scala-spark${sparkVersion.head}-shaded",
+      packageBin in Compile := (assembly in (sparkPrj, Compile)).value
     )
-      .disablePlugins(AssemblyPlugin)
-      .settings(
-        commonSettings,
-        crossScalaVersions := Seq(scala212),
-        enablingPublishingSettings,
-        disablingCoverage,
-        name := s"osm4scala-spark${sparkVersion.head}-shaded",
-        description := "Spark 2 connector for OpenStreetMap Pbf parser as shaded fat jar.",
-        bintrayPackage := s"osm4scala-spark${sparkVersion.head}-shaded",
-        packageBin in Compile := (assembly in(sparkPrj, Compile)).value
-      )
 
 def generateSparkModule(sparkVersion: String): Project = {
 
-  val baseFolder = if(sparkDefaultVersion == sparkVersion) {
+  val baseFolder = if (sparkDefaultVersion == sparkVersion) {
     s"spark"
   } else {
     s"target/spark${sparkVersion.head}"
   }
 
   Project(id = s"spark${sparkVersion.head}", base = file(baseFolder))
-  .enablePlugins(AssemblyPlugin)
-  .settings(
-    commonSettings,
-    scalaSource in Compile := baseDirectory.value / ".." / "spark" / "src" / "main" / "scala",
-    scalaSource in Test := baseDirectory.value / ".." / "spark" / "src" / "test" / "scala",
-    crossScalaVersions := Seq(scala212),
-    enablingPublishingSettings,
-    coverageConfig,
-    name := s"osm4scala-spark${sparkVersion.head}",
-    description := "Spark 2 connector for OpenStreetMap Pbf parser.",
-    bintrayPackage := s"osm4scala-spark${sparkVersion.head}",
-    libraryDependencies ++= Seq(
-      "org.apache.spark" %% "spark-sql" % sparkVersion % Provided
-    ),
-    assemblyOption in assembly := (assemblyOption in assembly).value.copy(
-      includeScala = false,
-      cacheUnzip = false,
-      cacheOutput = false
-    ),
-    assemblyShadeRules in assembly := Seq(
-      ShadeRule
-        .rename("com.google.protobuf.**" -> "shadeproto.@1")
-        .inAll
+    .enablePlugins(AssemblyPlugin)
+    .settings(
+      commonSettings,
+      scalaSource in Compile := baseDirectory.value / ".." / "spark" / "src" / "main" / "scala",
+      resourceDirectories in Compile := Seq(baseDirectory.value / ".." / "spark" / "src" / "main" / "resources"),
+      scalaSource in Test := baseDirectory.value / ".." / "spark" / "src" / "test" / "scala",
+      resourceDirectory in Test := baseDirectory.value / ".." / "spark" / "src" / "test" / "resources",
+      crossScalaVersions := sparkScalaVersions,
+      enablingPublishingSettings,
+      coverageConfig,
+      name := s"osm4scala-spark${sparkVersion.head}",
+      description := "Spark 2 connector for OpenStreetMap Pbf parser.",
+      bintrayPackage := s"osm4scala-spark${sparkVersion.head}",
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-sql" % sparkVersion % Provided
+      ),
+      assemblyOption in assembly := (assemblyOption in assembly).value.copy(
+        includeScala = false,
+        cacheUnzip = false,
+        cacheOutput = false
+      ),
+      assemblyShadeRules in assembly := Seq(
+        ShadeRule
+          .rename("com.google.protobuf.**" -> "shadeproto.@1")
+          .inAll
+      )
     )
-  )
-  .dependsOn(core)
+    .dependsOn(core)
 }
 
 lazy val spark2 = generateSparkModule(spark2Version)
@@ -143,23 +148,37 @@ lazy val spark2FatShaded = generateSparkFatShadedModule(spark2Version, spark2)
 lazy val spark3 = generateSparkModule(spark3Version)
 lazy val spark3FatShaded = generateSparkFatShadedModule(spark3Version, spark3)
 
-import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
-lazy val root = (project in file("."))
-  .disablePlugins(AssemblyPlugin)
-  .aggregate(
+
+def listOfProjects(): Seq[ProjectReference] = {
+
+  val modules: Seq[ProjectReference] = Seq(
     core,
     spark2,
     spark2FatShaded,
-    spark3,
-    spark3FatShaded,
     commonUtilities,
     examplesCounter,
     examplesCounterParallel,
     examplesCounterAkka,
     examplesTagsExtraction,
     examplesPrimitivesExtraction,
+  )
+
+  val spark3Projects: Seq[ProjectReference] = Seq(
+    spark3,
+    spark3FatShaded,
     exampleSparkUtilities
   )
+
+  val projects = modules ++ (if(isPatch211Enable()) Seq.empty else spark3Projects)
+
+  print(s"PATCH_211 is ${isPatch211Enable()} so we are going to work with this list of projects: \n${projects.mkString("\t- ", "\n\t- ", "")}")
+
+  projects
+}
+
+lazy val root = (project in file("."))
+  .disablePlugins(AssemblyPlugin)
+  .aggregate( listOfProjects(): _*)
   .settings(
     name := "osm4scala-root",
     // crossScalaVersions must be set to Nil on the aggregating project
@@ -167,7 +186,7 @@ lazy val root = (project in file("."))
     publish / skip := true,
     // don't use sbt-release's cross facility
     releaseCrossBuild := false,
-    releaseProcess := Seq[ReleaseStep](
+    releaseProcess :=   Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
       runClean,
@@ -196,9 +215,6 @@ lazy val core = Project(id = "core", base = file("core"))
       scalapb.gen(grpc = false) -> (sourceManaged in Compile).value
     )
   )
-
-
-
 
 // Examples
 
