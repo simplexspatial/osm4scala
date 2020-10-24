@@ -25,13 +25,24 @@
 
 package com.acervera.osm4scala.spark
 
+import java.io.File
+
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.{DataFrame, Row, SaveMode, SparkSession, functions => fn}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import scala.util.Random
+
 class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
+
+  def withTemporalFolder(testCode: File => Any): Unit =
+    testCode(
+      new File(
+        s"target/test_outs/${this.getClass().getCanonicalName()}/${Random.alphanumeric.take(10).mkString.toUpperCase()}"
+      )
+    )
 
   val cores = 4
   val madridPath = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
@@ -115,7 +126,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
 
     }
 
-    "export to other formats" in {
+    "export to other formats" in withTemporalFolder { tmpFolder =>
       val threeExamples = loadOsmPbf(madridPath)
         .filter("id == 55799 || id == 3996192 || id == 171946")
         .orderBy("id")
@@ -123,11 +134,11 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
       threeExamples.write
         .mode(SaveMode.Overwrite)
         .format("orc")
-        .save("target/madrid/three")
+        .save(s"${tmpFolder}/madrid/three")
 
       val readFromOrc = sqlContext.read
         .format("orc")
-        .load("target/madrid/three")
+        .load(s"${tmpFolder}/madrid/three")
         .orderBy("id")
         .collect()
 
