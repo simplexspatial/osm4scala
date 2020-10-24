@@ -1,4 +1,4 @@
-import sbt.Keys._
+import sbt.Keys.{baseDirectory, _}
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport.{releaseCrossBuild, _}
 
@@ -112,14 +112,20 @@ def generateSparkModule(sparkVersion: String): Project = {
     s"target/spark${sparkVersion.head}"
   }
 
+  def pathFromModule(relativePath: String): String = if (sparkDefaultVersion == sparkVersion) {
+    relativePath
+  } else {
+    s"../../spark/${relativePath}"
+  }
+
   Project(id = s"spark${sparkVersion.head}", base = file(baseFolder))
     .enablePlugins(AssemblyPlugin)
     .settings(
       commonSettings,
-      scalaSource in Compile := baseDirectory.value / ".." / "spark" / "src" / "main" / "scala",
-      resourceDirectories in Compile := Seq(baseDirectory.value / ".." / "spark" / "src" / "main" / "resources"),
-      scalaSource in Test := baseDirectory.value / ".." / "spark" / "src" / "test" / "scala",
-      resourceDirectory in Test := baseDirectory.value / ".." / "spark" / "src" / "test" / "resources",
+      Compile / scalaSource       := baseDirectory.value / pathFromModule("src/main/scala"),
+      Compile / resourceDirectory := baseDirectory.value / pathFromModule("src/main/resources"),
+      Test / scalaSource          := baseDirectory.value / pathFromModule("src/test/scala"),
+      Test / resourceDirectory    := baseDirectory.value / pathFromModule("src/test/resources"),
       crossScalaVersions := sparkScalaVersions,
       enablingPublishingSettings,
       coverageConfig,
