@@ -109,7 +109,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll 
         relation55799.getAs[Seq[Any]]("nodes") shouldBe Seq.empty
         relation55799.getAs[InternalRow]("relations") shouldBe Seq(
           Row(28775036L, 1, "outer"),
-          Row(28775323, 1, "inner"),
+          Row(28775323, 1, "inner")
         )
       }
 
