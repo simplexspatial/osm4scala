@@ -7,8 +7,6 @@ jobs:
       env: PATCH_211=true
       script:
         - sbt clean "++$TRAVIS_SCALA_VERSION test"
-      after_success:
-        - sbt coveralls
     - scala: 2.12.12
       jdk: openjdk8
       env: PATCH_211=false
