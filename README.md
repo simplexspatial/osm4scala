@@ -24,18 +24,12 @@ It is important to choose the right version depending of your Scala version.
 
 | osm4scala | Scala | Scalapb | Spark |
 |:--------:|:------:|:-------:|:-----:|
-| 1.0.6 | 2.12, 2.13 | 0.10.2 | 3.0.* |
-| 1.0.4 | 2.12, 2.13 | 0.10.2 | NA |
+| 1.0.7-RC1 | 2.11 | 0.9.7 | 2.4 |
+| 1.0.7-RC1 | 2.12 | 0.10.2 | 2.4, 3.0 |
+| 1.0.7-RC1 | 2.13 | 0.10.2 | NA |
+| 1.0.6 | 2.12 | 0.10.2 | 3.0 |
+| 1.0.6 | 2.13 | 0.10.2 | NA |
 | 1.0.3 | 2.11, 2.12, 2.13 | 0.9.7 | NA |
-| 1.0.1 | 2.11, 2.12 | 0.5.47 | NA |
-| 1.0 | 2.10, 2.11 | 0.5.47 | NA |
-
-> Why osm4scala is not available for all Scala version?
->
-> osm4scala use ScalaPB library for Google Protobuf parsing. This library is not supporting Scala 2.11 in the more recent
-> versions. Branch 1.0.3 will be update with all new functionalities, like latest 1.0.* version.
->
-
 
 ## Core library
 With Osm4scala, you can forget about complexity of the `osm.pbf` format and think about a **scala iterators of primitives**
