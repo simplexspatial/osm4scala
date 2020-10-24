@@ -7,7 +7,7 @@ val scalapbVersionPatch = "0.9.7"
   * offers Spark services based on Scala 2.11.
   *
   * This is a patch that will allow to publish a Scala 2.11 version checking the ENV variable `PATCH_2_11`.
-  * If `PATCH_2.11` is `true`, it will use scalapb 0.9.7. Otherwise, it will use the last version.
+  * If `PATCH_211` is `true`, it will use scalapb 0.9.7. Otherwise, it will use the last version.
   *
   * @return Version to use.
   */
