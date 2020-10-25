@@ -54,7 +54,7 @@ class CounterActor(filterType: Option[OSMTypes.Value]) extends Actor {
 
   override def receive = {
     case BlobTupleMsg(header, blob) =>
-      sender ! CounterResponse(count(blob))
+      sender() ! CounterResponse(count(blob))
   }
 
 }

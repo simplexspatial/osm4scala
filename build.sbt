@@ -126,6 +126,7 @@ def generateSparkModule(sparkVersion: String): Project = {
       Compile / resourceDirectory := baseDirectory.value / pathFromModule("src/main/resources"),
       Test / scalaSource          := baseDirectory.value / pathFromModule("src/test/scala"),
       Test / resourceDirectory    := baseDirectory.value / pathFromModule("src/test/resources"),
+      Test / parallelExecution    := false,
       crossScalaVersions := sparkScalaVersions,
       enablingPublishingSettings,
       coverageConfig,

@@ -50,9 +50,7 @@ class ControllerActor(pbfFile: File, filterByOsmType: Option[OSMTypes.Value]) ex
 
   val startTime = System.currentTimeMillis()
 
-  override def postStop() {
-    pbfIS.close()
-  }
+  override def postStop(): Unit = pbfIS.close()
 
   override def receive = {
 
@@ -74,7 +72,7 @@ class ControllerActor(pbfFile: File, filterByOsmType: Option[OSMTypes.Value]) ex
     // Handling the count when the counter finish and process other blob if it is available.
     case CounterResponse(count) => {
       counter += count
-      nextBlob(sender)
+      nextBlob(sender())
     }
 
   }
