@@ -56,10 +56,10 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
     throw new Exception("Only visible nodes are implemented.")
   }
 
-  private val idIterator = osmosisDenseNode.id.toIterator
-  private val lonIterator = osmosisDenseNode.lon.toIterator
-  private val latIterator = osmosisDenseNode.lat.toIterator
-  private val tagsIterator = osmosisDenseNode.keysVals.toIterator
+  private val idIterator = osmosisDenseNode.id.iterator
+  private val lonIterator = osmosisDenseNode.lon.iterator
+  private val latIterator = osmosisDenseNode.lat.iterator
+  private val tagsIterator = osmosisDenseNode.keysVals.iterator
 
   private var lastNode: NodeEntity = NodeEntity(0, 0, 0, Map())
 

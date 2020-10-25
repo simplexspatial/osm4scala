@@ -48,7 +48,7 @@ class FromPbfFileEntitiesIterator(pbfInputStream: InputStreamSentinel) extends E
     osmEntitiesIterator.isDefined && (osmEntitiesIterator.get.hasNext || blobIterator.hasNext)
 
   override def next(): OSMEntity = {
-    val nextEntity = osmEntitiesIterator.get.next
+    val nextEntity = osmEntitiesIterator.get.next()
 
     if (!osmEntitiesIterator.get.hasNext) {
       osmEntitiesIterator = readNextBlock()
@@ -62,7 +62,7 @@ class FromPbfFileEntitiesIterator(pbfInputStream: InputStreamSentinel) extends E
     */
   private def readNextBlock() =
     if (blobIterator.hasNext) {
-      Some(EntityIterator.fromBlob(blobIterator.next._2))
+      Some(EntityIterator.fromBlob(blobIterator.next()._2))
     } else {
       None
     }
