@@ -33,6 +33,7 @@ import com.acervera.osm4scala.spark.OsmPbfRowIterator._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FSDataInputStream, FileStatus, Path}
 import org.apache.hadoop.mapreduce.Job
+import org.apache.spark.SerializableWritable
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.InternalRow
@@ -68,7 +69,7 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
 
 //    TODO: OsmSqlEntity.validateSchema(requiredSchema)
 
-    val broadcastedHadoopConf = sparkSession.sparkContext.broadcast(new SerializableConfiguration(hadoopConf))
+    val broadcastedHadoopConf = sparkSession.sparkContext.broadcast(new SerializableWritable(hadoopConf))
 
     (file: PartitionedFile) =>
       {

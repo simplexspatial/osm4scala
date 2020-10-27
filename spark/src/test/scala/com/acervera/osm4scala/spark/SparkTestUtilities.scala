@@ -25,6 +25,7 @@
 
 package com.acervera.osm4scala.spark
 
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.scalatest.{BeforeAndAfterAll, Suite}
 
@@ -62,13 +63,16 @@ trait SparkSessionBeforeAfterAll extends BeforeAndAfterAll { this: Suite =>
 
   var spark: SparkSession = _
 
+  def sparkConf(): SparkConf =
+    new SparkConf()
+      .setAppName(appName)
+      .setMaster(s"local[$cores]")
+
   override def beforeAll(): Unit = {
-    spark =
-      SparkSession
-        .builder()
-        .appName(appName)
-        .master(s"local[$cores]")
-        .getOrCreate()
+    spark = SparkSession
+      .builder()
+      .config(sparkConf())
+      .getOrCreate()
 
     super.beforeAll()
   }

@@ -22,14 +22,17 @@ This library achieves two different goals:
 ## Selecting the right Version
 It is important to choose the right version depending of your Scala version.
 
-| osm4scala | Scala | Scalapb | Spark |
-|:--------:|:------:|:-------:|:-----:|
-| 1.0.7-RC1 | 2.11 | 0.9.7 | 2.4 |
-| 1.0.7-RC1 | 2.12 | 0.10.2 | 2.4, 3.0 |
-| 1.0.7-RC1 | 2.13 | 0.10.2 | NA |
-| 1.0.6 | 2.12 | 0.10.2 | 3.0 |
-| 1.0.6 | 2.13 | 0.10.2 | NA |
-| 1.0.3 | 2.11, 2.12, 2.13 | 0.9.7 | NA |
+| osm4scala | Scalapb | Scala | Spark |
+|:---------:|:------:|:-------:|:-----:|
+| 1.0.7    | 0.9.7  | 2.11     | 2.4 |
+| 1.0.7    | 0.10.2 | 2.12     | 2.4, 3.0 |
+| 1.0.7    | 0.10.2 | 2.13     | NA |
+
+For example,
+- If you want to import the Spark Connector for Scala 2.11 and Spark 2.4: `com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.7`
+- If you want to import the Spark Connector for Scala 2.12 and Spark 2.4: `com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.7`
+- If you want to import the Spark Connector for Scala 2.12 and Spark 3.0: `com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7`
+
 
 ## Core library
 With Osm4scala, you can forget about complexity of the `osm.pbf` format and think about a **scala iterators of primitives**
@@ -94,7 +97,7 @@ StructType(
 
 1. Start the shell:
     ```shell script
-    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
+    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7'
     ```
 2. Load the data set and execute queries:
     ```scala
@@ -227,7 +230,7 @@ StructType(
 ### Examples from spark-sql
 1. Start the shell:
     ```shell script
-    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
+    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7'
     ```
 2. Load the data set and execute queries:
     ``` sql
@@ -258,7 +261,7 @@ StructType(
 ### Examples from pyspark
 1. Start the shell:
     ```shell script
-    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
+    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7'
     ```
 2. Load the data set and execute queries:
     ```python
@@ -291,27 +294,27 @@ The simplest way to add the library to the job, is using the shaded flat jar.
 For example:
 - Submitting a job:
     ```shell script
-    bin/spark-submit --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6' .....
+    bin/spark-submit --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7' .....
     ```
 
 - Using in a Spark shell:
     ```shell script
-    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6' .....
+    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7' .....
     ```
 
 - Using in a Spark SQL shell:
     ```shell script
-    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6' .....
+    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7' .....
     ```
 
 - Using in a Spark R shell:
     ```
-    bin/sparkR --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
+    bin/sparkR --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7'
     ```
 
 - Using in a PySpark shell:
     ```
-    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.6'
+    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7'
     ```
 
 
