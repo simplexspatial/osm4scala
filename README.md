@@ -445,12 +445,10 @@ For free community support, there are two channels:
   generic question or anything that does not fit in the Stackoverflow scope.  
 
 
-## DEV
-
-### Contributing
+## Contributing
 First of all, if you arrived to this point, thanks for at least think about contributing!!!
-How to do it?
- 
+
+### Way to contribute
 - Spread the word. Maybe a project in Github with a post in your blog, with a link to [osm4scala repo](https://github.com/simplexspatial/osm4scala)
 - Join [![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk) group
 - Response questions in [Stackoverflow](https://stackoverflow.com/). Stackoverflow will send you notifications if you are
@@ -469,7 +467,6 @@ How to do it?
           PATCH_211=false sbt clean +test
           PATCH_211=true sbt clean +test
           ```
-
 
 ### Prepare environment
 It's possible to develope using a Windows machine, but all documentation suppose that you are using Linux or Mac.
