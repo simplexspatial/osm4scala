@@ -433,26 +433,60 @@ Extract a list of unique tags from an osm.pbf file, optionally filtering by prim
 The list is stored in a file given as parameter.
 
 
-## As reference:
+## Support
+I'm doing my best, but keep in mind that this is an opensource project, developed for free.
 
+If you need / want osm4scala (or Scala, BigData, Spark, Java, etc...) premium support, don't hesitate to [contact me and contract my services](https://www.acervera.com).  
+
+For free community support, there are two channels:
+- Stackoverflow using the tag [osm4scala](https://stackoverflow.com/questions/tagged/osm4scala): if it is a technical question.
+  Please, try to be clear, adding simple example to reproduce the error or whatever the porblem is.
+- [![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk): if it is suggestion,
+  generic question or anything that does not fit in the Stackoverflow scope.  
+
+
+## Contributing
+First of all, if you arrived to this point, thanks for at least think about contributing!!!
+
+### Way to contribute
+- Spread the word. Maybe a project in Github with a post in your blog, with a link to [osm4scala repo](https://github.com/simplexspatial/osm4scala)
+- Join [![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk) group
+- Response questions in [Stackoverflow](https://stackoverflow.com/). Stackoverflow will send you notifications if you are
+  watching the [osm4scala](https://stackoverflow.com/questions/tagged/osm4scala) tag.
+- Post or comment issues for bugs, new features, feedback, etc.
+- Contribute improvements or fixes using a Pull Request. Before to create the PR, please:
+    - Discuss with the authors on an issue ticket prior to doing anything big.
+    - Follow the style, naming and structure conventions of the rest of the project.
+        - There is a `scalastyle` and a `scalafmt` config file in root of the repository. Use it.
+        - Follow the official[ Scala Style Guide](https://docs.scala-lang.org/style/)
+        - One feature per PR. Don't modify things that are not related to the ticket and are not necessary for it.
+        - If you find something wrong implementing of fixing, create a new ticket and fix it there (even if it is simple formatting style)
+        - Make commits atomic and easy to merge. Keep in mind that only "squash and rebase" is available in the PR.
+        - Verify all tests are passing, for all Scala/Spark version available, even if you think that you did not touch anything.
+          ```
+          PATCH_211=false sbt clean +test
+          PATCH_211=true sbt clean +test
+          ```
+
+### Prepare environment
+It's possible to develope using a Windows machine, but all documentation suppose that you are using Linux or Mac.
+
+The only special requirement is to execute `sbt compile` to generate the protobuf source code.
+```shell script
+sbt compile
+```
+
+
+## Other notes
+### As reference:
   - PBF2 Documentation: http://wiki.openstreetmap.org/wiki/PBF_Format
   - PBF2 Java library: https://github.com/openstreetmap/osmosis/tree/master/osmosis-osm-binary
   - Download whole planet pbf files: http://free.nchc.org.tw/osm.planet/
   - Download country pbf files: http://download.geofabrik.de/index.html
   - Scala protocol buffer library: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
 
-## Libraries:
-
+### Libraries:
   - ScalaPB: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
-
-
-## DEV
-
-### Prepare environment
-The only special requiriment is to execute `sbt compile` to generate the protobuf source code.
-```shell script
-sbt compile
-```
 
 ### Release process
 ```shell script
@@ -462,3 +496,4 @@ PATCH_211=false sbt release
 git checkout v1.*.*
 PATCH_211=true sbt clean +publish
 ```
+
