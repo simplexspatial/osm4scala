@@ -26,6 +26,7 @@
 package com.acervera.osm4scala.spark
 
 import java.io.File
+import java.time.Instant
 
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.{DataFrame, Row, SaveMode, SparkSession, functions => fn}
@@ -45,6 +46,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
 
   val madridPath = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
   val monacoPath = "core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf"
+  val delawarePath = "core/src/test/resources/com/acervera/osm4scala/delaware-latest.osm.pbf"
 
   def loadOsmPbf(spark: SparkSession, path: String, tableName: Option[String] = None): DataFrame = {
     val df = spark.sqlContext.read
@@ -109,6 +111,81 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
         )
       }
 
+    }
+
+    "parse optional field correctly" when {
+      "parse node with optional fields" in {
+        val node75390099 = loadOsmPbf(spark, delawarePath).filter("id == 75390099").collect()(0)
+        node75390099.getAs[Long]("id") shouldBe 75390099L
+        node75390099.getAs[Byte]("type") shouldBe 0
+        node75390099.getAs[Double]("latitude") shouldBe (39.7221284 +- 0.001)
+        node75390099.getAs[Double]("longitude") shouldBe (-75.7886029 +- 0.001)
+        node75390099.getAs[Map[String, String]]("tags") shouldBe
+          Map(
+            "ele" -> "240",
+            "ref" -> "1",
+            "name" -> "Tri-State Marker",
+            "historic" -> "boundary_stone",
+            "description" -> "Lat-Long (NAD27) \tN39°43'26.3\" W75°47'19.9\"\nUTM (NAD27) \t18S 432415 4397212\nUTM (WGS84) \t18S 432391 4397420",
+            "inscription" -> "Top: U.S. COAST & GEODETIC SURVEY REFERENCE MARK / FOR INFORMATION WRITE TO THE DIRECTOR, WASHINGTON, D.C. / $2500 FINE OR IMPRISONMENT FOR DISTURBING THIS MARK. / MD P CORNER NO 2 1935 Side 1: M Side 2: M Side 3: P 1849 Side 4: D"
+          )
+        node75390099.getAs[Seq[Any]]("nodes") shouldBe Seq.empty
+        node75390099.getAs[Seq[Any]]("relations") shouldBe Seq.empty
+        node75390099.getAs[Int]("version") shouldBe 9
+        node75390099.getAs[Int]("changeset") shouldBe 0
+        node75390099.getAs[Long]("timestamp") shouldBe Instant.parse("2020-06-19T02:30:15Z").toEpochMilli
+      }
+      "parse way with optional fields" in {
+        //        loadOsmPbf(delawarePath).filter("type == 1").show(100)
+        val way17229816 = loadOsmPbf(spark, delawarePath).filter("id == 17229816").collect()(0)
+        way17229816.getAs[Long]("id") shouldBe 17229816L
+        way17229816.getAs[Byte]("type") shouldBe 1
+        way17229816.getAs[AnyRef]("latitude") shouldBe (null)
+        way17229816.getAs[AnyRef]("longitude") shouldBe (null)
+        way17229816.getAs[Map[String, String]]("tags") shouldBe
+          Map(
+            "name" -> "Ridgewood Drive",
+            "source" -> "image",
+            "highway" -> "residential",
+            "maxspeed" -> "25 mph",
+            "source_ref" -> "yahoo aerial imagery",
+            "tiger:cfcc" -> "A41",
+            "tiger:county" -> "New Castle, DE",
+            "tiger:zip_left" -> "19707",
+            "tiger:name_base" -> "Ridgewood",
+            "tiger:name_type" -> "Dr",
+            "tiger:zip_right" -> "19707"
+          )
+        way17229816.getAs[Seq[Long]]("nodes") shouldBe Seq(178634861L, 178682677L, 178682679L, 178682682L, 178682683L,
+          178682685L, 178682687L, 178682689L, 178682691L)
+        way17229816.getAs[Seq[Any]]("relations") shouldBe Seq.empty
+        way17229816.getAs[Int]("version") shouldBe 3
+        way17229816.getAs[Int]("changeset") shouldBe 0
+        way17229816.getAs[String]("user") shouldBe ""
+        way17229816.getAs[Long]("timestamp") shouldBe Instant.parse("2017-09-30T23:45:16Z").toEpochMilli
+      }
+      "parse relation with optional field" in {
+        val relation11777502 = loadOsmPbf(spark, delawarePath).filter("id == 11777502").collect()(0)
+        relation11777502.getAs[Long]("id") shouldBe 11777502
+        relation11777502.getAs[Byte]("type") shouldBe 2
+        relation11777502.getAs[AnyRef]("latitude") should be(null)
+        relation11777502.getAs[AnyRef]("longitude") should be(null)
+        relation11777502.getAs[Map[String, String]]("tags") shouldBe
+          Map("restriction" -> "no_left_turn", "type" -> "restriction")
+
+        relation11777502.getAs[Seq[Any]]("nodes") shouldBe Seq.empty
+        relation11777502.getAs[InternalRow]("relations") shouldBe Seq(
+          Row(861238019, 1, "from"),
+          Row(861238018, 1, "to"),
+          Row(178578433, 0, "via")
+        )
+        relation11777502.getAs[Int]("version") shouldBe 1
+        relation11777502.getAs[Long]("timestamp") shouldBe Instant.parse("2020-10-21T01:55:20Z").toEpochMilli
+        relation11777502.getAs[Int]("changeset") shouldBe 0
+        relation11777502.getAs[String]("user") shouldBe ""
+        relation11777502.getAs[Int]("uid") shouldBe 0
+
+      }
     }
 
     "export to other formats" in withTemporalFolder { tmpFolder =>

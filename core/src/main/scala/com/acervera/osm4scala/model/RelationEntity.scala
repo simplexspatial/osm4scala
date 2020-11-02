@@ -25,6 +25,7 @@
 
 package com.acervera.osm4scala.model
 
+import com.acervera.osm4scala.utilities.DecompressUtils
 import org.openstreetmap.osmosis.osmbinary.osmformat.{Info, Relation, StringTable}
 
 /**
@@ -37,7 +38,7 @@ case class RelationEntity(id: Long,
                           timestamp: Option[Long],
                           changeset: Option[Long],
                           uid: Option[Int],
-                          user_sid: Option[Int],
+                          user: Option[String],
                           visible: Option[Boolean]) extends OSMEntity {
 
   override val osmModel: OSMTypes.Value = OSMTypes.Relation
@@ -57,8 +58,8 @@ case class RelationEntity(id: Long,
       s"timestamp: ${timestamp.getOrElse("None")}, " +
       s"changeset: ${changeset.getOrElse("None")}, " +
       s"uid: ${uid.getOrElse("None")}, " +
-      s"user_sid: ${user_sid.getOrElse("None")}, " +
-      s"visible: ${visible.getOrElse("True")}\n"
+      s"user: ${user.getOrElse("None")}, " +
+      s"visible: ${visible.getOrElse("None")}\n"
   }
 
 }
@@ -79,7 +80,7 @@ object RelationEntity {
 
     // Calculate tags using the StringTable.
     val tags: Map[String, String] = (osmosisRelation.keys, osmosisRelation.vals).zipped.map { (k, v) =>
-      osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8")
+      osmosisStringTable.s(k).toString(DecompressUtils.STRING_ENCODER) -> osmosisStringTable.s(v).toString(DecompressUtils.STRING_ENCODER)
     }.toMap
 
     // Decode members references in stored in delta compression.
@@ -89,14 +90,15 @@ object RelationEntity {
 
     // Calculate relations
     val relations: Seq[RelationMemberEntity] = (members, osmosisRelation.types, osmosisRelation.rolesSid).zipped.map { (m, t, r) =>
-      RelationMemberEntity(m, RelationMemberEntityTypes(t.value), osmosisStringTable.s(r).toString("UTF-8"))
+      RelationMemberEntity(m, RelationMemberEntityTypes(t.value), osmosisStringTable.s(r).toString(DecompressUtils.STRING_ENCODER))
     }
 
     val version: Option[Int] = optionalInfo.filter(_.version.isDefined).map(_.version.get)
-    val timestamp: Option[Long] = optionalInfo.filter(_.timestamp.isDefined).map(_.version.get * _dateGranularity)
+    val timestamp: Option[Long] = optionalInfo.filter(_.timestamp.isDefined).map(_.timestamp.get * _dateGranularity)
     val changeset: Option[Long] = optionalInfo.filter(_.changeset.isDefined).map(_.changeset.get)
     val uid: Option[Int] = optionalInfo.filter(_.uid.isDefined).map(_.uid.get)
-    val user_sid: Option[Int] = optionalInfo.filter(_.userSid.isDefined).map(_.userSid.get)
+    val userSid: Option[Int] = optionalInfo.filter(_.userSid.isDefined).map(_.userSid.get)
+    val user: Option[String] = userSid.map(x => osmosisStringTable.s(x).toString(DecompressUtils.STRING_ENCODER))
     val visible: Option[Boolean] = optionalInfo.filter(_.visible.isDefined).map(_.visible.get)
 
     RelationEntity(
@@ -107,7 +109,7 @@ object RelationEntity {
       timestamp = timestamp,
       changeset = changeset,
       uid = uid,
-      user_sid = user_sid,
+      user = user,
       visible = visible
     )
   }

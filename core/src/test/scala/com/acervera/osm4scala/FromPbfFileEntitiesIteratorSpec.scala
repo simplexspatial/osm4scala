@@ -70,18 +70,21 @@ class FromPbfFileEntitiesIteratorSpec extends AnyWordSpec with Matchers {
     "Read Entities correctly" in {
       val testFile = "core/src/test/resources/com/acervera/osm4scala/delaware-latest.osm.pbf"
       var pbfIS: InputStream = null
-      try {
-        pbfIS = new FileInputStream(testFile)
-        val readFile: EntityIterator = fromPbf(pbfIS)
-        val out = new ObjectOutputStream(new FileOutputStream("core/src/test/resources/com/acervera/osm4scala/delaware-latest.txt"))
-        readFile.foreach(x =>
-          out.writeObject(x.toString)
-        )
-        out.close()
+      val write = false
+      if(write) {
+        try {
+          pbfIS = new FileInputStream(testFile)
+          val readFile: EntityIterator = fromPbf(pbfIS)
+          val out = new ObjectOutputStream(new FileOutputStream("core/src/test/resources/com/acervera/osm4scala/delaware-latest.txt"))
+          readFile.foreach(x =>
+            out.writeObject(x.toString)
+          )
+          out.close()
 
 
-      } finally {
-        if (pbfIS != null) pbfIS.close()
+        } finally {
+          if (pbfIS != null) pbfIS.close()
+        }
       }
     }
   }

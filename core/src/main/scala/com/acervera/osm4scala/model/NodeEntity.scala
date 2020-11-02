@@ -36,7 +36,7 @@ case class NodeEntity(id: Long,
                       timestamp: Option[Long],
                       changeset: Option[Long],
                       uid: Option[Int],
-                      user_sid: Option[Int],
+                      user: Option[String],
                       visible: Option[Boolean]) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Node
 
@@ -56,7 +56,7 @@ case class NodeEntity(id: Long,
       s"timestamp: ${timestamp.getOrElse("None")}, " +
       s"changeset: ${changeset.getOrElse("None")}, " +
       s"uid: ${uid.getOrElse("None")}, " +
-      s"user_sid: ${user_sid.getOrElse("None")}, " +
-      s"visible: ${visible.getOrElse("True")}\n"
+      s"user: ${user.getOrElse("None")}, " +
+      s"visible: ${visible.getOrElse("None")}\n"
   }
 }

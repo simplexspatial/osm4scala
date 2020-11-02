@@ -91,11 +91,11 @@ object OsmPbfRowIterator {
       case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Array.empty[Long])
       case OsmSqlEntity.FIELD_RELATIONS => new GenericArrayData(Seq.empty)
       case FIELD_TAGS                   => calculateTags(entity.tags)
-      case FIELD_VERSION                => entity.version.getOrElse[Int](-1)
-      case FIELD_TIMESTAMP              => entity.timestamp.getOrElse[Long](-1)
-      case FIELD_CHANGESET              => entity.changeset.getOrElse[Long](-1)
-      case FIELD_UID                    => entity.uid.getOrElse[Int](-1)
-      case FIELD_USER_SID               => entity.user_sid.getOrElse[Int](-1)
+      case FIELD_VERSION                => if(entity.version.isDefined) entity.version.get else null
+      case FIELD_TIMESTAMP              => if(entity.timestamp.isDefined) entity.timestamp.get else null
+      case FIELD_CHANGESET              => if(entity.changeset.isDefined) entity.changeset.get else null
+      case FIELD_UID                    => if(entity.uid.isDefined) entity.uid.get else null
+      case FIELD_USER                   => if (entity.user.isDefined) UTF8String.fromString(entity.user.get) else null
       case FIELD_VISIBLE                => entity.visible.getOrElse[Boolean](true)
     }
 
@@ -107,11 +107,11 @@ object OsmPbfRowIterator {
       case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(entity.nodes.toArray)
       case OsmSqlEntity.FIELD_RELATIONS => new GenericArrayData(Seq.empty)
       case FIELD_TAGS                   => calculateTags(entity.tags)
-      case FIELD_VERSION                => entity.version.getOrElse[Int](-1)
-      case FIELD_TIMESTAMP              => entity.timestamp.getOrElse[Long](-1)
-      case FIELD_CHANGESET              => entity.changeset.getOrElse[Long](-1)
-      case FIELD_UID                    => entity.uid.getOrElse[Int](-1)
-      case FIELD_USER_SID               => entity.user_sid.getOrElse[Int](-1)
+      case FIELD_VERSION                => if(entity.version.isDefined) entity.version.get else null
+      case FIELD_TIMESTAMP              => if(entity.timestamp.isDefined) entity.timestamp.get else null
+      case FIELD_CHANGESET              => if(entity.changeset.isDefined) entity.changeset.get else null
+      case FIELD_UID                    => if(entity.uid.isDefined) entity.uid.get else null
+      case FIELD_USER                   => if(entity.user.isDefined) UTF8String.fromString(entity.user.get) else null
       case FIELD_VISIBLE                => entity.visible.getOrElse[Boolean](true)
     }
 
@@ -125,11 +125,11 @@ object OsmPbfRowIterator {
           case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Seq.empty[Long].toArray)
           case OsmSqlEntity.FIELD_RELATIONS => calculateRelations(entity.relations, f)
           case FIELD_TAGS                   => calculateTags(entity.tags)
-          case FIELD_VERSION                => entity.version.getOrElse[Int](-1)
-          case FIELD_TIMESTAMP              => entity.timestamp.getOrElse[Long](-1)
-          case FIELD_CHANGESET              => entity.changeset.getOrElse[Long](-1)
-          case FIELD_UID                    => entity.uid.getOrElse[Int](-1)
-          case FIELD_USER_SID               => entity.user_sid.getOrElse[Int](-1)
+          case FIELD_VERSION                => if(entity.version.isDefined) entity.version.get else null
+          case FIELD_TIMESTAMP              => if(entity.timestamp.isDefined) entity.timestamp.get else null
+          case FIELD_CHANGESET              => if(entity.changeset.isDefined) entity.changeset.get else null
+          case FIELD_UID                    => if(entity.uid.isDefined) entity.uid.get else null
+          case FIELD_USER                   => if(entity.user.isDefined) UTF8String.fromString(entity.user.get) else null
           case FIELD_VISIBLE                => entity.visible.getOrElse[Boolean](true)
       })
 

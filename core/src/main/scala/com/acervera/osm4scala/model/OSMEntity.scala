@@ -39,7 +39,6 @@ trait OSMEntity extends Product with Serializable {
   val timestamp: Option[Long]
   val changeset: Option[Long]
   val uid: Option[Int]
-  val user_sid: Option[Int]
+  val user: Option[String]
   val visible: Option[Boolean]
-
 }

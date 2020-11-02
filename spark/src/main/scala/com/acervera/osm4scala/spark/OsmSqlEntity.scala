@@ -45,7 +45,7 @@ object OsmSqlEntity {
   val FIELD_TIMESTAMP = "timestamp"
   val FIELD_CHANGESET = "changeset"
   val FIELD_UID = "uid"
-  val FIELD_USER_SID = "user_sid"
+  val FIELD_USER = "user"
   val FIELD_VISIBLE = "visible"
 
   val ENTITY_TYPE_NODE: Byte = 0
@@ -85,7 +85,7 @@ object OsmSqlEntity {
       StructField(FIELD_TIMESTAMP, LongType, true),
       StructField(FIELD_CHANGESET, LongType, true),
       StructField(FIELD_UID, IntegerType, true),
-      StructField(FIELD_USER_SID, IntegerType, true),
+      StructField(FIELD_USER, StringType, true),
       StructField(FIELD_VISIBLE, BooleanType, true)
     ))
 

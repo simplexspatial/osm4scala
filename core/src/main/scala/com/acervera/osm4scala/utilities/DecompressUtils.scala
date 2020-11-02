@@ -33,6 +33,9 @@ package com.acervera.osm4scala.utilities
   */
 object DecompressUtils {
 
+  private val COORDINATE_SCALING_FACTOR = 0.000000001
+  val STRING_ENCODER: String = "UTF-8"
+
   def iteratorCheck[A](iterator: Iterator[A]): Option[A] = {
     if(iterator.isEmpty || !iterator.hasNext) None else Option[A](iterator.next())
   }
@@ -48,7 +51,7 @@ object DecompressUtils {
                       delta: Long,
                       granularity: Long,
                       currentValue: Double): Double = {
-    (.000000001 * (offSet + (granularity * delta))) + currentValue
+    (this.COORDINATE_SCALING_FACTOR * (offSet + (granularity * delta))) + currentValue
   }
 
   def decompressTimestamp(currentTimeStampOffSet: Option[Long],
