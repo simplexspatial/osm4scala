@@ -465,11 +465,11 @@ First of all, if you arrived to this point, thanks for at least think about cont
         - Follow the official [Scala Style Guide](https://docs.scala-lang.org/style/)
         - Using Scala inference and the compiler optimization coming from there is good. So use it and specify typing only
           for public functions/properties to help the API user. If the developer cannot figure out the type in a short
-          function (or short scope), then there is a problem with the developer, with the code complexity or with both.
+          function (or short scope), then there is a problem with the code complexity, with the developer or with both.
         - Variable names should be self descriptive and camel case. `_` or others not alphabetical chars are not allowed
           if there is not a real reason.
-        - If you find that repeating a function/property name is needed, something is wrong, because two function/property
-          are used for the same, you can remove one of them. Never try to fix it add a prefix (like `_` or `$`)
+        - If you find that repeating a function/property name is needed, something is wrong. It means that two function/property
+          are used for the same thing, so you can remove one of them. Never try to fix it adding a prefix (like `_` or `$`)
     - One feature per PR. Don't modify things that are not related to the ticket and are not necessary for it.
     - If you find something wrong or that could be better, create a new ticket and fix it there (even if it is simple formatting style)
     - Make your commits atomics and easy to merge and review. Keep in mind that only "squash and rebase" is available in the PR.
@@ -478,13 +478,13 @@ First of all, if you arrived to this point, thanks for at least think about cont
     - Try always functional approaches over imperative. Sometime is not possible, specially working with iterators over files
       (it means mutability and side effects) like in this project, but all around that should be as functional as possible.
     - Don't pollute the code with things that does not add **value**.
-    - Avoid using other libraries as possible. This is a library used with other complex frameworks like AKKA and Spark.
-      Dependencies in those cases are source of problems.
+    - Avoid using other libraries as possible. This is a library used with other complex frameworks like Spark or toolkits
+      like AKKA. Dependencies in these cases are source of problems.
     - Again, modify only the code that is strictly necessary and it's inside of the scope of the ticket. Currently, all stuff
       work with no problem and with a great performance, so it is ok (In fact, this is the point!).
     - If you think something could be better, great! Create a ticket with a good description (why, motivation, etc) and
       we can talk from there.
-    - Don't write production code for testing or debug. All related with testing should be with testing code. 
+    - Don't write production code for testing or debugging. All related with testing should be with the testing source code. 
     - Verify that all tests are passing, for all Scala/Spark version available, even if you think that you did not touch anything.
       ```
       PATCH_211=false sbt clean +test
