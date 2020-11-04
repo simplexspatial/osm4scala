@@ -46,7 +46,7 @@ object RelationEntity {
 
     // Calculate relations
     val relations = (members, osmosisRelation.types, osmosisRelation.rolesSid).zipped.map { (m, t, r) =>
-      RelationMemberEntity(m, RelationMemberEntityTypes(t.value), osmosisStringTable.s(r).toString(CHARSET))
+      RelationMemberEntity(m, RelationMemberEntityTypes(t.value), osmosisStringTable.getString(r))
     }
 
     new RelationEntity(

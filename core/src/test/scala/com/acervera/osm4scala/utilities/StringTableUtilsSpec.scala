@@ -36,6 +36,9 @@ class StringTableUtilsSpec extends AnyWordSpecLike {
     "extract tags from key,value sequence" in {
       fail("Still refactoring")
     }
+    "extract the String" in {
+      fail("Still refactoring")
+    }
   }
 
 }

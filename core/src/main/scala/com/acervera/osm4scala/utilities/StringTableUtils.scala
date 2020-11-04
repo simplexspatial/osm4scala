@@ -32,7 +32,7 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.StringTable
   */
 object StringTableUtils {
 
-  val CHARSET = "UTF-8"
+  private val CHARSET = "UTF-8"
 
   implicit class StringTableEnricher(stringTable: StringTable) {
 
@@ -59,6 +59,14 @@ object StringTableUtils {
         .grouped(2)
         .map(tag => stringTable.s(tag.head).toString(CHARSET) -> stringTable.s(tag.last).toString(CHARSET))
         .toMap
+
+    /**
+      * Extract String from the String table.
+      *
+      * @param idx String index.
+      * @return Proper Scala String.
+      */
+    def getString(idx: Int): String = stringTable.s(idx).toString(CHARSET)
 
   }
 
