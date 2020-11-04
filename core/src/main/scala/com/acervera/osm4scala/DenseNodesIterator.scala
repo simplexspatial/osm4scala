@@ -26,6 +26,7 @@
 package com.acervera.osm4scala
 
 import com.acervera.osm4scala.model.NodeEntity
+import com.acervera.osm4scala.utilities.StringTableUtils._
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
 
 object DenseNodesIterator {
@@ -72,18 +73,14 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
       decompressCoord(latOffset, latIterator.next(), lastNode.latitude)
     val longitude =
       decompressCoord(lonOffset, lonIterator.next(), lastNode.longitude)
-    val tags = tagsIterator
-      .takeWhile(_ != 0L)
-      .grouped(2)
-      .map { tag =>
-        osmosisStringTable.s(tag.head).toString("UTF-8") -> osmosisStringTable
-          .s(tag.last)
-          .toString("UTF-8")
-      }
-      .toMap
 
     // Create node
-    lastNode = NodeEntity(id, latitude, longitude, tags)
+    lastNode = NodeEntity(
+      id,
+      latitude,
+      longitude,
+      osmosisStringTable.extractTags(tagsIterator.takeWhile(_ != 0L))
+    )
 
     lastNode
   }

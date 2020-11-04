@@ -27,6 +27,9 @@ package com.acervera.osm4scala.utilities
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.StringTable
 
+/**
+  * Utilities to extract data from StringTable Objects.
+  */
 object StringTableUtils {
 
   val CHARSET = "UTF-8"
@@ -34,7 +37,7 @@ object StringTableUtils {
   implicit class StringTableEnricher(stringTable: StringTable) {
 
     /**
-      * From a list of an values indexes, create Map of tags.
+      * From a sequence of keys and values indexes, creates a Map of tags.
       *
       * @param keys Sequence of indexes pointing to strings used as keys
       * @param values Sequence of indexes pointing to strings used as values
@@ -45,5 +48,18 @@ object StringTableUtils {
         stringTable.s(key).toString(CHARSET) -> stringTable.s(value).toString(CHARSET)
       }.toMap
 
+    /**
+      * From a sequence of indexes following the sequence pattern `(key,value)*`m creates a Map of tags.
+      *
+      * @param keyValueSequence key,value sequence.
+      * @return Map with tags.
+      */
+    def extractTags(keyValueSequence: Iterator[Int]): Map[String, String] =
+      keyValueSequence
+        .grouped(2)
+        .map(tag => stringTable.s(tag.head).toString(CHARSET) -> stringTable.s(tag.last).toString(CHARSET))
+        .toMap
+
   }
+
 }
