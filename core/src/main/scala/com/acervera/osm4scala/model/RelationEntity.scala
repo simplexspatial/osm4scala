@@ -25,6 +25,7 @@
 
 package com.acervera.osm4scala.model
 
+import com.acervera.osm4scala.utilities.StringTableUtils._
 import org.openstreetmap.osmosis.osmbinary.osmformat.{Relation, StringTable}
 
 /**
@@ -40,20 +41,19 @@ object RelationEntity {
 
   def apply(osmosisStringTable: StringTable, osmosisRelation: Relation): RelationEntity = {
 
-    // Calculate tags using the StringTable.
-    val tags = (osmosisRelation.keys, osmosisRelation.vals).zipped.map { (k, v) =>
-      osmosisStringTable.s(k).toString("UTF-8") -> osmosisStringTable.s(v).toString("UTF-8")
-    }.toMap
-
     // Decode members references in stored in delta compression.
     val members = osmosisRelation.memids.scanLeft(0L) { _ + _ }.drop(1)
 
     // Calculate relations
     val relations = (members, osmosisRelation.types, osmosisRelation.rolesSid).zipped.map { (m, t, r) =>
-      RelationMemberEntity(m, RelationMemberEntityTypes(t.value), osmosisStringTable.s(r).toString("UTF-8"))
+      RelationMemberEntity(m, RelationMemberEntityTypes(t.value), osmosisStringTable.s(r).toString(CHARSET))
     }
 
-    new RelationEntity(osmosisRelation.id, relations, tags)
+    new RelationEntity(
+      osmosisRelation.id,
+      relations,
+      osmosisStringTable.extractTags(osmosisRelation.keys, osmosisRelation.vals)
+    )
   }
 
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2020 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,27 @@
  *
  */
 
-package com.acervera.osm4scala.model
+package com.acervera.osm4scala.utilities
 
-import com.acervera.osm4scala.utilities.StringTableUtils._
-import org.openstreetmap.osmosis.osmbinary.osmformat.{StringTable, Way}
+import org.openstreetmap.osmosis.osmbinary.osmformat.StringTable
 
-/**
-  * Entity that represent a OSM way as https://wiki.openstreetmap.org/wiki/Elements#Way and https://wiki.openstreetmap.org/wiki/Way describe
-  */
-case class WayEntity(id: Long, nodes: Seq[Long], tags: Map[String, String]) extends OSMEntity {
+object StringTableUtils {
 
-  override val osmModel: OSMTypes.Value = OSMTypes.Way
+  val CHARSET = "UTF-8"
 
-  object WayEntityTypes extends Enumeration { // TODO: How to know the type ?????
-    val Open, Close, Area, CombinedClosedPolylineArea = Value
+  implicit class StringTableEnricher(stringTable: StringTable) {
+
+    /**
+      * From a list of an values indexes, create Map of tags.
+      *
+      * @param keys Sequence of indexes pointing to strings used as keys
+      * @param values Sequence of indexes pointing to strings used as values
+      * @return Map with tags.
+      */
+    def extractTags(keys: Seq[Int], values: Seq[Int]): Map[String, String] =
+      (keys, values).zipped.map { (key, value) =>
+        stringTable.s(key).toString(CHARSET) -> stringTable.s(value).toString(CHARSET)
+      }.toMap
+
   }
-
-}
-
-object WayEntity {
-
-  def apply(osmosisStringTable: StringTable, osmosisWay: Way): WayEntity = {
-
-    // Calculate nodes references in stored in delta compression.
-    val nodes = osmosisWay.refs.scanLeft(0L) { _ + _ }.drop(1)
-
-    new WayEntity(
-      osmosisWay.id,
-      nodes,
-      osmosisStringTable.extractTags(osmosisWay.keys, osmosisWay.vals)
-    )
-  }
-
 }
