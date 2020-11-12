@@ -40,13 +40,13 @@ class StringTableUtilsSpec extends AnyWordSpecLike with Matchers with StringTabl
     "extract tags from one sequences of keys and other of values " in {
       strTable.extractTags(Seq(0,5), Seq(2,1)) shouldBe Map(
         "value0" -> "value2",
-        "value5" -> "value1",
+        "value5" -> "value1"
       )
     }
     "extract tags from key,value sequence" in {
       strTable.extractTags(Seq(0,2,5,1).toIterator) shouldBe Map(
         "value0" -> "value2",
-        "value5" -> "value1",
+        "value5" -> "value1"
       )
     }
     "extract the String" in {
