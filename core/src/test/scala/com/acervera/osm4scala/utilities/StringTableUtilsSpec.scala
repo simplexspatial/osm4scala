@@ -32,7 +32,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 class StringTableUtilsSpec extends AnyWordSpecLike with Matchers with StringTableUtils {
 
-  val strTable = StringTable(
+  private val strTable = StringTable(
     (0 to 10).map(idx => ByteString.copyFromUtf8(s"value$idx"))
   )
 
