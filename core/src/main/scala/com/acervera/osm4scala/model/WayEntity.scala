@@ -25,7 +25,7 @@
 
 package com.acervera.osm4scala.model
 
-import com.acervera.osm4scala.utilities.StringTableUtils._
+import com.acervera.osm4scala.utilities.StringTableUtils
 import org.openstreetmap.osmosis.osmbinary.osmformat.{StringTable, Way}
 
 /**
@@ -41,7 +41,7 @@ case class WayEntity(id: Long, nodes: Seq[Long], tags: Map[String, String]) exte
 
 }
 
-object WayEntity {
+object WayEntity extends StringTableUtils {
 
   def apply(osmosisStringTable: StringTable, osmosisWay: Way): WayEntity = {
 

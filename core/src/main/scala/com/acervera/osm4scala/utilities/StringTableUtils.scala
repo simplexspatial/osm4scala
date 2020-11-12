@@ -30,14 +30,14 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.StringTable
 /**
   * Utilities to extract data from StringTable Objects.
   */
-object StringTableUtils {
+private[osm4scala] trait StringTableUtils {
 
   private val CHARSET = "UTF-8"
 
   implicit class StringTableEnricher(stringTable: StringTable) {
 
     /**
-      * From a sequence of keys and values indexes, creates a Map of tags.
+      * From a sequence of keys and values indexes, it creates a Map of tags.
       *
       * @param keys Sequence of indexes pointing to strings used as keys
       * @param values Sequence of indexes pointing to strings used as values
@@ -49,7 +49,7 @@ object StringTableUtils {
       }.toMap
 
     /**
-      * From a sequence of indexes following the sequence pattern `(key,value)*`m creates a Map of tags.
+      * From a sequence of indexes following the sequence pattern `(key,value)*`, it creates a Map of tags.
       *
       * @param keyValueSequence key,value sequence.
       * @return Map with tags.
