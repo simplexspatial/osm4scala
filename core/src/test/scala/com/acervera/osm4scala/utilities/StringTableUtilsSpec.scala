@@ -23,36 +23,35 @@
  *
  */
 
-package com.acervera.osm4scala.model
+package com.acervera.osm4scala.utilities
 
-import com.acervera.osm4scala.utilities.StringTableUtils
-import org.openstreetmap.osmosis.osmbinary.osmformat.{StringTable, Way}
+import com.google.protobuf.ByteString
+import org.openstreetmap.osmosis.osmbinary.osmformat.StringTable
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-/**
-  * Entity that represent a OSM way as https://wiki.openstreetmap.org/wiki/Elements#Way and https://wiki.openstreetmap.org/wiki/Way describe
-  */
-case class WayEntity(id: Long, nodes: Seq[Long], tags: Map[String, String]) extends OSMEntity {
+class StringTableUtilsSpec extends AnyWordSpecLike with Matchers with StringTableUtils {
 
-  override val osmModel: OSMTypes.Value = OSMTypes.Way
+  private val strTable = StringTable(
+    (0 to 10).map(idx => ByteString.copyFromUtf8(s"value$idx"))
+  )
 
-  object WayEntityTypes extends Enumeration { // TODO: How to know the type ?????
-    val Open, Close, Area, CombinedClosedPolylineArea = Value
-  }
-
-}
-
-object WayEntity extends StringTableUtils {
-
-  def apply(osmosisStringTable: StringTable, osmosisWay: Way): WayEntity = {
-
-    // Calculate nodes references in stored in delta compression.
-    val nodes = osmosisWay.refs.scanLeft(0L) { _ + _ }.drop(1)
-
-    new WayEntity(
-      osmosisWay.id,
-      nodes,
-      osmosisStringTable.extractTags(osmosisWay.keys, osmosisWay.vals)
-    )
+  "StringTableEnricher" should {
+    "extract tags from one sequences of keys and other of values " in {
+      strTable.extractTags(Seq(0,5), Seq(2,1)) shouldBe Map(
+        "value0" -> "value2",
+        "value5" -> "value1"
+      )
+    }
+    "extract tags from key,value sequence" in {
+      strTable.extractTags(Seq(0,2,5,1).toIterator) shouldBe Map(
+        "value0" -> "value2",
+        "value5" -> "value1"
+      )
+    }
+    "extract the String" in {
+      strTable.getString(0) shouldBe "value0"
+    }
   }
 
 }
