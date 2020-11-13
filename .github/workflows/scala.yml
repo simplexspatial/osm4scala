@@ -16,4 +16,4 @@ jobs:
       - name: Run tests
         run: sbt clean coverage test
       - name: Report coverage
-        run: sbt coverageAggregate
+        run: sbt coverageReport
