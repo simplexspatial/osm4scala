@@ -57,7 +57,7 @@ object OSMDataFinder {
         * Check that It's OSMData string and a true block as well.
         * @return
         */
-      def isFalsePositive(): Boolean = false // TODO: Need implementation.
+      def isFalsePositive(): Boolean = false // TODO: Needs implementation.
 
       /**
         * Read next n bytes from the stream. If are not enough, return None.
