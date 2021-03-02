@@ -18,6 +18,9 @@ This library achieves two different goals:
 - [Core library](#core-library): High performance Scala library to read OSM Pbf files as iterators.
 - [Spark Connector](#spark-connector): Polyglot ([Scala](#examples-from-spark-shell), [Python](#examples-from-pyspark),
   [SQL](#examples-from-spark-sql) or R) Spark connector to query OSM Pbf files.
+  
+## Question?
+Please, use [Stackoverflow](https://stackoverflow.com) with the tag `[osm4scala]`. **I will response asap**.
 
 
 ## Selecting the right Version
