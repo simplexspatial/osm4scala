@@ -92,7 +92,8 @@ def generateSparkFatShadedModule(sparkVersion: String, sparkPrj: Project): Proje
   Project(
     id = s"osm4scala-spark${sparkVersion.head}-shaded",
     base = file(s"target/osm4scala-spark${sparkVersion.head}-shaded")
-  ).disablePlugins(AssemblyPlugin)
+  )
+    .disablePlugins(AssemblyPlugin)
     .settings(
       commonSettings,
       crossScalaVersions := sparkScalaVersions,
