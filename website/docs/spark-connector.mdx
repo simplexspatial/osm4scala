@@ -296,31 +296,14 @@ When we need to write more complex analysis, data extractions, ETLs, etc, it is 
 
     :::
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Plain (non-shaded jar) dependency.
-When we need to write more complex analysis, data extractions, ETLs, etc, it is necessary to write Spark applications. In
-this case, the best practice is to manage dependencies using `sbt` or `maven`, instead to import the shaded file.
+Sometimes we need to write more complex applications, analysis, data extractions, ETLs, integrate with other libraries,
+unit testing, etc.
+In that case, the best practice is to manage dependencies using `sbt` or `maven`, instead to import the shaded file.
 
-As you probably know, Spark is base in Scala. Different Spark distributions are using different Scala versions.
-
-:::note
 
 OSM Pbf files are based on [Protocol Buffer](https://developers.google.com/protocol-buffers), so [Scalapb](https://scalapb.github.io) is
-used as deserializer. In the next version table, I added one column with the version used for each combination.
-
-:::
+used as deserializer so it's the unique transitive dependency.
 
 This is the Spark/Scala version combination available for latest release v1.0.7:
 
@@ -331,8 +314,24 @@ This is the Spark/Scala version combination available for latest release v1.0.7:
 | 3.0   | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3_2.12/1.0.7/jar)
 
 After importing the connector, you can use it as we explained in the [All in one section](#all-in-one-jar). So lets see
-how to import the library in our project and few examples:
+how to import the library in our project and few examples.
 
 ### Resolving dependency conflicts
+Osm4scala has a transitive dependency with Java Google Protobuf library.
+Spark, Hadoop and other libraries in the ecosystem are using an older version of the same library (currently v2.5.0 from Mar, 2013) that is not compatible.
+
+To be able to resolve this conflicts, you will need to `shade` your deployed jar. The conflict comes from the package `com.google.protobuf`.
+
+Following, how to do it using SBT:
+
+```scala title="Sbt"
+assemblyShadeRules in assembly := Seq(
+ShadeRule
+  .rename("com.google.protobuf.**" -> "shadeproto.@1")
+  .inAll
+)
+```
+
+It is possible to do the same using the [shade maven plugin](https://maven.apache.org/plugins/maven-shade-plugin/index.html).
 
 
