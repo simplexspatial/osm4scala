@@ -19,7 +19,7 @@ The current implementation offers:
     - Pushdown required columns.
 
 The library is distributed via [Maven Repo](https://mvnrepository.com/artifact/com.acervera.osm4scala) in two different ways,
-[all in one jar](#all-in-on-jar) to be able to use directly with all dependencies or as [scala dependency](#as-scala-dependency).
+[all in one jar](#all-in-on-jar) to be able to use directly with all dependencies or as [plain scala dependency](#plain-non-shaded-jar-dependency).
 
 ## Schema definition
 
@@ -57,21 +57,31 @@ Where the column `relationType` could be:
 | 3     | Unrecognized |
 
 ## All in one jar
-Usually, osm4scala is used from the [Spark Shell](spark-shell) or from a [Notebook](notebook). For those cases, to simplify the way to add the
-connector as dependency, you have a shaded fat jar version with all dependencies that are necessary.
-The fat jar is around 4MB, so the size should be not a problem.
+Usually, osm4scala is used from the [Spark Shell](spark-shell) or from a [Notebook](notebook). For these cases,
+to simplify the way to add the connector as dependency, you have a shaded fat jar version with all dependencies that are
+necessary.
+The fat jar is near 5MB, so the size should be not a problem.
 
 As you probably know, Spark is base in Scala. Different Spark distributions are using different Scala versions.
 This is the Spark/Scala version combination available for latest release v1.0.7:
 
 | Spark |  Scala | Packages |
-|:-----:|:------:|---------:|
-| 2.4   | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.11/1.0.7/jar)
-| 2.4   | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.12/1.0.7/jar)
-| 3.0   | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3_2.12/1.0.7/jar)
+|:-----:|:------:|:---------|
+| 2.4   | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.11/1.0.7/jar)
+| 2.4   | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.12/1.0.7/jar)
+| 3.0   | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3-shaded_2.12/1.0.7/jar)
 
 Although following sections are focus on Spark Shell and Notebooks, you can use the same technique in other situations where
 you want to use the shaded version.
+
+### Why a fat shaded library?
+
+Osm4scala has a transitive dependency with Java Google Protobuf library. Spark, Hadoop and other libraries in the
+ecosystem are using an old version of the same library (currently v2.5.0 from Mar, 2013) that is not compatible.
+
+To solve the conflict, I published the library in two fashion:
+- Fat and Shaded as `osm4scala-spark3-shaded` that solves `com.google.protobuf.**` conflicts.
+- Don't shaded as `osm4scala-spark3`, so you can solve the conflict on your way.
 
 ### Spark Shell
 
@@ -183,28 +193,98 @@ you want to use the shaded version.
 
 ### Notebook
 
-There are different notebooks solutions in the market and each one is using a different way to import libraries, but after
+There are different notebooks solutions in the market and each one is using a different way to import libraries. But after
 importing the library, you can use the osm4scala connector in the same way.
 
-For this section, we are going to talk about [Jupyter Notebook](https://jupyter.org)
+For this section, we are going to talk about [Jupyter Notebook](https://jupyter.org). If you can not access to a Jupyter Notebook
+installation, you can use [jupyter/all-spark-notebook](https://hub.docker.com/r/jupyter/all-spark-notebook) Docker image as I will do.
+[Here](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html), full documentation about how to install and use it.
+
+Also, You can use [MyBinder](https://mybinder.org/v2/gh/jupyter/docker-stacks/master?filepath=README.ipynb).
 
 
-## As Scala dependency
+### Spark application
+
+When we need to write more complex analysis, data extractions, ETLs, etc, it is necessary to write Spark applications.
+
+1. Import the spark connector **it is not really necessary** because the integration is transparent.
+
+   Only two *possible* advantages (not available if using Python) are:
+   - The use of static constants, for example, to avoid `magic numbers` for primitive and relation types.
+   - Using the library as part of Unit Testing or Integration Testing.
+   - Adding osm4scala jar library as part of the deployable artifact.
+
+    **For Python**, like in Scala, it is not necessary to import the library except in runtime. But unlike in Scala, you
+    can not *easily* to import and use facilities from the Scala library. So in this case, you can jump to the next step.
+
+    ```sbt title="Sbt"
+    libraryDependencies += "com.acervera.osm4scala" % "osm4scala-spark3-shaded_2.12" % "1.0.7"
+    ```
+    ```xml title="Maven"
+    <dependency>
+        <groupId>com.acervera.osm4scala</groupId>
+        <artifactId>osm4scala-spark3-shaded_2.12</artifactId>
+        <version>1.0.7</version>
+    </dependency>
+    ```
+    :::tip Reduce artifact size.
+
+    The shaded dependency is near 5MB. You can add this dependency as a package when you submit the job instead to include it
+    in the deployable artifact generated.
+
+    *If you don't know what I'm talking about, don't pay too much attention and forget it.* :wink:
+
+    ```sbt title="Sbt"
+    libraryDependencies += ..... % "provided"
+    ```
+    ```xml title="Maven"
+    <dependency>
+        .....
+        <scope>provided</scope>
+    </dependency>
+    ```
+
+    :::
+
+2. Create the Dataframe using the osm.pbf format, pointing to the pbf file or folder containing pbf files.
 
 
-For example,
-- If you want to import the Spark Connector for Scala 2.11 and Spark 2.4: `com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.7`
-- If you want to import the Spark Connector for Scala 2.12 and Spark 2.4: `com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.7`
-- If you want to import the Spark Connector for Scala 2.12 and Spark 3.0: `com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7`
 
 
 
-## Why a fat shaded library?
 
-Osm4scala has a transitive dependency with Java Google Protobuf library. Spark, Hadoop and other libraries in the
-ecosystem are using an old version of the same library (currently v2.5.0 from Mar, 2013) that is not compatible.
 
-To solve the conflict, I published the library in two fashion:
-- Fat and Shaded as `osm4scala-spark3-shaded` that solves `com.google.protobuf.**` conflicts.
-- Don't shaded as `osm4scala-spark3`, so you can solve the conflict on your way.
+
+
+
+
+
+
+
+## Plain (non-shaded jar) dependency.
+When we need to write more complex analysis, data extractions, ETLs, etc, it is necessary to write Spark applications. In
+this case, the best practice is to manage dependencies using `sbt` or `maven`, instead to import the shaded file.
+
+As you probably know, Spark is base in Scala. Different Spark distributions are using different Scala versions.
+
+:::note
+
+OSM Pbf files are based on [Protocol Buffer](https://developers.google.com/protocol-buffers), so [Scalapb](https://scalapb.github.io) is
+used as deserializer. In the next version table, I added one column with the version used for each combination.
+
+:::
+
+This is the Spark/Scala version combination available for latest release v1.0.7:
+
+| Spark | Scalapb |  Scala | Packages |
+|:-----:|:-------:|:------:|:---------|
+| 2.4   | 0.9.7  | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2_2.11:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.11/1.0.7/jar)
+| 2.4   | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.12/1.0.7/jar)
+| 3.0   | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3_2.12/1.0.7/jar)
+
+
+After importing the connector, you can use it as we explained in the [All in one section](#all-in-one-jar). So lets see
+how to import the library in our project and few examples:
+
+
 
