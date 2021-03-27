@@ -230,23 +230,71 @@ When we need to write more complex analysis, data extractions, ETLs, etc, it is 
     :::tip Reduce artifact size.
 
     The shaded dependency is near 5MB. You can add this dependency as a package when you submit the job instead to include it
-    in the deployable artifact generated.
+    in the deployable artifact generated. To do it, set the scope dependency as `Test` or `Provided`.
 
     *If you don't know what I'm talking about, don't pay too much attention and forget it.* :wink:
 
-    ```sbt title="Sbt"
-    libraryDependencies += ..... % "provided"
-    ```
-    ```xml title="Maven"
-    <dependency>
-        .....
-        <scope>provided</scope>
-    </dependency>
-    ```
-
     :::
 
-2. Create the Dataframe using the osm.pbf format, pointing to the pbf file or folder containing pbf files.
+2. Create the Dataframe using the osm.pbf format, pointing to the pbf file or folder containing pbf files, and use as usual.
+    ```scala title="Scala / PrimitivesCounter.scala"
+
+    import com.acervera.osm4scala.spark.OsmSqlEntity
+    import org.apache.spark.sql.SparkSession
+
+    object PrimitivesCounter {
+
+      def main(args: Array[String]): Unit = {
+        val spark = SparkSession
+          .builder()
+          .appName("Primitives counter")
+          .getOrCreate()
+
+        spark.read
+          .format("osm.pbf")
+          .load(args(0))
+          .groupBy(OsmSqlEntity.FIELD_TYPE)
+          .count
+          .show
+      }
+    }
+
+    ```
+    ```python title="PySpark / PrimiriveCounter.py"
+    from pyspark.sql import SparkSession
+    import sys
+
+    if __name__ == '__main__':
+
+        spark = SparkSession.builder.appName("Primitives counter").getOrCreate()
+
+        spark.read.format("osm.pbf")\
+            .load(sys.argv[1])\
+            .groupBy("type")\
+            .count()\
+            .show()
+    ```
+
+3. Submit the application to your Spark cluster.
+    ```shell title="Scala"
+    bin/spark-submit \
+        --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7' \
+        examples/spark-documentation/target/scala-2.12/osm4scala-examples-spark-documentation_2.12-1.0.8-SNAPSHOT.jar \
+        /tmp/osm/monaco-latest.osm.pbf
+    ```
+    ```shell title="PySpark"
+    bin/spark-submit \
+        --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7' \
+        examples/spark-documentation/src/main/scala/com/acervera/osm4scala/examples/spark/documentation/PrimiriveCounter.py \
+        /tmp/osm/monaco-latest.osm.pbf
+    ```
+
+    :::note Optional --packages.
+
+    You will not need to add `--packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7'` if it is part of the
+    deployed artifact.
+
+    :::
 
 
 
@@ -282,9 +330,9 @@ This is the Spark/Scala version combination available for latest release v1.0.7:
 | 2.4   | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.12/1.0.7/jar)
 | 3.0   | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3_2.12/1.0.7/jar)
 
-
 After importing the connector, you can use it as we explained in the [All in one section](#all-in-one-jar). So lets see
 how to import the library in our project and few examples:
 
+### Resolving dependency conflicts
 
 

@@ -174,7 +174,8 @@ def listOfProjects(): Seq[ProjectReference] = {
   val spark3Projects: Seq[ProjectReference] = Seq(
     spark3,
     spark3FatShaded,
-    exampleSparkUtilities
+    exampleSparkUtilities,
+    exampleSparkDocumentation
   )
 
   val projects = modules ++ (if(isPatch211Enable()) Seq.empty else spark3Projects)
@@ -313,6 +314,21 @@ lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base =
     description := "Example of different utilities using osm4scala and Spark.",
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-sql" % spark3Version % Provided
+    )
+  )
+  .dependsOn(spark3, commonUtilities)
+
+
+lazy val exampleSparkDocumentation = Project(id = "examples-spark-documentation", base = file("examples/spark-documentation"))
+  .disablePlugins(AssemblyPlugin)
+  .settings(
+    commonSettings,
+    exampleSettings,
+    crossScalaVersions := Seq(scala212),
+    name := "osm4scala-examples-spark-documentation",
+    description := "Examples used in the documentation.",
+    libraryDependencies ++= Seq(
+      "org.apache.spark" %% "spark-sql" % spark3Version
     )
   )
   .dependsOn(spark3, commonUtilities)
