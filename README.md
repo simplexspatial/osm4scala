@@ -8,7 +8,13 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala?ref=badge_shield)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](https://github.com/simplexspatial/osm4scala/blob/master/code_of_conduct.md)
 
+<p align="center">
+  <img src="website/static/android-chrome-512x512.png">
+</p>
+
+## Documentation and site
 Full documentation at https://simplexspatial.github.io/osm4scala/
+
 
 
 ## Dev information:
