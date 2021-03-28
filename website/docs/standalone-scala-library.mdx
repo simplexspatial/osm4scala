@@ -1,0 +1,71 @@
+---
+title: Scala library
+---
+
+With Osm4scala, you can forget about complexity of the `osm.pbf` format and think about a **scala iterators of primitives**
+(nodes, ways and relations) or blob blocks.
+
+For example, counting all node primitives in a file is so simple as:
+```scala
+EntityIterator.fromPbf(inputStream).count(_.osmModel == OSMTypes.Node)
+```
+
+This is a simple example, but because the iterator nature, you can use it for more complex tasks and patterns,
+to process data at the same time you are reading with near zero memory usage, for example.
+
+The library allows to read the pbf file on two different ways:
+
+## Entity iteration.
+OpenStreetMap is based in three different type of primitives:
+- Nodes: Represented by the `NodeEntity` case class.
+- Ways: Represented by the `WayEntity` case class.
+- Relations: Represented by the `RelationEntity` case class.
+
+To iterate over all primitives in a file, the only step is create an iterator using the `EntityIterator` factory:
+- `EntityIterator.fromPbf(pbfInputStream: InputStream): EntityIterator` allows to create an iterator from any Java
+   InputStream.
+- `EntityIterator.fromPbf(pbfInputStream: InputStreamSentinel): EntityIterator` allows to create an iterator from any
+   Java InputStream with a sentinel to stop under the defined condition.
+- `EntityIterator.def fromBlob(blob: Blob): EntityIterator` allows to read a Blob block as and iterator.
+
+Every element in the iterator will be an Entity case class implementing an `OSMEntity` trait.
+
+There is an example [in the repository](https://github.com/simplexspatial/osm4scala/tree/master/examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter)
+that count all primitives with optional filtering by primitive type (Way, Node or Relation).
+
+## Blob iteration
+Sometimes, it is better to split the read in two steps. Iterate over all blobs and, secondly, iterate over all entities
+in avery blob.
+
+To iterate over all blobs in a file, the only step is create an iterator using the `BlobTupleIterator` factory:
+- `BlobTupleIterator.fromPbf(pbfInputStream: InputStream): BlobTupleIterator` allows to create an iterator from any Java
+InputStream.
+- `BlobTupleIterator.fromPbf(pbfInputStream: InputStreamSentinel): BlobTupleIterator` allows to create an iterator from any
+Java InputStream with a sentinel to stop under the defined condition.
+
+Every element in the iterator will be a `(BlobHeader, Blob)` tuple.
+
+There is an example [in the repository](https://github.com/simplexspatial/osm4scala/tree/master/examples/blocksextraction/src/main/scala/com/acervera/osm4scala/examples/blocksextraction)
+that extract all block from a pbf file, and store them in a folder.
+
+
+## Dependencies: [ ![Download Core](https://api.bintray.com/packages/angelcervera/maven/osm4scala-core/images/download.svg) ](https://bintray.com/angelcervera/maven/osm4scala-core/_latestVersion)
+
+- Import the library using sbt.
+    ```scala
+    libraryDependencies += "com.acervera.osm4scala" %% "osm4scala-core" % "<version>"
+    ```
+- Import the library using maven.
+    ```xml
+    <dependency>
+      <groupId>com.acervera.osm4scala</groupId>
+      <artifactId>osm4scala-core_${scala-version}</artifactId>
+      <version>${version}</version>
+    </dependency>
+    ```
+
+- **Only if you have problems resolving dependencies without it**, add my bintray repo:
+  ```scala
+  resolvers += "osm4scala repo" at "http://dl.bintray.com/angelcervera/maven"
+    ```
+
