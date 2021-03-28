@@ -8,21 +8,6 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fangelcervera%2Fosm4scala?ref=badge_shield)
 
 
-**Scala library** and **Spark Connector** focus on parsing [PBF2 OpenStreetMap files](https://wiki.openstreetmap.org/wiki/PBF_Format) as iterators.
-
-At the moment, practically all OpenStreetMap data distribution are published using the osm pbf format because for publishing/distribution it is looking for size save.
-Because this format has been designed to achieve good compression, it is really complex to obtain an optimized way to process its content.
-
-## Goals
-This library achieves two different goals:
-- [Core library](#core-library): High performance Scala library to read OSM Pbf files as iterators.
-- [Spark Connector](#spark-connector): Polyglot ([Scala](#examples-from-spark-shell), [Python](#examples-from-pyspark),
-  [SQL](#examples-from-spark-sql) or R) Spark connector to query OSM Pbf files.
-  
-## Question?
-Please, use [Stackoverflow](https://stackoverflow.com) with the tag `[osm4scala]`. **I will response asap**.
-
-
 ## Selecting the right Version
 It is important to choose the right version depending of your Scala version.
 
@@ -31,12 +16,6 @@ It is important to choose the right version depending of your Scala version.
 | 1.0.7    | 0.9.7  | 2.11     | 2.4 |
 | 1.0.7    | 0.10.2 | 2.12     | 2.4, 3.0 |
 | 1.0.7    | 0.10.2 | 2.13     | NA |
-
-For example,
-- If you want to import the Spark Connector for Scala 2.11 and Spark 2.4: `com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.7`
-- If you want to import the Spark Connector for Scala 2.12 and Spark 2.4: `com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.7`
-- If you want to import the Spark Connector for Scala 2.12 and Spark 3.0: `com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7`
-
 
 ## Core library
 With Osm4scala, you can forget about complexity of the `osm.pbf` format and think about a **scala iterators of primitives**
@@ -191,53 +170,7 @@ For free community support, there are two channels:
 
 
 ## Contributing
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 
-First of all, if you arrived to this point, thanks for at least think about contributing!!!
-
-### Way to contribute
-- Spread the word. Maybe a project in Github with a post in your blog, with a link to [osm4scala repo](https://github.com/simplexspatial/osm4scala)
-- Join [![Gitter](https://img.shields.io/gitter/room/osm4scala/talk.svg)](https://gitter.im/osm4scala/talk) group
-- Response questions in [Stackoverflow](https://stackoverflow.com/). Stackoverflow will send you notifications if you are
-  watching the [osm4scala](https://stackoverflow.com/questions/tagged/osm4scala) tag.
-- Post or comment issues for bugs, new features, feedback, etc.
-- Contributing with improvements or fixes using a Pull Request. Before to create the PR, please:
-    - Discuss with the authors on an issue ticket prior to doing anything big.
-    - I appreciate all contributions, and I understand that usually people do it for free, **like me**. But please,
-      I don't want to spend all my free time doing code reviews. So keep this in mind and don't modify anything that
-      is not necessary. On this way, I can keep focus in the change core, and review and ship asap. Example: If you modify
-      one line of code, don't reformat the full file!!
-    - Follow the style, naming and structure conventions of the rest of the project.
-        - There is a `scalastyle` and a `scalafmt` config file in root of the repository. Use it.
-        - Follow the official [Scala Style Guide](https://docs.scala-lang.org/style/)
-        - Using Scala inference and the compiler optimization coming from there is good. So use it and specify typing only
-          for public functions/properties to help the API user. If the developer cannot figure out the type in a short
-          function (or short scope), then there is a problem with the code complexity, with the developer or with both.
-        - Variable names should be self descriptive and camel case. `_` or others not alphabetical chars are not allowed
-          if there is not a real reason.
-        - If you find that repeating a function/property name is needed, something is wrong. It means that two function/property
-          are used for the same thing, so you can remove one of them. Never try to fix it adding a prefix (like `_` or `$`)
-    - One feature per PR. Don't modify things that are not related to the ticket and are not necessary for it.
-    - If you find something wrong or that could be better, create a new ticket and fix it there (even if it is simple formatting style)
-    - Make your commits atomics and easy to merge and review. Keep in mind that only "squash and rebase" is available in the PR.
-    - Always apply KISS principle
-    - No code duplication allowed at all. That is the first symptom of horrible design.
-    - Try always functional approaches over imperative. Sometime is not possible, specially working with iterators over files
-      (it means mutability and side effects) like in this project, but all around that should be as functional as possible.
-    - Don't pollute the code with things that does not add **value**.
-    - Avoid using other libraries as possible. This is a library used with other complex frameworks like Spark or toolkits
-      like AKKA. Dependencies in these cases are source of problems.
-    - Again, modify only the code that is strictly necessary and it's inside of the scope of the ticket. Currently, all stuff
-      work with no problem and with a great performance, so it is ok (In fact, this is the point!).
-    - If you think something could be better, great! Create a ticket with a good description (why, motivation, etc) and
-      we can talk from there.
-    - Don't write production code for testing or debugging. All related with testing should be with the testing source code. 
-    - Verify that all tests are passing, for all Scala/Spark version available, even if you think that you did not touch anything.
-      ```
-      PATCH_211=false sbt clean +test
-      PATCH_211=true sbt clean +test
-      ```
-    - I hope this long list did not scare you. 🙇
 
 ### Prepare environment
 It's possible to develope using a Windows machine, but all documentation suppose that you are using Linux or Mac.
