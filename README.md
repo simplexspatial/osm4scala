@@ -9,7 +9,7 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](https://github.com/simplexspatial/osm4scala/blob/master/code_of_conduct.md)
 
 <p align="center">
-  <img src="website/static/android-chrome-512x512.png">
+  <img src="website/static/android-chrome-192x192.png">
 </p>
 
 ## Documentation and site
