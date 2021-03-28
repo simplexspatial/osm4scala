@@ -31,3 +31,32 @@ GIT_USER=<Your GitHub username> USE_SSH=true yarn deploy
 ```
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+
+
+```shell
+$ npm run                                                                                           (base) 
+Lifecycle scripts included in documentation:
+  start
+    docusaurus start
+
+available via `npm run-script`:
+  docusaurus
+    docusaurus
+  build
+    docusaurus build
+  swizzle
+    docusaurus swizzle
+  deploy
+    docusaurus deploy
+  clear
+    docusaurus clear
+  serve
+    docusaurus serve
+  write-translations
+    docusaurus write-translations
+  write-heading-ids
+    docusaurus write-heading-ids
+
+$ npm run clear
+$ npm run start
+```
