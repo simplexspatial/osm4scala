@@ -6,14 +6,14 @@ module.exports = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
+  favicon: 'favicon.ico',
   organizationName: 'simplexspatial',
   projectName: 'osm4scala',
   themeConfig: {
     navbar: {
       title: 'osm4scala',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'osm4scala logo',
         src: 'img/logo.svg',
       },
       items: [

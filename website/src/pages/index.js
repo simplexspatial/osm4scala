@@ -9,31 +9,37 @@ import styles from './styles.module.css';
 const features = [
   {
     title: 'Scala library',
-    imageUrl: 'img/undraw_docusaurus_mountain.svg',
+    imageUrl: 'img/scala_full_color.svg',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Forget about the <code>OSM Pbf</code> format complexity and think about a <strong>simple iterators of primitives (nodes, ways and relations) or blob blocks</strong>.
+        <br/>
+        Easy and high performance library, with millions of entities processed per second, in only one thread.
       </>
     ),
   },
   {
     title: 'Spark Polyglot',
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
+    imageUrl: 'img/apache_spark_logo.svg',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Creating DataFrames representing OSM Pbf file contents
+          from <strong>PySpark</strong>, <strong>Spark Scala</strong>, <strong>Spark SQL</strong> or <strong>SparkR</strong> is as simple as any other format file.
       </>
     ),
   },
   {
-    title: 'Notebook friendly',
-    imageUrl: 'img/undraw_docusaurus_react.svg',
+    title: 'Community / Commercial support',
+    imageUrl: 'img/simplex_logo.png',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Two support ways:
+        <ul>
+          <li>Free support, via <a href="https://stackoverflow.com/questions/tagged/osm4scala" target="_blank">StackOverflow</a>.</li>
+          <li>Commercial support, via the <a href="https://www.acervera.com" target="_blank">Author services</a>.</li>
+        </ul>
+
+
       </>
     ),
   },
@@ -59,7 +65,7 @@ export default function Home() {
   const {siteConfig = {}} = context;
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
+      title={`${siteConfig.title}`}
       description="Description will go into a meta tag in <head />">
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
