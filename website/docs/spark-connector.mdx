@@ -80,8 +80,8 @@ Osm4scala has a transitive dependency with Java Google Protobuf library. Spark, 
 ecosystem are using an old version of the same library (currently v2.5.0 from Mar, 2013) that is not compatible.
 
 To solve the conflict, I published the library in two fashion:
-- Fat and Shaded as `osm4scala-spark3-shaded` that solves `com.google.protobuf.**` conflicts.
-- Don't shaded as `osm4scala-spark3`, so you can solve the conflict on your way.
+- Fat and Shaded as `osm4scala-spark[2,3]-shaded` that solves `com.google.protobuf.**` conflicts.
+- Don't shaded as `osm4scala-spark[2,3]`, so you can solve the conflict on your way.
 
 ### Spark Shell
 
@@ -196,11 +196,70 @@ To solve the conflict, I published the library in two fashion:
 There are different notebooks solutions in the market and each one is using a different way to import libraries. But after
 importing the library, you can use the osm4scala connector in the same way.
 
-For this section, we are going to talk about [Jupyter Notebook](https://jupyter.org). If you can not access to a Jupyter Notebook
+For this section, we are going to use [Jupyter Notebook](https://jupyter.org).
+
+:::note
+
+If you can not access to a Jupyter Notebook
 installation, you can use [jupyter/all-spark-notebook](https://hub.docker.com/r/jupyter/all-spark-notebook) Docker image as I will do.
 [Here](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html), full documentation about how to install and use it.
 
-Also, You can use [MyBinder](https://mybinder.org/v2/gh/jupyter/docker-stacks/master?filepath=README.ipynb).
+To start the docker image, as easy as running the docker image and use the link provided:
+```ssh
+$ docker run -e JUPYTER_ENABLE_LAB=yes -p 8888:8888 jupyter/all-spark-notebook
+[I 11:02:45.132 NotebookApp] Serving notebooks from local directory: /home/jovyan
+[I 11:02:45.132 NotebookApp] Jupyter Notebook 6.2.0 is running at:
+[I 11:02:45.132 NotebookApp] http://479a92a85698:8888/?token=60ace2db5d456f7348c2ba0399cab986e36f4de9XX00a554
+[I 11:02:45.132 NotebookApp]  or http://127.0.0.1:8888/?token=60ace2db5d456f7348c2ba0399cab986e36f4de9XX00a554
+[I 11:02:45.132 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 11:02:45.135 NotebookApp]
+
+    To access the notebook, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-6-open.html
+    Or copy and paste one of these URLs:
+        http://479a92a85698:8888/?token=60ace2db5d456f7348c2ba0399cab986e36f4de9XX00a554
+     or http://127.0.0.1:8888/?token=60ace2db5d456f7348c2ba0399cab986e36f4de9XX00a554
+
+```
+
+If you prefer an online option, you can try [MyBinder](https://mybinder.org/v2/gh/jupyter/docker-stacks/master?filepath=README.ipynb).
+
+:::
+
+1. Create a new Notebook. For Scala, we are going to use the `spylon-kernel`.
+2. Add a new Cell and import the right osm4scala library for your Notebook installation, following the table at the start
+   of the [All in one jar](#all-in-one-jar) section. In or case, the version used is `Spark v3.1.1` with `Scala 2.12`.
+   ```jypiter
+   %%init_spark
+   launcher.packages = ["com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7"]
+   ```
+   If you did not execute anything before, running the cell will start the Spark session. Sometime, depending to the
+   Notebook used, **you will need to restart the Spark session (or Kernel session)**.
+3. From the previous step, you can start creating dataframes from pbf files as we did before in previous sections.
+
+    Let's suppose that you uploaded a file called `monaco-latest.osm.pbf` into the notebook's `work` folder.
+
+    If you create a new Cell with next content, you will get all traffic signals in Monaco.
+    ```scala title="Scala"
+    val osmDF = spark.read.format("osm.pbf").load("/home/jovyan/work/monaco-latest.osm.pbf")
+    osmDF.select("latitude", "longitude")
+        .where("element_at(tags, 'highway') == 'traffic_signals'")
+        .show
+    ```
+    ```python {1}
+    %%python
+    osm_df = spark.read.format("osm.pbf").load("/home/jovyan/work/monaco-latest.osm.pbf")
+    osm_df.select("latitude", "longitude").where("element_at(tags, 'highway') == 'traffic_signals'").show()
+    ```
+    :::note
+    Pay attention to the first line in the Python Cell. Because the kernel used is using `Scala` as default, you need to add
+    the **`%%python`** header.
+    :::
+
+    Next, a screenshot with the output generated:
+    ![Notebook Screenshoot](/img/notebook_screenshoot.png)
+
+    Of course, from the dataframe you can create beautiful maps, graphs, etc. But that is out of the scope of this documentation.
 
 
 ### Spark application
