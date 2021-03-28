@@ -355,6 +355,144 @@ When we need to write more complex analysis, data extractions, ETLs, etc, it is 
 
     :::
 
+
+### More Examples
+
+Following, more examples. This time, we will create a SQL temporal view and SQL:
+```scala
+scala> val osmDF = spark.sqlContext.read.format("osm.pbf").load("<osm files path here>")
+osmDF: org.apache.spark.sql.DataFrame = [id: bigint, type: tinyint ... 5 more fields]
+scala> osmDF.createOrReplaceTempView("osm")
+```
+
+```scala title="Primitives counter"
+scala> spark.sql("select type, count(*) as num_primitives from osm group by type").show()
++----+--------------+
+|type|num_primitives|
++----+--------------+
+|   1|        338795|
+|   2|         10357|
+|   0|       2328075|
++----+--------------+
+```
+
+```scala title="Extract all keys used in tags"
+scala> spark.sql("select distinct(explode(map_keys(tags))) as tag_key from osm order by tag_key asc").show()
++------------------+
+|           tag_key|
++------------------+
+|             Calle|
+|        Conference|
+|             Exper|
+|             FIXME|
+|         ISO3166-1|
+|  ISO3166-1:alpha2|
+|  ISO3166-1:alpha3|
+| ISO3166-1:numeric|
+|         ISO3166-2|
+|           MAC_dec|
+|            Nombre|
+|            Numero|
+|              Open|
+|        Peluqueria|
+|    Residencia UEM|
+|          Telefono|
+|         abandoned|
+| abandoned:amenity|
+| abandoned:barrier|
+|abandoned:building|
++------------------+
+only showing top 20 rows
+```
+
+```scala title="Extract id, coords and tags from all nodes"
+scala> spark.sql("select id, latitude, longitude, tags from osm where type = 0").show()
++--------+------------------+-------------------+--------------------+
+|      id|          latitude|          longitude|                tags|
++--------+------------------+-------------------+--------------------+
+|  171933|          40.42006|-3.7016600000000004|                  []|
+|  171946|          40.42125|-3.6844500000000004|[highway -> traff...|
+|  171948|40.420230000000004|-3.6877900000000006|                  []|
+|  171951|40.417350000000006|-3.6889800000000004|                  []|
+|  171952|          40.41499|-3.6889800000000004|                  []|
+|  171953|          40.41277|-3.6889000000000003|                  []|
+|  171954|          40.40946|-3.6887900000000005|                  []|
+|  171959|          40.40326|-3.7012200000000006|                  []|
+|20952874|          40.42099|-3.6019200000000007|                  []|
+|20952875|40.422610000000006|-3.5994900000000007|                  []|
+|20952878| 40.42136000000001| -3.601470000000001|                  []|
+|20952879| 40.42262000000001| -3.599770000000001|                  []|
+|20952881| 40.42905000000001|-3.5970500000000007|                  []|
+|20952883| 40.43131000000001|-3.5961000000000007|                  []|
+|20952888| 40.42930000000001| -3.596590000000001|                  []|
+|20952890| 40.43012000000001|-3.5961500000000006|                  []|
+|20952891| 40.43043000000001|-3.5963600000000007|                  []|
+|20952892| 40.43057000000001|-3.5969100000000007|                  []|
+|20952893| 40.43039000000001|-3.5973200000000007|                  []|
+|20952895| 40.42967000000001|-3.5972300000000006|                  []|
++--------+------------------+-------------------+--------------------+
+only showing top 20 rows
+```
+
+```scala title="Extract id, nodes and tags from all ways"
+scala> spark.sql("select id, nodes, tags from osm where type = 1").show()
++-------+--------------------+--------------------+
+|     id|               nodes|                tags|
++-------+--------------------+--------------------+
+|3996189|[23002322, 230022...|[name -> M-40, in...|
+|3996190|[20952892, 213645...|[name -> Avenida ...|
+|3996191|[21364526, 253693...|[lanes -> 2, onew...|
+|3996192|[20952914, 242495...|[name -> Plaza de...|
+|3996195|[20952923, 421448...|[name -> Calle de...|
+|3996196|[20952942, 209529...|[name -> Avenida ...|
+|3996197|[20952893, 209628...|[name -> Avenida ...|
+|3996199|[20952929, 209529...|[name -> Calle de...|
+|3996203|[20952948, 391553...|[name -> Calle de...|
+|3997425|[20960686, 219912...|[name -> Avenida ...|
+|3997426|[2424952617, 2095...|[name -> Avenida ...|
+|3997427|[20960717, 209606...|[name -> Calle de...|
+|3997428|[20960693, 209607...|[highway -> terti...|
+|3997429|[20960696, 421448...|[name -> Calle de...|
+|3997430|[20963025, 209630...|[name -> Paseo de...|
+|3997432|[20960688, 209607...|[name -> Calle de...|
+|3997433|[1811010970, 1811...|[name -> Calle de...|
+|4004278|[255148257, 21067...|[name -> Calle de...|
+|4004280|[20963101, 209630...|[name -> Calle de...|
+|4004281|[25530614, 297977...|[name -> Calle de...|
++-------+--------------------+--------------------+
+only showing top 20 rows
+```
+
+```scala title="Extract id, relations and tags from all relations"
+scala> spark.sql("select id, relations, tags from osm where type = 2").show()
++-----+--------------------+--------------------+
+|   id|           relations|                tags|
++-----+--------------------+--------------------+
+|11331|[[2609596233, 0, ...|[network -> Cerca...|
+|11332|[[196618381, 1, p...|[network -> Cerca...|
+|14612|[[24698019, 1, ou...|[website -> http:...|
+|30117|[[26629303, 1, ou...|[type -> multipol...|
+|30399|[[307006515, 1, i...|[website -> http:...|
+|38757|[[6120746, 1, ], ...|[network -> lcn, ...|
+|38965|[[44571128, 1, fr...|[type -> restrict...|
+|48292|[[317775809, 0, s...|[network -> Metro...|
+|49958|[[308868559, 0, v...|[type -> restrict...|
+|49959|[[308868558, 0, v...|[type -> restrict...|
+|50874|[[26141446, 1, ou...|[name -> Escuela ...|
+|52312|[[24531942, 1, ou...|[name -> Pista pr...|
+|52313|[[24698560, 1, ou...|[type -> multipol...|
+|53157|[[2609596077, 0, ...|[network -> Cerca...|
+|55085|[[246285922, 0, s...|[network -> Cerca...|
+|55087|[[194005015, 1, ]...|[network -> Cerca...|
+|55799|[[28775036, 1, ou...|[type -> multipol...|
+|56044|[[258556530, 0, s...|[network -> Metro...|
+|56260|[[144383571, 1, o...|[name -> Ayuntami...|
+|56791|[[32218973, 0, st...|[network -> Metro...|
++-----+--------------------+--------------------+
+only showing top 20 rows
+```
+
+
 ## Plain (non-shaded jar) dependency.
 Sometimes we need to write more complex applications, analysis, data extractions, ETLs, integrate with other libraries,
 unit testing, etc.
