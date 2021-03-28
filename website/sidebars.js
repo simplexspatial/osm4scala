@@ -7,6 +7,7 @@ module.exports = {
         'overview',
         'spark-connector',
         'standalone-scala-library',
+        'performance',
         'contributing',
       ],
     },

@@ -2,8 +2,6 @@
 title: Spark SQL Connector
 ---
 
-
-
 ## Overview
 Using *Osm4scala Spark SQL Connector*, reading OSM Pbf file from **PySpark**, **Spark Scala**, **SparkSQL** or **SparkR** is
 so easy as writing `.read.format("osm.pbf")`.
@@ -18,8 +16,9 @@ The current implementation offers:
     - File splitting to increase parallelism per pbf file.
     - Pushdown required columns.
 
-The library is distributed via [Maven Repo](https://mvnrepository.com/artifact/com.acervera.osm4scala) in two different ways,
-[all in one jar](#all-in-on-jar) to be able to use directly with all dependencies or as [plain scala dependency](#plain-non-shaded-jar-dependency).
+The library is distributed via [Maven Repo](https://mvnrepository.com/artifact/com.acervera.osm4scala) in two different flavours:
+- [All in one jar](#all-in-one-jar) to be able to use directly with all dependencies
+- As [plain scala dependency](#plain-non-shaded-jar-dependency).
 
 ## Schema definition
 
@@ -57,7 +56,7 @@ Where the column `relationType` could be:
 | 3     | Unrecognized |
 
 ## All in one jar
-Usually, osm4scala is used from the [Spark Shell](spark-shell) or from a [Notebook](notebook). For these cases,
+Usually, osm4scala is used from the [Spark Shell](#spark-shell) or from a [Notebook](#notebook). For these cases,
 to simplify the way to add the connector as dependency, you have a shaded fat jar version with all dependencies that are
 necessary.
 The fat jar is near 5MB, so the size should be not a problem.
@@ -65,11 +64,11 @@ The fat jar is near 5MB, so the size should be not a problem.
 As you probably know, Spark is base in Scala. Different Spark distributions are using different Scala versions.
 This is the Spark/Scala version combination available for latest release v1.0.7:
 
-| Spark |  Scala | Packages |
-|:-----:|:------:|:---------|
-| 2.4   | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.11/1.0.7/jar)
-| 2.4   | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.12/1.0.7/jar)
-| 3.0   | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3-shaded_2.12/1.0.7/jar)
+| Spark Branch |  Scala | Packages |
+|:------------:|:------:|:---------|
+| 2.4          | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.11/1.0.7/jar)
+| 2.4          | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.12/1.0.7/jar)
+| 3.0 / 3.1    | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3-shaded_2.12/1.0.7/jar)
 
 Although following sections are focus on Spark Shell and Notebooks, you can use the same technique in other situations where
 you want to use the shaded version.
@@ -196,7 +195,7 @@ To solve the conflict, I published the library in two fashion:
 There are different notebooks solutions in the market and each one is using a different way to import libraries. But after
 importing the library, you can use the osm4scala connector in the same way.
 
-For this section, we are going to use [Jupyter Notebook](https://jupyter.org).
+For this section, we are going to use [Jupyter Notebook](https://jupyter.org) and [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/).
 
 :::note
 
@@ -504,11 +503,11 @@ used as deserializer so it's the unique transitive dependency.
 
 This is the Spark/Scala version combination available for latest release v1.0.7:
 
-| Spark | Scalapb |  Scala | Packages |
-|:-----:|:-------:|:------:|:---------|
-| 2.4   | 0.9.7  | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2_2.11:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.11/1.0.7/jar)
-| 2.4   | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.12/1.0.7/jar)
-| 3.0   | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3_2.12/1.0.7/jar)
+| Spark branch | Scalapb |  Scala | Packages |
+|:------------:|:-------:|:------:|:---------|
+| 2.4          | 0.9.7  | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2_2.11:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.11/1.0.7/jar)
+| 2.4          | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.12/1.0.7/jar)
+| 3.0 / 3.1    | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3_2.12:1.0.7`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3_2.12/1.0.7/jar)
 
 After importing the connector, you can use it as we explained in the [All in one section](#all-in-one-jar). So lets see
 how to import the library in our project and few examples.

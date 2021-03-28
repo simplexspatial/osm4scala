@@ -1,0 +1,109 @@
+---
+title: Performance
+---
+:::warning
+Performance executed on 2016. Newer versions and newer hardware will give you even better!!!
+:::
+
+:::note
+The performance here is related to the Scala library. Spark Connector is based in this library, but allows distributed
+deserialization plus other optimizations, so performance can be escalated horizontally.
+:::
+
+Laptop specifications used to execute testing and performance comparison:
+```
+Ubuntu 16.04.1 LTS Desktop / 64bits
+Intel(R) Core(TM) i7-4712HQ CPU @ 2.30GHz
+2x8GiB SODIMM DDR3 Synchronous 1600 MHz (0.6 ns)
+512GB SAMSUNG SSD
+```
+
+## One thread performance.
+
+To have more representative performance metrics, all metrics in this section are using only one thread.
+
+I'm going to use a Primitives Counter application, that well count the number of primitives in a file with the possibility of
+filtering by primitive type. The [source code](https://github.com/simplexspatial/osm4scala/tree/master/examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala).
+
+In all cases, because the streaming nature of the library, **the use of memory is negligible**, keeping no more than one block (32MB)
+of memory per iteration.
+
+About the performance:
+
+For example, it expends only **32 seconds to iterate over near of 70 millions** of elements that compose Spain.
+Below the result of few executions of the [Primitives Counter Example](https://github.com/simplexspatial/osm4scala/tree/master/examples/counter/src/main/scala/com/acervera/osm4scala/examples/counter/Counter.scala) available in the code.
+~~~~
+Found [67,976,861] primitives in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.44 sec.
+Found [4,839,505] primitives of type [Way] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 31.72 sec.
+Found [63,006,432] primitives of type [Node] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.70 sec.
+Found [130,924] primitives of type [Relation] in /home/angelcervera/projects/osm/spain-latest.osm.pbf in 32.66 sec.
+~~~~
+
+Other example, iterate over the **full planet (near of 4,000 millions of elements on August 2016), 40 minutes**, reading the 36GB file from an USB3 drive.
+~~~
+Found [3,976,885,170] primitives in /media/angelcervera/My Passport/osm/planet-latest.osm.pbf in 2,566.11 sec.
+~~~
+
+The other example, [Tag Extraction Example](https://github.com/simplexspatial/osm4scala/tree/master/osm4scala/examples/tagsextraction/src/main/scala/com/acervera/osm4scala/examples/tagsextraction/TagExtraction.scala)
+expends only 42 seconds to extract the list of all unique tags from the Spain pbf.
+~~~~
+Found [4,166] different tags in /home/angelcervera/projects/osm/spain-latest.osm.pbf. List stored in /home/angelcervera/projects/osm/spain-latest.tags.txt. Time to process: 39.22 sec.
+Found [2,451] different tags in primitives of type [Way] in /home/angelcervera/projects/osm/spain-latest.osm.pbf. List stored in /home/angelcervera/projects/osm/spain-latest.tags.txt. Time to process: 33.47 sec.
+~~~~
+
+
+## Multi-thread performance.
+In the following examples, we are going to see different ways to process in blocks in parallel. But to be able to run more
+complex analysis and transformations, the clear recommendation is go with the [Spark Connector](spark-connector.mdx).
+
+### Counter Parallel using Scala Future.traverse [Source](https://github.com/simplexspatial/osm4scala/tree/master/examples/counter-parallel/src/main/scala/com/acervera/osm4scala/examples/counterparallel/CounterParallel.scala).
+
+Because the library implements different iterator to be able to iterate over blocks and entities, it is really simple to use it in a parallel way.
+
+This example show how to process data in parallel, using only Scala Future.traverse
+
+This is the simple way, but has a big problem: Futures.traverse create **sequentially** one Future per element in the
+Iterator and parallel is executing them. That means put all block in memory.
+**This is ok if you have enough memory** (16GB is enough to manage all USA or Europe) but if you want process the full
+planet or a heavy memory consume process per block, you will need more than that. My recommendation is go with the [Spark Connector](spark-connector.mdx).
+
+~~~scala
+  val counter = new AtomicLong()
+  def count(pbfIS: InputStream): Long = {
+    val result = Future.traverse(BlobTupleIterator.fromPbf(pbfIS))(tuple => Future {
+      counter.addAndGet( count(tuple._2) )
+    })
+    Await.result(result, Duration.Inf)
+    counter.longValue()
+  }
+~~~
+
+### Counter Parallel using AKKA [Source](https://github.com/simplexspatial/osm4scala/tree/master/examples/counter-akka/src/main/scala/com/acervera/osm4scala/examples/counterakka).
+
+This example show how to process data in parallel, using AKKA
+
+The implementation is not complex at all, but it is necessary a little (a really little bit) of knowledge about AKKA to understand it.
+Two big advantage respect the Future.traverse version:
+- The memory used depends directly on the number of actor used, so you can process the full planet with no more of few GB of RAM.
+- It is possible distribute the execution in different nodes.
+
+
+### Counter Concurrent examples comparison.
+
+#### Ireland and North Ireland
+- Entities: 15,751,251
+- Counter (One thread): 8.91 sec.
+- Concurrent Future.traverse: 5.31 sec.
+- Concurrent AKKA 4 cores: 5.89 sec.
+
+#### Spain
+- Entities: 67,976,861
+- Counter (One thread): 35.67 sec.
+- Concurrent Future.traverse: 17.33 sec.
+- Concurrent AKKA 4 cores: 16.82 sec.
+
+#### North America (USA and Canada)
+- Entities: 944,721,636
+- Counter (One thread): 514 sec. / 8.5 min.
+- Concurrent Future.traverse: 211 sec. / 3.5  min. (-XX:-UseGCOverheadLimit -Xms14g)
+- Concurrent AKKA 4 cores: 256.70 sec. / 4.27 min. -> **But only uses 4 cores and 128M of RAM**, so can play "Solitaire" while you wait.
