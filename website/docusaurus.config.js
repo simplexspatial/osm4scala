@@ -2,8 +2,8 @@
 module.exports = {
   title: 'osm4scala',
   tagline: 'Scala library and Spark Polyglot connector for OpenStreetMap Pbf files',
-  url: 'https://osm4scala.github.io',
-  baseUrl: '/',
+  url: 'https://simplexspatial.github.io/osm4scala/',
+  baseUrl: '/osm4scala/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'favicon.ico',
