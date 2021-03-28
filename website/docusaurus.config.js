@@ -78,7 +78,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Ángel Cervera Claudio.<br/>Supported by Simplexportal Ltd.<br/>Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} <a href="https://www.acervera.com/" target="_blank">Ángel Cervera Claudio</a>. Supported by Simplexportal Ltd.`,
     },
   },
   presets: [
