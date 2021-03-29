@@ -27,7 +27,7 @@ lazy val commonSettings = Seq(
   organizationHomepage := Some(url("http://www.acervera.com")),
   licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
   homepage in ThisBuild := Some(
-    url(s"https://github.com/simplexspatial/osm4scala")
+    url(s"https://simplexspatial.github.io/osm4scala/")
   ),
   scmInfo in ThisBuild := Some(
     ScmInfo(
