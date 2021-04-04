@@ -106,4 +106,14 @@ module.exports = {
       },
     ],
   ],
+  scripts: [
+      'gitter_conf.js',
+    {
+      src: 'https://sidecar.gitter.im/dist/sidecar.v1.js',
+      async: true,
+      defer: true
+    },
+  ],
 };
+
+
