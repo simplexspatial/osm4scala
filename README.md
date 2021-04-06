@@ -12,6 +12,8 @@
   <img src="website/static/android-chrome-192x192.png">
 </p>
 
+High performance Scala library and Spark Polyglot (Scala, Python, SQL, etc.) connector for OpenStreetMap Pbf files.
+
 ## Documentation and site
 Full documentation at https://simplexspatial.github.io/osm4scala/
 
