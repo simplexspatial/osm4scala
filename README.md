@@ -49,6 +49,11 @@ export GIT_USER=<username>; export USE_SSH=true; npm run deploy
   - Download whole planet pbf files: http://free.nchc.org.tw/osm.planet/
   - Download country pbf files: http://download.geofabrik.de/index.html
   - Scala protocol buffer library: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
+  - OSM primitives: https://wiki.openstreetmap.org/wiki/Elements
+    -  Node: https://wiki.openstreetmap.org/wiki/Node
+    -  Way: https://wiki.openstreetmap.org/wiki/Way
+    -  Relations: https://wiki.openstreetmap.org/wiki/Relation
+    -  Tags: https://wiki.openstreetmap.org/wiki/Tags
 
 ### third party OSS libraries:
   - ScalaPB: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
