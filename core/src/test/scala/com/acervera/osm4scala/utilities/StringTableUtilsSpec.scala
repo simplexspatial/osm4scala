@@ -25,12 +25,13 @@
 
 package com.acervera.osm4scala.utilities
 
+import com.acervera.osm4scala.utilities.StringTableUtils._
 import com.google.protobuf.ByteString
 import org.openstreetmap.osmosis.osmbinary.osmformat.StringTable
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class StringTableUtilsSpec extends AnyWordSpecLike with Matchers with StringTableUtils {
+class StringTableUtilsSpec extends AnyWordSpecLike with Matchers {
 
   private val strTable = StringTable(
     (0 to 10).map(idx => ByteString.copyFromUtf8(s"value$idx"))

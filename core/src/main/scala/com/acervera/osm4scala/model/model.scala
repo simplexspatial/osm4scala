@@ -25,8 +25,8 @@
 
 package com.acervera.osm4scala.model
 
-import com.acervera.osm4scala.utilities.StringTableUtils
-import org.openstreetmap.osmosis.osmbinary.osmformat.{Relation, StringTable, Way}
+import com.acervera.osm4scala.utilities.StringTableUtils._
+import org.openstreetmap.osmosis.osmbinary.osmformat
 
 final object OSMTypes extends Enumeration {
   type osmType = Value
@@ -37,27 +37,57 @@ sealed trait OSMEntity {
   val osmModel: OSMTypes.Value
   val id: Long
   val tags: Map[String, String]
+  val info: Info
+}
 
-  // Optional metadata
-  val version: Option[Int] = None
-  val timestamp: Option[Long] = None
-  val changeset: Option[Long] = None
-  val uid: Option[Int] = None
-  val user_sid: Option[String] = None
-  val visible: Option[Boolean] = None
+case class Info(
+    version: Option[Int] = None,
+    timestamp: Option[Long] = None,
+    changeset: Option[Long] = None,
+    uid: Option[Int] = None,
+    userSid: Option[String] = None,
+    visible: Option[Boolean] = None
+)
+
+object Info {
+  def apply(osmosisStringTable: osmformat.StringTable, infoOpt: Option[osmformat.Info]): Info = infoOpt match {
+    case None => Info.empty()
+    case Some(info) =>
+      Info(
+        info.version,
+        info.timestamp,
+        info.changeset,
+        info.uid,
+        info.userSid.map(idx => osmosisStringTable.getString(idx))
+      )
+  }
+
+  def empty(): Info = Info()
+
 }
 
 /**
   * Entity that represent a OSM node as https://wiki.openstreetmap.org/wiki/Elements#Node and https://wiki.openstreetmap.org/wiki/Node describe
   */
-case class NodeEntity(id: Long, latitude: Double, longitude: Double, tags: Map[String, String]) extends OSMEntity {
+case class NodeEntity(
+    id: Long,
+    latitude: Double,
+    longitude: Double,
+    tags: Map[String, String],
+    info: Info = Info.empty()
+) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Node
 }
 
 /**
   * Entity that represent a OSM way as https://wiki.openstreetmap.org/wiki/Elements#Way and https://wiki.openstreetmap.org/wiki/Way describe
   */
-case class WayEntity(id: Long, nodes: Seq[Long], tags: Map[String, String]) extends OSMEntity {
+case class WayEntity(
+    id: Long,
+    nodes: Seq[Long],
+    tags: Map[String, String],
+    info: Info = Info.empty()
+) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Way
 
   object WayEntityTypes extends Enumeration {
@@ -65,50 +95,45 @@ case class WayEntity(id: Long, nodes: Seq[Long], tags: Map[String, String]) exte
   }
 }
 
-object WayEntity extends StringTableUtils {
-  def apply(osmosisStringTable: StringTable, osmosisWay: Way): WayEntity = {
-
-    // Calculate nodes references in stored in delta compression.
-    val nodes = osmosisWay.refs
-      .scanLeft(0L) {
-        _ + _
-      }
-      .drop(1)
-
+object WayEntity {
+  def apply(osmosisStringTable: osmformat.StringTable, osmosisWay: osmformat.Way): WayEntity =
     new WayEntity(
       osmosisWay.id,
-      nodes,
-      osmosisStringTable.extractTags(osmosisWay.keys, osmosisWay.vals)
+      osmosisWay.refs.scanLeft(0L) { _ + _ }.drop(1), // Calculate nodes references in stored in delta compression. TODO: extract to utility class.
+      osmosisStringTable.extractTags(osmosisWay.keys, osmosisWay.vals),
+      Info(osmosisStringTable, osmosisWay.info)
     )
-  }
 }
 
 /**
   * Entity that represent a OSM relation as https://wiki.openstreetmap.org/wiki/Elements#Relation and https://wiki.openstreetmap.org/wiki/Relation describe
   */
-case class RelationEntity(id: Long, relations: Seq[RelationMemberEntity], tags: Map[String, String]) extends OSMEntity {
+case class RelationEntity(
+    id: Long,
+    relations: Seq[RelationMemberEntity],
+    tags: Map[String, String],
+    info: Info = Info.empty()
+) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Relation
 }
 
-object RelationEntity extends StringTableUtils {
-  def apply(osmosisStringTable: StringTable, osmosisRelation: Relation): RelationEntity = {
-
-    // Decode members references in stored in delta compression.
-    val members = osmosisRelation.memids
-      .scanLeft(0L) {
-        _ + _
-      }
-      .drop(1)
+object RelationEntity {
+  def apply(osmosisStringTable: osmformat.StringTable, osmosisRelation: osmformat.Relation): RelationEntity = {
 
     // Calculate relations
-    val relations = (members, osmosisRelation.types, osmosisRelation.rolesSid).zipped.map { (m, t, r) =>
+    val relations = (
+      osmosisRelation.memids.scanLeft(0L) {_ + _}.drop(1), // Decode members references in stored in delta compression. TODO: extract to utility class.
+      osmosisRelation.types,
+      osmosisRelation.rolesSid
+    ).zipped.map { (m, t, r) =>
       RelationMemberEntity(m, RelationMemberEntityTypes(t.value), osmosisStringTable.getString(r))
     }
 
     new RelationEntity(
       osmosisRelation.id,
       relations,
-      osmosisStringTable.extractTags(osmosisRelation.keys, osmosisRelation.vals)
+      osmosisStringTable.extractTags(osmosisRelation.keys, osmosisRelation.vals),
+      Info(osmosisStringTable, osmosisRelation.info)
     )
   }
 }
@@ -121,4 +146,8 @@ object RelationMemberEntityTypes extends Enumeration {
   val Unrecognized = Value(3)
 }
 
-case class RelationMemberEntity(id: Long, relationTypes: RelationMemberEntityTypes.Value, role: String)
+case class RelationMemberEntity(
+    id: Long,
+    relationTypes: RelationMemberEntityTypes.Value,
+    role: String
+)

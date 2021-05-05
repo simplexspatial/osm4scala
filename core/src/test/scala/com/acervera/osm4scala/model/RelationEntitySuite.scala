@@ -25,10 +25,10 @@
 
 package com.acervera.osm4scala.model
 
-import java.io.FileInputStream
-
 import org.openstreetmap.osmosis.osmbinary.osmformat.{Relation, StringTable}
 import org.scalatest.funsuite.AnyFunSuite
+
+import java.io.FileInputStream
 
 /**
   * Created by angelcervera on 23/06/16.
@@ -47,6 +47,8 @@ class RelationEntitySuite extends AnyFunSuite {
     assert(relation.id === 2898444)
     assert(relation.relations === List(RelationMemberEntity(219042667,RelationMemberEntityTypes.Way,"inner"),RelationMemberEntity(219042634,RelationMemberEntityTypes.Way,"outer")))
     assert(relation.tags == Map("type" -> "multipolygon"))
+
+    fail("Why is not failing with the information field!!!")
   }
 
 }

@@ -25,12 +25,11 @@
 
 package com.acervera.osm4scala
 
-import java.io.{File, FileInputStream}
-
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import java.io.{File, FileInputStream}
 import scala.io.Source
 
 class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
@@ -67,6 +66,10 @@ class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
         x.latitude shouldBe latAndLon(0).toDouble +- 0.01
         x.longitude shouldBe latAndLon(1).toDouble +- 0.01
       })
+    }
+
+    "check info field" in {
+      fail("Why is not failing with the information field!!!")
     }
   }
 

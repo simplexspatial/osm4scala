@@ -26,7 +26,7 @@
 package com.acervera.osm4scala
 
 import com.acervera.osm4scala.model.NodeEntity
-import com.acervera.osm4scala.utilities.StringTableUtils
+import com.acervera.osm4scala.utilities.StringTableUtils._
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
 
 object DenseNodesIterator {
@@ -51,7 +51,7 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
                          latOffset: Long = 0,
                          lonOffset: Long = 0,
                          granularity: Int = 100)
-    extends Iterator[NodeEntity] with StringTableUtils {
+    extends Iterator[NodeEntity] {
 
   if (osmosisDenseNode.denseinfo.isDefined && osmosisDenseNode.denseinfo.get.visible.nonEmpty) {
     throw new Exception("Only visible nodes are implemented.")

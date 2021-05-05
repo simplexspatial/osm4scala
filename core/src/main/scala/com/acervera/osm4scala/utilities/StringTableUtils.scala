@@ -30,7 +30,7 @@ import org.openstreetmap.osmosis.osmbinary.osmformat.StringTable
 /**
   * Utilities to extract data from StringTable Objects.
   */
-private[osm4scala] trait StringTableUtils {
+private[osm4scala] object StringTableUtils {
 
   private val CHARSET = "UTF-8"
 
