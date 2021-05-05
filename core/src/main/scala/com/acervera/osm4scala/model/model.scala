@@ -37,6 +37,14 @@ sealed trait OSMEntity {
   val osmModel: OSMTypes.Value
   val id: Long
   val tags: Map[String, String]
+
+  // Optional metadata
+  val version: Option[Int] = None
+  val timestamp: Option[Long] = None
+  val changeset: Option[Long] = None
+  val uid: Option[Int] = None
+  val user_sid: Option[String] = None
+  val visible: Option[Boolean] = None
 }
 
 /**
@@ -59,10 +67,14 @@ case class WayEntity(id: Long, nodes: Seq[Long], tags: Map[String, String]) exte
 
 object WayEntity extends StringTableUtils {
   def apply(osmosisStringTable: StringTable, osmosisWay: Way): WayEntity = {
+
     // Calculate nodes references in stored in delta compression.
-    val nodes = osmosisWay.refs.scanLeft(0L) {
-      _ + _
-    }.drop(1)
+    val nodes = osmosisWay.refs
+      .scanLeft(0L) {
+        _ + _
+      }
+      .drop(1)
+
     new WayEntity(
       osmosisWay.id,
       nodes,
@@ -82,9 +94,11 @@ object RelationEntity extends StringTableUtils {
   def apply(osmosisStringTable: StringTable, osmosisRelation: Relation): RelationEntity = {
 
     // Decode members references in stored in delta compression.
-    val members = osmosisRelation.memids.scanLeft(0L) {
-      _ + _
-    }.drop(1)
+    val members = osmosisRelation.memids
+      .scanLeft(0L) {
+        _ + _
+      }
+      .drop(1)
 
     // Calculate relations
     val relations = (members, osmosisRelation.types, osmosisRelation.rolesSid).zipped.map { (m, t, r) =>
