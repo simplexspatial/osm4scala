@@ -489,6 +489,22 @@ scala> spark.sql("select id, relations, tags from osm where type = 2").show()
 |56791|[[32218973, 0, st...|[network -> Metro...|
 +-----+--------------------+--------------------+
 only showing top 20 rows
+
+```
+
+```scala title="Extract id, relations and tags from all relations"
+scala> spark.sql("select id, type, info.version, info.userId, info.userName, date_format(info.timestamp, \"dd-MMM-y kk:mm:ss O\") as timestamp from osm where info.userId IS NOT NULL").show(5, false)
+
++---------+----+-------+--------+------------+--------------------------+
+|id       |type|version|userId  |userName    |timestamp                 |
++---------+----+-------+--------+------------+--------------------------+
+|10966459 |2   |26     |18XXXX  |XXXXX       |01-Oct-2020 18:44:49 GMT+1|
+|166399497|1   |4      |16XXXXX |XXXXXXXXXXXX|09-Aug-2019 05:52:21 GMT+1|
+|434583789|1   |7      |25XXXX  |XXXXXX      |05-Mar-2020 06:48:01 GMT  |
+|161752645|1   |14     |11XXXXXX|XXXXXXXXXXX |22-Mar-2021 09:08:10 GMT  |
+|690021772|1   |1      |31XXXX  |XXXXX       |14-May-2019 19:18:06 GMT+1|
++---------+----+-------+--------+------------+--------------------------+
+only showing top 5 rows
 ```
 
 
