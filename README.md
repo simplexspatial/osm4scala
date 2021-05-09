@@ -57,7 +57,3 @@ export GIT_USER=<username>; export USE_SSH=true; npm run deploy
 
 ### third party OSS libraries:
   - ScalaPB: https://scalapb.github.io/ and https://github.com/thesamet/sbt-protoc
-
-
-```
-
