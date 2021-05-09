@@ -48,7 +48,6 @@ class RelationEntitySuite extends AnyFunSuite {
     assert(relation.relations === List(RelationMemberEntity(219042667,RelationMemberEntityTypes.Way,"inner"),RelationMemberEntity(219042634,RelationMemberEntityTypes.Way,"outer")))
     assert(relation.tags == Map("type" -> "multipolygon"))
 
-    fail("Why is not failing with the information field!!!")
   }
 
 }

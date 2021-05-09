@@ -67,10 +67,6 @@ class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
         x.longitude shouldBe latAndLon(1).toDouble +- 0.01
       })
     }
-
-    "check info field" in {
-      fail("Why is not failing with the information field!!!")
-    }
   }
 
 }

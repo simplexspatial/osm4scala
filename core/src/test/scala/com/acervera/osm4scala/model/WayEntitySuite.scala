@@ -47,8 +47,6 @@ class WayEntitySuite extends AnyFunSuite {
     assert(way.id === 199785422)
     assert(way.nodes === List(2097786485L, 2097786450L, 2097786416L, 2097786358L))
     assert(way.tags == Map("source" -> "PNOA", "highway" -> "path", "surface" -> "ground"))
-
-    fail("Why is not failing with the information field!!!")
   }
 
 }
