@@ -28,6 +28,8 @@ package com.acervera.osm4scala.model
 import com.acervera.osm4scala.utilities.StringTableUtils._
 import org.openstreetmap.osmosis.osmbinary.osmformat
 
+import java.time.Instant
+
 final object OSMTypes extends Enumeration {
   type osmType = Value
   val Way, Node, Relation = Value
@@ -42,7 +44,7 @@ sealed trait OSMEntity {
 
 case class Info(
     version: Option[Int] = None,
-    timestamp: Option[Long] = None,
+    timestamp: Option[Instant] = None,
     changeset: Option[Long] = None,
     userId: Option[Int] = None,
     userName: Option[String] = None,
@@ -55,7 +57,7 @@ object Info {
       case info =>
         Info(
           info.version,
-          info.timestamp,
+          info.timestamp.map(Instant.ofEpochSecond),
           info.changeset,
           info.uid,
           info.userSid.map(idx => osmosisStringTable.getString(idx))

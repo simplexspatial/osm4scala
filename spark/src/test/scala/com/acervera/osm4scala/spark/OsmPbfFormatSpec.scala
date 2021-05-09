@@ -25,13 +25,13 @@
 
 package com.acervera.osm4scala.spark
 
-import java.io.File
-
 import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SaveMode, SparkSession, functions => fn}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import java.io.File
 import scala.util.Random
 
 class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBeforeAfterAll {
@@ -63,17 +63,47 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
     }
 
     "parser correctly" when {
-      "is parsing nodes" in {
-        val node171946 = loadOsmPbf(spark, madridPath).filter("id == 171946").collect()(0)
-        node171946.getAs[Long]("id") shouldBe 171946L
-        node171946.getAs[Byte]("type") shouldBe 0
-        node171946.getAs[Double]("latitude") shouldBe (40.42125 +- 0.001)
-        node171946.getAs[Double]("longitude") shouldBe (-3.68445 +- 0.001)
-        node171946.getAs[Map[String, String]]("tags") shouldBe
-          Map("highway" -> "traffic_signals", "crossing" -> "traffic_signals", "crossing_ref" -> "zebra")
+      "is parsing nodes" when {
+        "read all columns" in {
+          val node171946 = loadOsmPbf(spark, madridPath).filter("id == 171946").collect()(0)
+          node171946.getAs[Long]("id") shouldBe 171946L
+          node171946.getAs[Byte]("type") shouldBe 0
+          node171946.getAs[Double]("latitude") shouldBe (40.42125 +- 0.001)
+          node171946.getAs[Double]("longitude") shouldBe (-3.68445 +- 0.001)
+          node171946.getAs[Map[String, String]]("tags") shouldBe
+            Map("highway" -> "traffic_signals", "crossing" -> "traffic_signals", "crossing_ref" -> "zebra")
 
-        node171946.getAs[Seq[Any]]("nodes") shouldBe Seq.empty
-        node171946.getAs[Seq[Any]]("relations") shouldBe Seq.empty
+          node171946.getAs[Seq[Any]]("nodes") shouldBe Seq.empty
+          node171946.getAs[Seq[Any]]("relations") shouldBe Seq.empty
+        }
+
+        "read without info" in {
+          val node171946 = loadOsmPbf(spark, madridPath).select("id").filter("id == 171946").collect()(0)
+          node171946.getAs[Long]("id") shouldBe 171946L
+        }
+
+        "read null info" in {
+          val node171946 = loadOsmPbf(spark, madridPath).select("id", "info").filter("id == 171946").collect()(0)
+          node171946.getAs[Long]("id") shouldBe 171946L
+          node171946.getAs[Row]("info") should be(null)
+
+          val testIfNulls = loadOsmPbf(spark, madridPath)
+            .select(
+              col("id"),
+              (
+                col("info.version").isNull and
+                col("info.timestamp").isNull and
+                col("info.changeset").isNull and
+                col("info.userId").isNull and
+                col("info.userName").isNull and
+                col("info.visible").isNull
+              ).as("allNulls")
+            ).filter("id == 171946").collect()(0)
+
+          testIfNulls.getAs[Long]("id") shouldBe 171946L
+          testIfNulls.getAs[Boolean]("allNulls") shouldBe true
+        }
+
       }
 
       "is parsing ways" in {

@@ -30,7 +30,7 @@ import com.acervera.osm4scala.spark.OsmPbfRowIterator._
 import com.acervera.osm4scala.spark.OsmSqlEntity._
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.UnsafeArrayData
-import org.apache.spark.sql.catalyst.util.{ArrayBasedMapData, ArrayData, GenericArrayData, MapData}
+import org.apache.spark.sql.catalyst.util._
 import org.apache.spark.sql.types.{ArrayType, StructField, StructType}
 import org.apache.spark.unsafe.types.UTF8String
 
@@ -68,8 +68,25 @@ object OsmPbfRowIterator {
       case FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Array.empty[Long])
       case FIELD_RELATIONS => new GenericArrayData(Seq.empty)
       case FIELD_TAGS      => calculateTags(entity.tags)
-      case FIELD_INFO      => entity.info.map(calculateInformation).orNull
+      case FIELD_INFO      => entity.info.map(populateInfo).orNull
+      case fieldName       => throw new Exception(s"Field $fieldName not valid for a Node.")
     }
+
+    private def calculateTags(tags: Map[String, String]): MapData = ArrayBasedMapData(
+      tags,
+      (k: Any) => UTF8String.fromString(k.toString),
+      (v: Any) => UTF8String.fromString(v.toString)
+    )
+
+    private def populateInfo(info: Info): InternalRow = InternalRow.fromSeq(infoSchema.fieldNames.map{
+      case FIELD_INFO_VERSION   => info.version.getOrElse(null)
+      case FIELD_INFO_TIMESTAMP => info.timestamp.map(inst => DateTimeUtils.fromMillis(inst.toEpochMilli)).getOrElse(null)
+      case FIELD_INFO_CHANGESET => info.changeset.getOrElse(null)
+      case FIELD_INFO_USER_ID   => info.userId.getOrElse(null)
+      case FIELD_INFO_USER_NAME => info.userName.map(UTF8String.fromString).orNull
+      case FIELD_INFO_VISIBLE   => info.visible.getOrElse(null)
+      case fieldName            => throw new Exception(s"Field $fieldName not valid for Info.")
+    })
 
     private def populateWay(entity: WayEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
       case FIELD_ID        => entity.id
@@ -79,26 +96,8 @@ object OsmPbfRowIterator {
       case FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(entity.nodes.toArray)
       case FIELD_RELATIONS => new GenericArrayData(Seq.empty)
       case FIELD_TAGS      => calculateTags(entity.tags)
-      case FIELD_INFO      => entity.info.map(calculateInformation).orNull
-    }
-
-    private def calculateTags(tags: Map[String, String]): MapData = ArrayBasedMapData(
-      tags,
-      (k: Any) => UTF8String.fromString(k.toString),
-      (v: Any) => UTF8String.fromString(v.toString)
-    )
-
-    private def calculateInformation(info: Info): InternalRow = {
-      InternalRow.fromSeq(
-        Seq(
-          info.version.orNull,
-          info.timestamp.orNull, // CalendarIntervalType and DateTimeUtils for timestamp??
-          info.changeset.orNull,
-          info.userId.orNull,
-          info.userName.map(UTF8String.fromString).orNull,
-          info.visible.orNull
-        )
-      )
+      case FIELD_INFO      => entity.info.map(populateInfo).orNull
+      case fieldName       => throw new Exception(s"Field $fieldName not valid for a Way.")
     }
 
     private def populateRelation(entity: RelationEntity, structType: StructType): Seq[Any] =
@@ -111,7 +110,8 @@ object OsmPbfRowIterator {
           case FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Seq.empty[Long].toArray)
           case FIELD_RELATIONS => calculateRelations(entity.relations, f)
           case FIELD_TAGS      => calculateTags(entity.tags)
-          case FIELD_INFO      => entity.info.map(calculateInformation).orNull
+          case FIELD_INFO      => entity.info.map(populateInfo).orNull
+          case fieldName       => throw new Exception(s"Field $fieldName not valid for a Relation.")
       })
 
     private def calculateRelations(relations: Seq[RelationMemberEntity], structField: StructField): ArrayData =
@@ -135,6 +135,7 @@ object OsmPbfRowIterator {
         case FIELD_RELATIONS_ID   => relation.id
         case FIELD_RELATIONS_TYPE => typeFromOsmRelationEntity(relation.relationTypes)
         case FIELD_RELATIONS_ROLE => UTF8String.fromString(relation.role)
+        case fieldName            => throw new Exception(s"Field $fieldName not valid for a RelationMember.")
       }
 
   }

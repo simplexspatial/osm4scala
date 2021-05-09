@@ -71,14 +71,15 @@ object OsmSqlEntity {
         StructField(FIELD_RELATIONS_ROLE, StringType, true))
   )
 
-  lazy val infoSchema = StructType(Seq(
-    StructField(FIELD_INFO_VERSION, IntegerType, true),
-    StructField(FIELD_INFO_TIMESTAMP, LongType, true),
-    StructField(FIELD_INFO_CHANGESET, LongType, true),
-    StructField(FIELD_INFO_USER_ID, IntegerType, true),
-    StructField(FIELD_INFO_USER_NAME, StringType, true),
-    StructField(FIELD_INFO_VISIBLE, BooleanType, true)
-  ))
+  lazy val infoSchema = StructType(
+    Seq(
+      StructField(FIELD_INFO_VERSION, IntegerType, true),
+      StructField(FIELD_INFO_TIMESTAMP, TimestampType, true),
+      StructField(FIELD_INFO_CHANGESET, LongType, true),
+      StructField(FIELD_INFO_USER_ID, IntegerType, true),
+      StructField(FIELD_INFO_USER_NAME, StringType, true),
+      StructField(FIELD_INFO_VISIBLE, BooleanType, true)
+    ))
 
 
   lazy val schema = StructType(
