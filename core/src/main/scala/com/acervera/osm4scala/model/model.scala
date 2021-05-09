@@ -37,30 +37,30 @@ sealed trait OSMEntity {
   val osmModel: OSMTypes.Value
   val id: Long
   val tags: Map[String, String]
-  val info: Info
+  val info: Option[Info]
 }
 
 case class Info(
     version: Option[Int] = None,
     timestamp: Option[Long] = None,
     changeset: Option[Long] = None,
-    uid: Option[Int] = None,
-    userSid: Option[String] = None,
+    userId: Option[Int] = None,
+    userName: Option[String] = None,
     visible: Option[Boolean] = None
 )
 
 object Info {
-  def apply(osmosisStringTable: osmformat.StringTable, infoOpt: Option[osmformat.Info]): Info = infoOpt match {
-    case None => Info.empty()
-    case Some(info) =>
-      Info(
-        info.version,
-        info.timestamp,
-        info.changeset,
-        info.uid,
-        info.userSid.map(idx => osmosisStringTable.getString(idx))
-      )
-  }
+  def apply(osmosisStringTable: osmformat.StringTable, infoOpt: Option[osmformat.Info]): Option[Info] =
+    infoOpt.map {
+      case info =>
+        Info(
+          info.version,
+          info.timestamp,
+          info.changeset,
+          info.uid,
+          info.userSid.map(idx => osmosisStringTable.getString(idx))
+        )
+    }
 
   def empty(): Info = Info()
 
@@ -74,7 +74,7 @@ case class NodeEntity(
     latitude: Double,
     longitude: Double,
     tags: Map[String, String],
-    info: Info = Info.empty()
+    info: Option[Info] = None
 ) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Node
 }
@@ -86,7 +86,7 @@ case class WayEntity(
     id: Long,
     nodes: Seq[Long],
     tags: Map[String, String],
-    info: Info = Info.empty()
+    info: Option[Info] = None
 ) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Way
 
@@ -99,7 +99,9 @@ object WayEntity {
   def apply(osmosisStringTable: osmformat.StringTable, osmosisWay: osmformat.Way): WayEntity =
     new WayEntity(
       osmosisWay.id,
-      osmosisWay.refs.scanLeft(0L) { _ + _ }.drop(1), // Calculate nodes references in stored in delta compression. TODO: extract to utility class.
+      osmosisWay.refs
+        .scanLeft(0L) { _ + _ }
+        .drop(1), // Calculate nodes references in stored in delta compression. TODO: extract to utility class.
       osmosisStringTable.extractTags(osmosisWay.keys, osmosisWay.vals),
       Info(osmosisStringTable, osmosisWay.info)
     )
@@ -112,7 +114,7 @@ case class RelationEntity(
     id: Long,
     relations: Seq[RelationMemberEntity],
     tags: Map[String, String],
-    info: Info = Info.empty()
+    info: Option[Info] = None
 ) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Relation
 }
@@ -122,7 +124,9 @@ object RelationEntity {
 
     // Calculate relations
     val relations = (
-      osmosisRelation.memids.scanLeft(0L) {_ + _}.drop(1), // Decode members references in stored in delta compression. TODO: extract to utility class.
+      osmosisRelation.memids
+        .scanLeft(0L) { _ + _ }
+        .drop(1), // Decode members references in stored in delta compression. TODO: extract to utility class.
       osmosisRelation.types,
       osmosisRelation.rolesSid
     ).zipped.map { (m, t, r) =>

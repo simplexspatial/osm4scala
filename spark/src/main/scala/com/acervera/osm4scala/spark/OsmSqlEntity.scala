@@ -26,7 +26,7 @@
 package com.acervera.osm4scala.spark
 
 import com.acervera.osm4scala.model.RelationMemberEntityTypes
-import org.apache.spark.sql.types.{StructField, StructType, _}
+import org.apache.spark.sql.types._
 
 object OsmSqlEntity {
 
@@ -37,9 +37,17 @@ object OsmSqlEntity {
   val FIELD_NODES = "nodes"
   val FIELD_RELATIONS = "relations"
   val FIELD_TAGS = "tags"
+  val FIELD_INFO = "info"
   val FIELD_RELATIONS_ID = "id"
   val FIELD_RELATIONS_TYPE = "relationType"
   val FIELD_RELATIONS_ROLE = "role"
+  val FIELD_INFO_VERSION = "version"
+  val FIELD_INFO_TIMESTAMP = "timestamp"
+  val FIELD_INFO_CHANGESET = "changeset"
+  val FIELD_INFO_USER_ID = "userId"
+  val FIELD_INFO_USER_NAME = "userName"
+  val FIELD_INFO_VISIBLE = "visible"
+
 
   val ENTITY_TYPE_NODE: Byte = 0
   val ENTITY_TYPE_WAY: Byte = 1
@@ -63,6 +71,16 @@ object OsmSqlEntity {
         StructField(FIELD_RELATIONS_ROLE, StringType, true))
   )
 
+  lazy val infoSchema = StructType(Seq(
+    StructField(FIELD_INFO_VERSION, IntegerType, true),
+    StructField(FIELD_INFO_TIMESTAMP, LongType, true),
+    StructField(FIELD_INFO_CHANGESET, LongType, true),
+    StructField(FIELD_INFO_USER_ID, IntegerType, true),
+    StructField(FIELD_INFO_USER_NAME, StringType, true),
+    StructField(FIELD_INFO_VISIBLE, BooleanType, true)
+  ))
+
+
   lazy val schema = StructType(
     Seq(
       StructField(FIELD_ID, LongType, false),
@@ -71,7 +89,8 @@ object OsmSqlEntity {
       StructField(FIELD_LONGITUDE, DoubleType, true),
       StructField(FIELD_NODES, ArrayType(LongType, false), true),
       StructField(FIELD_RELATIONS, ArrayType(relationSchema, false), true),
-      StructField(FIELD_TAGS, MapType(StringType, StringType, false), true)
+      StructField(FIELD_TAGS, MapType(StringType, StringType, false), true),
+      StructField(FIELD_INFO, StructType(infoSchema), true)
     ))
 
 }

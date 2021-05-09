@@ -54,18 +54,65 @@ object OsmPbfRowIterator {
 
   implicit class OsmEntityDecorator(osmEntity: OSMEntity) {
 
+    def toSQLTypesSeq(structType: StructType): Seq[Any] = osmEntity match {
+      case entity: NodeEntity     => populateNode(entity, structType)
+      case entity: WayEntity      => populateWay(entity, structType)
+      case entity: RelationEntity => populateRelation(entity, structType)
+    }
+
+    private def populateNode(entity: NodeEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
+      case FIELD_ID        => entity.id
+      case FIELD_TYPE      => ENTITY_TYPE_NODE
+      case FIELD_LATITUDE  => entity.latitude
+      case FIELD_LONGITUDE => entity.longitude
+      case FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Array.empty[Long])
+      case FIELD_RELATIONS => new GenericArrayData(Seq.empty)
+      case FIELD_TAGS      => calculateTags(entity.tags)
+      case FIELD_INFO      => entity.info.map(calculateInformation).orNull
+    }
+
+    private def populateWay(entity: WayEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
+      case FIELD_ID        => entity.id
+      case FIELD_TYPE      => ENTITY_TYPE_WAY
+      case FIELD_LATITUDE  => null
+      case FIELD_LONGITUDE => null
+      case FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(entity.nodes.toArray)
+      case FIELD_RELATIONS => new GenericArrayData(Seq.empty)
+      case FIELD_TAGS      => calculateTags(entity.tags)
+      case FIELD_INFO      => entity.info.map(calculateInformation).orNull
+    }
+
     private def calculateTags(tags: Map[String, String]): MapData = ArrayBasedMapData(
       tags,
-      (k:Any) => UTF8String.fromString(k.toString),
-      (v:Any) => UTF8String.fromString(v.toString)
+      (k: Any) => UTF8String.fromString(k.toString),
+      (v: Any) => UTF8String.fromString(v.toString)
     )
 
-    private def calculateRelation(relation: RelationMemberEntity, structType: StructType): Seq[Any] =
-      structType.fieldNames.map {
-        case FIELD_RELATIONS_ID   => relation.id
-        case FIELD_RELATIONS_TYPE => typeFromOsmRelationEntity(relation.relationTypes)
-        case FIELD_RELATIONS_ROLE => UTF8String.fromString(relation.role)
-      }
+    private def calculateInformation(info: Info): InternalRow = {
+      InternalRow.fromSeq(
+        Seq(
+          info.version.orNull,
+          info.timestamp.orNull, // CalendarIntervalType and DateTimeUtils for timestamp??
+          info.changeset.orNull,
+          info.userId.orNull,
+          info.userName.map(UTF8String.fromString).orNull,
+          info.visible.orNull
+        )
+      )
+    }
+
+    private def populateRelation(entity: RelationEntity, structType: StructType): Seq[Any] =
+      structType.fields.map(f =>
+        f.name match {
+          case FIELD_ID        => entity.id
+          case FIELD_TYPE      => ENTITY_TYPE_RELATION
+          case FIELD_LATITUDE  => null
+          case FIELD_LONGITUDE => null
+          case FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Seq.empty[Long].toArray)
+          case FIELD_RELATIONS => calculateRelations(entity.relations, f)
+          case FIELD_TAGS      => calculateTags(entity.tags)
+          case FIELD_INFO      => entity.info.map(calculateInformation).orNull
+      })
 
     private def calculateRelations(relations: Seq[RelationMemberEntity], structField: StructField): ArrayData =
       new GenericArrayData(
@@ -83,43 +130,12 @@ object OsmPbfRowIterator {
         }
       )
 
-    private def populateNode(entity: NodeEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
-      case FIELD_ID                     => entity.id
-      case FIELD_TYPE                   => ENTITY_TYPE_NODE
-      case OsmSqlEntity.FIELD_LATITUDE  => entity.latitude
-      case OsmSqlEntity.FIELD_LONGITUDE => entity.longitude
-      case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Array.empty[Long])
-      case OsmSqlEntity.FIELD_RELATIONS => new GenericArrayData(Seq.empty)
-      case FIELD_TAGS                   => calculateTags(entity.tags)
-    }
-
-    private def populateWay(entity: WayEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
-      case FIELD_ID                     => entity.id
-      case FIELD_TYPE                   => ENTITY_TYPE_WAY
-      case OsmSqlEntity.FIELD_LATITUDE  => null
-      case OsmSqlEntity.FIELD_LONGITUDE => null
-      case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(entity.nodes.toArray)
-      case OsmSqlEntity.FIELD_RELATIONS => new GenericArrayData(Seq.empty)
-      case FIELD_TAGS                   => calculateTags(entity.tags)
-    }
-
-    private def populateRelation(entity: RelationEntity, structType: StructType): Seq[Any] =
-      structType.fields.map(f =>
-        f.name match {
-          case FIELD_ID                     => entity.id
-          case FIELD_TYPE                   => ENTITY_TYPE_RELATION
-          case OsmSqlEntity.FIELD_LATITUDE  => null
-          case OsmSqlEntity.FIELD_LONGITUDE => null
-          case OsmSqlEntity.FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(Seq.empty[Long].toArray)
-          case OsmSqlEntity.FIELD_RELATIONS => calculateRelations(entity.relations, f)
-          case FIELD_TAGS                   => calculateTags(entity.tags)
-      })
-
-    def toSQLTypesSeq(structType: StructType): Seq[Any] = osmEntity match {
-      case entity: NodeEntity     => populateNode(entity, structType)
-      case entity: WayEntity      => populateWay(entity, structType)
-      case entity: RelationEntity => populateRelation(entity, structType)
-    }
+    private def calculateRelation(relation: RelationMemberEntity, structType: StructType): Seq[Any] =
+      structType.fieldNames.map {
+        case FIELD_RELATIONS_ID   => relation.id
+        case FIELD_RELATIONS_TYPE => typeFromOsmRelationEntity(relation.relationTypes)
+        case FIELD_RELATIONS_ROLE => UTF8String.fromString(relation.role)
+      }
 
   }
 
