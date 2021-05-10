@@ -25,11 +25,11 @@
 
 package com.acervera.osm4scala.spark
 
-import java.io.{ByteArrayInputStream, FileInputStream, InputStream}
-
 import com.acervera.osm4scala.spark.OSMDataFinder._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
+
+import java.io.{ByteArrayInputStream, FileInputStream, InputStream}
 
 class OSMDataFinderSpec extends AnyWordSpecLike with Matchers {
   "OSMDataFinder" should {
@@ -38,7 +38,7 @@ class OSMDataFinderSpec extends AnyWordSpecLike with Matchers {
         val idx = new ByteArrayInputStream(Array.emptyByteArray).firstBlockIndex()
         idx shouldBe None
       }
-      "file is length block size" in {
+      "file is larger than block size" in {
         val idx = new ByteArrayInputStream(Array.fill[Byte](4)(0)).firstBlockIndex()
         idx shouldBe None
       }
