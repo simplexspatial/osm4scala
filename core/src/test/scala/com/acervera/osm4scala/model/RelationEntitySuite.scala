@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2021 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,13 +27,14 @@ package com.acervera.osm4scala.model
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.{Relation, StringTable}
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 import java.io.FileInputStream
 
 /**
   * Created by angelcervera on 23/06/16.
   */
-class RelationEntitySuite extends AnyFunSuite {
+class RelationEntitySuite extends AnyFunSuite with Matchers {
 
   test("read a real osmosis Relations.") {
 
@@ -44,9 +45,9 @@ class RelationEntitySuite extends AnyFunSuite {
     // Test
     val relation = RelationEntity(strTable, osmosisRelation)
 
-    assert(relation.id === 2898444)
-    assert(relation.relations === List(RelationMemberEntity(219042667,RelationMemberEntityTypes.Way,"inner"),RelationMemberEntity(219042634,RelationMemberEntityTypes.Way,"outer")))
-    assert(relation.tags == Map("type" -> "multipolygon"))
+    relation.id shouldBe 2898444
+    relation.relations shouldBe List(RelationMemberEntity(219042667,RelationMemberEntityTypes.Way,"inner"),RelationMemberEntity(219042634,RelationMemberEntityTypes.Way,"outer"))
+    relation.tags shouldBe Map("type" -> "multipolygon")
 
   }
 

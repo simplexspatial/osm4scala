@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2021 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,9 +42,8 @@ class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
       val osmosisDense = DenseNodes parseFrom new FileInputStream(
         "core/src/test/resources/com/acervera/osm4scala/osmblock/denses/7875/0.dense"
       )
-      var counter = 0
-      DenseNodesIterator(strTable, osmosisDense).foreach(_ => counter += 1)
-      assert(counter == 6432, "There are 6432 nodes!")
+
+      DenseNodesIterator(strTable, osmosisDense).size shouldBe 6432
     }
 
     "Decode location" in {
@@ -61,6 +60,7 @@ class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
           )
         )
         .getLines()
+
       DenseNodesIterator(strTable, osmosisDense).foreach(x => {
         val latAndLon = expectedCoordIter.next().split(",")
         x.latitude shouldBe latAndLon(0).toDouble +- 0.01

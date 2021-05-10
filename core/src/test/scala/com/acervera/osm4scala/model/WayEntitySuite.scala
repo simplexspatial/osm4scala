@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2021 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ package com.acervera.osm4scala.model
 
 import org.openstreetmap.osmosis.osmbinary.osmformat.{StringTable, Way}
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 import java.io.FileInputStream
 
@@ -34,7 +35,7 @@ import java.io.FileInputStream
 /**
   * Created by angelcervera on 20/06/16.
   */
-class WayEntitySuite extends AnyFunSuite {
+class WayEntitySuite extends AnyFunSuite with Matchers {
 
   test("read a real osmosis Way.") {
 
@@ -44,9 +45,9 @@ class WayEntitySuite extends AnyFunSuite {
 
     // Test
     val way = WayEntity(strTable, osmosisWay)
-    assert(way.id === 199785422)
-    assert(way.nodes === List(2097786485L, 2097786450L, 2097786416L, 2097786358L))
-    assert(way.tags == Map("source" -> "PNOA", "highway" -> "path", "surface" -> "ground"))
+    way.id shouldBe 199785422
+    way.nodes shouldBe List(2097786485L, 2097786450L, 2097786416L, 2097786358L)
+    way.tags shouldBe Map("source" -> "PNOA", "highway" -> "path", "surface" -> "ground")
   }
 
 }
