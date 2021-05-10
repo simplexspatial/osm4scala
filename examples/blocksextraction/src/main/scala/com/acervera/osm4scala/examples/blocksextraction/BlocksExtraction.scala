@@ -25,14 +25,14 @@
 
 package com.acervera.osm4scala.examples.blocksextraction
 
-import java.io._
-import java.nio.file.{Files, Paths}
-
 import com.acervera.osm4scala.BlobTupleIterator
 import com.acervera.osm4scala.examples.blocksextraction.ParametersConfig._
 import com.acervera.osm4scala.examples.utilities.Benchmarking
 import com.acervera.osm4scala.utilities.Osm4ScalaUtils
-import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
+import scalapb.GeneratedMessage
+
+import java.io._
+import java.nio.file.{Files, Paths}
 
 /**
   * Low level example about how to uncompress and extract all data blocks to a folder.
@@ -49,26 +49,23 @@ object BlocksExtraction extends App with Osm4ScalaUtils with Benchmarking {
     try {
       pbfIS = new FileInputStream(pbfFilePath)
       Files.createDirectories(Paths.get(extractRootFolder))
-      val x = BlobTupleIterator.fromPbf(pbfIS).foldLeft(0L)((counter,x) => x match {
-        case _ if (x._1.`type` == "OSMData") => {
-          writeBlob(x._2, extractRootFolder, counter)
+      BlobTupleIterator
+        .fromPbf(pbfIS)
+        .foldLeft(0L) {
+          case (counter, (header, blob)) =>
+            write(s"$extractRootFolder/${counter}_${header.`type`}.blob", blob)
+            write(s"$extractRootFolder/${counter}_${header.`type`}.header", header)
+            counter + 1
         }
-        case _ =>  counter
-      })
-      x
     } finally {
       if (pbfIS != null) pbfIS.close()
     }
   }
 
-
-
-  def writeBlob(blob: Blob, outputFolderPath: String, counter: Long): Long = {
-    val output = new FileOutputStream(s"$outputFolderPath/${counter}.blob")
-    blob writeTo output
+  private def write(outPath: String, message: GeneratedMessage) {
+    val output = new FileOutputStream(outPath)
+    message writeTo output
     output.close
-
-    counter+1
   }
 
   // Logic that parse parameters.
