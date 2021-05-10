@@ -236,18 +236,18 @@ If you prefer an online option, you can try [MyBinder](https://mybinder.org/v2/g
    Notebook used, **you will need to restart the Spark session (or Kernel session)**.
 3. From the previous step, you can start creating dataframes from pbf files as we did before in previous sections.
 
-    Let's suppose that you uploaded a file called `monaco-latest.osm.pbf` into the notebook's `work` folder.
+    Let's suppose that you uploaded a file called `monaco-anonymized.osm.pbf` into the notebook's `work` folder.
 
     If you create a new Cell with next content, you will get all traffic signals in Monaco.
     ```scala title="Scala"
-    val osmDF = spark.read.format("osm.pbf").load("/home/jovyan/work/monaco-latest.osm.pbf")
+    val osmDF = spark.read.format("osm.pbf").load("/home/jovyan/work/monaco-anonymized.osm.pbf")
     osmDF.select("latitude", "longitude")
         .where("element_at(tags, 'highway') == 'traffic_signals'")
         .show
     ```
     ```python {1}
     %%python
-    osm_df = spark.read.format("osm.pbf").load("/home/jovyan/work/monaco-latest.osm.pbf")
+    osm_df = spark.read.format("osm.pbf").load("/home/jovyan/work/monaco-anonymized.osm.pbf")
     osm_df.select("latitude", "longitude").where("element_at(tags, 'highway') == 'traffic_signals'").show()
     ```
     :::note
@@ -338,13 +338,13 @@ When we need to write more complex analysis, data extractions, ETLs, etc, it is 
     bin/spark-submit \
         --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7' \
         examples/spark-documentation/target/scala-2.12/osm4scala-examples-spark-documentation_2.12-1.0.8-SNAPSHOT.jar \
-        /tmp/osm/monaco-latest.osm.pbf
+        /tmp/osm/monaco-anonymized.osm.pbf
     ```
     ```shell title="PySpark"
     bin/spark-submit \
         --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.7' \
         examples/spark-documentation/src/main/scala/com/acervera/osm4scala/examples/spark/documentation/PrimiriveCounter.py \
-        /tmp/osm/monaco-latest.osm.pbf
+        /tmp/osm/monaco-anonymized.osm.pbf
     ```
 
     :::note Optional --packages.

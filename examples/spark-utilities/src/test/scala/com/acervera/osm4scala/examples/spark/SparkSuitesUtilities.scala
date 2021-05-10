@@ -36,6 +36,6 @@ object SparkSuitesUtilities {
 
   def monaco: DataFrame = spark.sqlContext.read
     .format("osm.pbf")
-    .load("core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf")
+    .load("core/src/test/resources/com/acervera/osm4scala/monaco-anonymized.osm.pbf")
 }
 

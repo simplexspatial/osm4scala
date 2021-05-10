@@ -44,7 +44,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
     )
 
   val madridPath = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
-  val monacoPath = "core/src/test/resources/com/acervera/osm4scala/monaco-latest.osm.pbf"
+  val monacoPath = "core/src/test/resources/com/acervera/osm4scala/monaco-anonymized.osm.pbf"
 
   def loadOsmPbf(spark: SparkSession, path: String, tableName: Option[String] = None): DataFrame = {
     val df = spark.sqlContext.read
