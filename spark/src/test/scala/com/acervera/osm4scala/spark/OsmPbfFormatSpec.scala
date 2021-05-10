@@ -180,6 +180,20 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
       }
       "using SQL" should {
 
+        "show changes" in {
+          loadOsmPbf(spark, monacoPath, Some("monaco_shows"))
+          spark.sqlContext
+            .sql(
+              """
+                | select
+                |   id, type, info.version, date_format(info.timestamp, "dd-MMM-y kk:mm:ss O") as timestamp
+                | from monaco_shows
+                | order by info.timestamp desc
+                | """.stripMargin
+            )
+            .show()
+        }
+
         "count all zebras" in {
           loadOsmPbf(spark, madridPath, Some("madrid_shows"))
           spark.sqlContext
