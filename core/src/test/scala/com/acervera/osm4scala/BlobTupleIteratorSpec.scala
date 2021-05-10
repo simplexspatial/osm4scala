@@ -25,33 +25,30 @@
 
 package com.acervera.osm4scala
 
-import java.io.{FileInputStream, InputStream}
-
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class BlobTupleIteratorSpec extends AnyWordSpec {
+import java.io.{FileInputStream, InputStream}
+
+class BlobTupleIteratorSpec extends AnyWordSpec with Matchers {
 
   "The BlobTupleIterator should" should {
     "Read three pairs" in {
       val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.osm.pbf"
-      var counter = 0
       var pbfIS: InputStream = null
       try {
         pbfIS = new FileInputStream(testFile)
-        BlobTupleIterator.fromPbf(pbfIS).foreach(_ => counter += 1)
-        assert(counter == 3, "There are 3 blocks!")
+        BlobTupleIterator.fromPbf(pbfIS).size shouldBe  3
       } finally {
         if (pbfIS != null) pbfIS.close()
       }
     }
     "Read ten pairs" in {
       val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/ten_blocks.osm.pbf"
-      var counter = 0
       var pbfIS: InputStream = null
       try {
         pbfIS = new FileInputStream(testFile)
-        BlobTupleIterator.fromPbf(pbfIS).foreach(_ => counter += 1)
-        assert(counter == 10, "There are 10 blocks!")
+        BlobTupleIterator.fromPbf(pbfIS).size shouldBe 10
       } finally {
         if (pbfIS != null) pbfIS.close()
       }
