@@ -186,12 +186,12 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
             .sql(
               """
                 | select
-                |   id, type, info.version, date_format(info.timestamp, "dd-MMM-y kk:mm:ss O") as timestamp
+                |   id, type, info.version, date_format(info.timestamp, "dd-MMM-y kk:mm:ss z") as timestamp
                 | from monaco_shows
                 | order by info.timestamp desc
                 | """.stripMargin
             )
-            .show()
+            .show(false)
         }
 
         "count all zebras" in {
@@ -200,6 +200,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
             .sql("select count(*) from madrid_shows where array_contains(map_values(tags), 'zebra')")
             .show()
         }
+
         "extract all keys used in tags" in {
           loadOsmPbf(spark, madridPath, Some("madrid_shows"))
           spark.sqlContext
