@@ -34,7 +34,7 @@ class BlobTupleIteratorSpec extends AnyWordSpec with Matchers {
 
   "The BlobTupleIterator should" should {
     "Read three pairs" in {
-      val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.osm.pbf"
+      val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.pbf"
       var pbfIS: InputStream = null
       try {
         pbfIS = new FileInputStream(testFile)
@@ -44,7 +44,7 @@ class BlobTupleIteratorSpec extends AnyWordSpec with Matchers {
       }
     }
     "Read ten pairs" in {
-      val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/ten_blocks.osm.pbf"
+      val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/ten_blocks.pbf"
       var pbfIS: InputStream = null
       try {
         pbfIS = new FileInputStream(testFile)
