@@ -169,6 +169,8 @@ def listOfProjects(): Seq[ProjectReference] = {
     examplesCounterAkka,
     examplesTagsExtraction,
     examplesPrimitivesExtraction,
+    examplesBlocksExtraction,
+    examplesTakeN
   )
 
   val spark3Projects: Seq[ProjectReference] = Seq(
@@ -290,6 +292,16 @@ lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", b
     exampleSettings,
     name := "osm4scala-examples-blocks-extraction",
     description := "Extract all blocks from the pbf into a folder using osm4scala."
+  )
+  .dependsOn(core, commonUtilities)
+
+lazy val examplesTakeN = Project(id = "examples-takeN", base = file("examples/takeN"))
+  .disablePlugins(AssemblyPlugin)
+  .settings(
+    commonSettings,
+    exampleSettings,
+    name := "osm4scala-examples-takeN",
+    description := "Generate a pbf file by taking the first N blocks."
   )
   .dependsOn(core, commonUtilities)
 
