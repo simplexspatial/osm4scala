@@ -30,7 +30,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
 import java.io.FileInputStream
-
+import java.time.Instant
 
 /**
   * Created by angelcervera on 20/06/16.
@@ -40,14 +40,38 @@ class WayEntitySuite extends AnyFunSuite with Matchers {
   test("read a real osmosis Way.") {
 
     // Read the osmosis string table and way.
-    val strTable = StringTable parseFrom new FileInputStream("core/src/test/resources/com/acervera/osm4scala/osmblock/ways/8133/strTable")
-    val osmosisWay = Way parseFrom new FileInputStream("core/src/test/resources/com/acervera/osm4scala/osmblock/ways/8133/280.way")
+    val strTable = StringTable parseFrom new FileInputStream(
+      "core/src/test/resources/com/acervera/osm4scala/primitives/way/strTable")
+    val osmosisWay = Way parseFrom new FileInputStream(
+      "core/src/test/resources/com/acervera/osm4scala/primitives/way/way")
 
     // Test
     val way = WayEntity(strTable, osmosisWay)
-    way.id shouldBe 199785422
-    way.nodes shouldBe List(2097786485L, 2097786450L, 2097786416L, 2097786358L)
-    way.tags shouldBe Map("source" -> "PNOA", "highway" -> "path", "surface" -> "ground")
+    way shouldBe WayEntity(
+      4097656,
+      Vector(
+        21912089L, 7265761724L, 1079750744L, 2104793864L, 6340961560L, 1110560507L, 21912093L, 6340961559L, 21912095L,
+        7265762803L, 2104793866L, 6340961561L, 5603088200L, 6340961562L, 21912097L, 21912099L
+      ),
+      Map(
+        "name" -> "Avenue Princesse Alice",
+        "surface" -> "asphalt",
+        "maxspeed" -> "30",
+        "highway" -> "primary",
+        "lit" -> "yes",
+        "lanes" -> "2"
+      ),
+      Some(
+        Info(
+          Some(13),
+          Some(Instant.parse("2020-03-05T08:50:46Z")),
+          Some(0L),
+          Some(0),
+          Some(""),
+          None
+        )
+      )
+    )
   }
 
 }

@@ -91,10 +91,6 @@ case class WayEntity(
     info: Option[Info] = None
 ) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Way
-
-  object WayEntityTypes extends Enumeration {
-    val Open, Close, Area, CombinedClosedPolylineArea = Value
-  }
 }
 
 object WayEntity {

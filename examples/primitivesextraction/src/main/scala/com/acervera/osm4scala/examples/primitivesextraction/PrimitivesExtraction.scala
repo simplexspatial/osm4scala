@@ -25,16 +25,16 @@
 
 package com.acervera.osm4scala.examples.primitivesextraction
 
-import java.io._
-import java.nio.file.{Files, Paths}
-
 import com.acervera.osm4scala.BlobTupleIterator
-import com.acervera.osm4scala.utilities.{PrimitiveGroupType, Osm4ScalaUtils}
+import com.acervera.osm4scala.examples.primitivesextraction.ParametersConfig._
+import com.acervera.osm4scala.examples.utilities.Benchmarking
+import com.acervera.osm4scala.utilities.Osm4ScalaUtils
+import com.acervera.osm4scala.utilities.PrimitiveGroupType._
 import org.openstreetmap.osmosis.osmbinary.fileformat.Blob
 import org.openstreetmap.osmosis.osmbinary.osmformat.PrimitiveBlock
-import PrimitiveGroupType._
-import ParametersConfig._
-import com.acervera.osm4scala.examples.utilities.Benchmarking
+
+import java.io._
+import java.nio.file.{Files, Paths}
 
 /**
   * Low level example about how to uncompress and extract all primitives to a folder.
@@ -49,15 +49,19 @@ object PrimitivesExtraction extends App with Osm4ScalaUtils with Benchmarking {
     var pbfIS: InputStream = null
     try {
       pbfIS = new FileInputStream(pbfFilePath)
-      BlobTupleIterator.fromPbf(pbfIS).foldLeft(Map[String, Long]().withDefaultValue(0L))((counters,x) => {
-        if (x._1.`type` == "OSMData") {
-          val folder = s"$extractRootFolder/${counters("OSMData")}"
-          Files.createDirectories(Paths.get(folder))
-          fromBlob(x._2, s"$extractRootFolder/${counters("OSMData")}", counters + ("OSMData"-> (counters("OSMData") + 1L)))
-        } else {
-          counters
+      BlobTupleIterator
+        .fromPbf(pbfIS)
+        .foldLeft(Map[String, Long]().withDefaultValue(0L)) {
+          case (counters, (header, blob)) if header.`type` == "OSMData" =>
+            Files.createDirectories(Paths.get(s"$extractRootFolder/${counters("OSMData")}"))
+            fromBlob(
+              blob,
+              s"$extractRootFolder/${counters("OSMData")}",
+              counters + ("OSMData" -> (counters("OSMData") + 1L))
+            )
+          case (counters, _) =>
+            counters
         }
-      })
     } finally {
       if (pbfIS != null) pbfIS.close()
     }
@@ -73,8 +77,11 @@ object PrimitivesExtraction extends App with Osm4ScalaUtils with Benchmarking {
       * @param ext Extenstion used to store the block and used as key in the map of counters.
       * @return Map with counters
       */
-    def writePrimitives(counters: Map[String, Long], primitives: Seq[scalapb.GeneratedMessage], ext:String) =
-      primitives.foldLeft(counters)(writePrimitive(_ , _, ext))
+    def writePrimitives(counters: Map[String, Long], primitives: Seq[scalapb.GeneratedMessage], ext: String) =
+      primitives.foldLeft(counters) {
+        case (c, p) =>
+          writePrimitive(c, p, ext)
+      }
 
     /**
       * Function that write a block and increment the counter of blocks of this type.
@@ -84,16 +91,16 @@ object PrimitivesExtraction extends App with Osm4ScalaUtils with Benchmarking {
       * @param ext Extenstion used to store the block and used as key in the map of counters.
       * @return Map with counters
       */
-    def writePrimitive(counters: Map[String, Long], primitive: scalapb.GeneratedMessage, ext:String): Map[String, Long] = {
+    def writePrimitive(
+        counters: Map[String, Long],
+        primitive: scalapb.GeneratedMessage,
+        ext: String
+    ): Map[String, Long] = {
       val output = new FileOutputStream(s"$outputFolderPath/${counters(ext)}.${ext}")
       primitive writeTo output
       output.close
-      counters + (ext-> (counters(ext) + 1L))
+      counters + (ext -> (counters(ext) + 1L))
     }
-
-
-
-
 
     val primitiveBlock = PrimitiveBlock parseFrom dataInputStreamBlob(blob)
 
@@ -101,16 +108,16 @@ object PrimitivesExtraction extends App with Osm4ScalaUtils with Benchmarking {
     primitiveBlock.stringtable writeTo strTableFile
     strTableFile.close
 
-    primitiveBlock.primitivegroup.foldLeft(counters)( (counters, primitiveGroup) => {
+    primitiveBlock.primitivegroup.foldLeft(counters)( (counters, primitiveGroup) =>
       detectType(primitiveGroup) match {
-        case Relations => writePrimitives(counters, primitiveGroup.relations, "relation")
-        case Nodes => writePrimitives(counters, primitiveGroup.nodes, "node")
-        case Ways =>  writePrimitives(counters, primitiveGroup.ways, "way")
+        case Relations  => writePrimitives(counters, primitiveGroup.relations, "relation")
+        case Nodes      => writePrimitives(counters, primitiveGroup.nodes, "node")
+        case Ways       => writePrimitives(counters, primitiveGroup.ways, "way")
         case ChangeSets => writePrimitives(counters, primitiveGroup.changesets, "changeset")
-        case DenseNodes => writePrimitive(counters, primitiveGroup.dense.get , "dense")
-        case _ => throw new Exception("Unknown primitive group found.")
+        case DenseNodes => writePrimitive(counters, primitiveGroup.dense.get, "dense")
+        case _          => throw new Exception("Unknown primitive group found.")
       }
-    })
+    )
 
   }
 
@@ -123,6 +130,5 @@ object PrimitivesExtraction extends App with Osm4ScalaUtils with Benchmarking {
     }
     case _ =>
   }
-
 
 }

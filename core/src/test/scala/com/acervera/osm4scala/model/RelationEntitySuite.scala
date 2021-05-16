@@ -30,24 +30,43 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
 import java.io.FileInputStream
+import java.time.Instant
 
 /**
   * Created by angelcervera on 23/06/16.
   */
 class RelationEntitySuite extends AnyFunSuite with Matchers {
 
-  test("read a real osmosis Relations.") {
+  test("read a real known osmosis Relations.") {
 
     // Read the osmosis string table and way.
-    val strTable = StringTable parseFrom new FileInputStream("core/src/test/resources/com/acervera/osm4scala/osmblock/relations/8486/strTable")
-    val osmosisRelation = Relation parseFrom new FileInputStream("core/src/test/resources/com/acervera/osm4scala/osmblock/relations/8486/7954.relation")
+    val strTable = StringTable parseFrom new FileInputStream(
+      "core/src/test/resources/com/acervera/osm4scala/primitives/relation/strTable")
+    val osmosisRelation = Relation parseFrom new FileInputStream(
+      "core/src/test/resources/com/acervera/osm4scala/primitives/relation/relation")
 
     // Test
     val relation = RelationEntity(strTable, osmosisRelation)
 
-    relation.id shouldBe 2898444
-    relation.relations shouldBe List(RelationMemberEntity(219042667,RelationMemberEntityTypes.Way,"inner"),RelationMemberEntity(219042634,RelationMemberEntityTypes.Way,"outer"))
-    relation.tags shouldBe Map("type" -> "multipolygon")
+
+    relation shouldBe RelationEntity(
+      11538023L,
+      Seq(
+        RelationMemberEntity(840127147L, RelationMemberEntityTypes.Way, "outer"),
+        RelationMemberEntity(840127148L, RelationMemberEntityTypes.Way, "inner")
+      ),
+      Map("building" -> "yes", "type" -> "multipolygon"),
+      Some(
+        Info(
+          Some(1),
+          Some(Instant.parse("2020-08-24T10:22:47Z")),
+          Some(0),
+          Some(0),
+          Some(""),
+          None
+        )
+      )
+    )
 
   }
 
