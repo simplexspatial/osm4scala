@@ -182,7 +182,7 @@ def listOfProjects(): Seq[ProjectReference] = {
 
   val projects = modules ++ (if(isPatch211Enable()) Seq.empty else spark3Projects)
 
-  print(s"PATCH_211 is ${isPatch211Enable()} so we are going to work with this list of projects: \n${projects.mkString("\t- ", "\n\t- ", "")}")
+  println(s"PATCH_211 is ${isPatch211Enable()} so we are going to work with this list of projects: \n${projects.mkString("\t- ", "\n\t- ", "")}")
 
   projects
 }
