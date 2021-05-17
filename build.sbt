@@ -11,12 +11,12 @@ lazy val commonIOVersion = "2.5"
 lazy val logbackVersion = "1.1.7"
 lazy val scoptVersion = "3.7.1"
 lazy val akkaVersion = "2.5.31"
-lazy val spark3Version = "3.0.1"
+lazy val spark3Version = "3.1.1"
 lazy val spark2Version = "2.4.7"
 lazy val sparkDefaultVersion = spark3Version
 
-lazy val scala213 = "2.13.3"
-lazy val scala212 = "2.12.12"
+lazy val scala213 = "2.13.5"
+lazy val scala212 = "2.12.13"
 lazy val scala211 = "2.11.12"
 lazy val scalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(scala213, scala212)
 lazy val sparkScalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(scala212)
@@ -24,8 +24,8 @@ lazy val sparkScalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(sca
 lazy val commonSettings = Seq(
   crossScalaVersions := scalaVersions,
   organization := "com.acervera.osm4scala",
-  organizationHomepage := Some(url("http://www.acervera.com")),
-  licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
+  organizationHomepage := Some(url("https://www.acervera.com")),
+  licenses += ("MIT", url("https://opensource.org/licenses/MIT")),
   homepage in ThisBuild := Some(
     url(s"https://simplexspatial.github.io/osm4scala/")
   ),
@@ -116,7 +116,7 @@ def generateSparkModule(sparkVersion: String): Project = {
   def pathFromModule(relativePath: String): String = if (sparkDefaultVersion == sparkVersion) {
     relativePath
   } else {
-    s"../../spark/${relativePath}"
+    s"../../spark/$relativePath"
   }
 
   Project(id = s"spark${sparkVersion.head}", base = file(baseFolder))

@@ -80,7 +80,7 @@ object OsmPbfRowIterator {
 
     private def populateInfo(info: Info): InternalRow = InternalRow.fromSeq(infoSchema.fieldNames.map{
       case FIELD_INFO_VERSION   => info.version.getOrElse(null)
-      case FIELD_INFO_TIMESTAMP => info.timestamp.map(inst => DateTimeUtils.fromMillis(inst.toEpochMilli)).getOrElse(null)
+      case FIELD_INFO_TIMESTAMP => info.timestamp.map(inst => inst.toEpochMilli).getOrElse(null)
       case FIELD_INFO_CHANGESET => info.changeset.getOrElse(null)
       case FIELD_INFO_USER_ID   => info.userId.getOrElse(null)
       case FIELD_INFO_USER_NAME => info.userName.map(UTF8String.fromString).orNull

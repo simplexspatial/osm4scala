@@ -24,19 +24,29 @@ The library is distributed via [Maven Repo](https://mvnrepository.com/artifact/c
 
 The Dataframe Schema used is the following one:
 ```
-StructType(
-    StructField(id,LongType,false),
-    StructField(type,ByteType,false),
-    StructField(latitude,DoubleType,true),
-    StructField(longitude,DoubleType,true),
-    StructField(nodes,ArrayType(LongType,true),true),
-    StructField(relations,ArrayType(StructType(
-        StructField(id,LongType,true),
-        StructField(relationType,ByteType,true),
-        StructField(role,StringType,true)
-    ),true),true),
-    StructField(tags,MapType(StringType,StringType,true),true)
-)
+root
+ |-- id: long (nullable = true)
+ |-- type: byte (nullable = true)
+ |-- latitude: double (nullable = true)
+ |-- longitude: double (nullable = true)
+ |-- nodes: array (nullable = true)
+ |    |-- element: long (containsNull = true)
+ |-- relations: array (nullable = true)
+ |    |-- element: struct (containsNull = true)
+ |    |    |-- id: long (nullable = true)
+ |    |    |-- relationType: byte (nullable = true)
+ |    |    |-- role: string (nullable = true)
+ |-- tags: map (nullable = true)
+ |    |-- key: string
+ |    |-- value: string (valueContainsNull = true)
+ |-- info: struct (nullable = true)
+ |    |-- version: integer (nullable = true)
+ |    |-- timestamp: timestamp (nullable = true)
+ |    |-- changeset: long (nullable = true)
+ |    |-- userId: integer (nullable = true)
+ |    |-- userName: string (nullable = true)
+ |    |-- visible: boolean (nullable = true)
+
 ```
 Where the column `type` could be:
 
