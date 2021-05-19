@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2021 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,19 @@
  *
  */
 
-package com.acervera.osm4scala.utilities
+package com.acervera.osm4scala.examples.taken
 
-import com.acervera.osm4scala.utilities.StringTableUtils._
-import com.google.protobuf.ByteString
-import org.openstreetmap.osmosis.osmbinary.osmformat.StringTable
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+/**
+  * Command line arguments parser.
+  */
+object ParametersConfig {
 
-class StringTableUtilsSpec extends AnyWordSpecLike with Matchers {
-
-  private val strTable = StringTable(
-    (0 to 10).map(idx => ByteString.copyFromUtf8(s"value$idx"))
-  )
-
-  "StringTableEnricher" should {
-    "extract tags from one sequences of keys and other of values " in {
-      strTable.extractTags(Seq(0,5), Seq(2,1)) shouldBe Map(
-        "value0" -> "value2",
-        "value5" -> "value1"
-      )
-    }
-    "extract tags from key,value sequence" in {
-      strTable.extractTags(Seq(0,2,5,1).toIterator) shouldBe Map(
-        "value0" -> "value2",
-        "value5" -> "value1"
-      )
-    }
-    "extract the String" in {
-      strTable.getString(0) shouldBe "value0"
-    }
+  // Parser
+  case class Config(input: String = "", output: String = "", blocks: Int = 1)
+  val parser = new scopt.OptionParser[Config]("takeN") {
+    opt[String]('i', "input").required().valueName("<file>").action((x, c) =>  c.copy(input  = x)).text("input is a required pbf format file.")
+    opt[String]('o', "output").required().valueName("<file>").action((x, c) =>  c.copy(output  = x)).text("Path pbf file that will be generated.")
+    opt[Int]('n', "blocks").required().valueName("<blocks>").action((x, c) =>  c.copy(blocks  = x)).text("Number of blocks to extract.")
   }
 
 }

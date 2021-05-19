@@ -25,13 +25,12 @@
 
 package com.acervera.osm4scala.examples.tagsextraction
 
-import java.io.{File, FileInputStream, InputStream, PrintWriter}
-
 import com.acervera.osm4scala.EntityIterator._
-import com.acervera.osm4scala.model.{OSMEntity, OSMTypes}
-import ParametersConfig._
+import com.acervera.osm4scala.examples.tagsextraction.ParametersConfig._
 import com.acervera.osm4scala.examples.utilities.Benchmarking
+import com.acervera.osm4scala.model.{OSMEntity, OSMTypes}
 
+import java.io.{File, FileInputStream, InputStream, PrintWriter}
 import scala.annotation.tailrec
 
 /**
@@ -52,7 +51,7 @@ object TagExtraction extends App with Benchmarking {
     * @param osmType Type of primitives to process.
     * @return Set of tags found.
     */
-  def extract(pbfIS: InputStream, osmType: OSMTypes.Value) =
+  def extract(pbfIS: InputStream, osmType: OSMTypes.Value): Set[String] =
     extractRecursive(fromPbf(pbfIS).withFilter(_.osmModel == osmType), Set[String]())
 
   /**
@@ -61,7 +60,7 @@ object TagExtraction extends App with Benchmarking {
     * @param pbfIS InputStream with the osm pbf.
     * @return Set of tags found.
     */
-  def extract(pbfIS: InputStream) = {
+  def extract(pbfIS: InputStream): Set[String] = {
     extractRecursive(fromPbf(pbfIS), Set[String]())
   }
 

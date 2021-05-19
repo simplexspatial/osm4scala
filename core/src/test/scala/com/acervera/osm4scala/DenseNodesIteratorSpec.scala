@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2021 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,48 +25,44 @@
 
 package com.acervera.osm4scala
 
-import java.io.{File, FileInputStream}
-
+import com.acervera.osm4scala.model.{Info, NodeEntity}
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.io.Source
+import java.io.FileInputStream
+import java.time.Instant
 
 class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
 
   "The DenseNodesIterator should" should {
-    "Read 6432 nodes" in {
+    "Read known node" in {
       val strTable = StringTable parseFrom new FileInputStream(
-        "core/src/test/resources/com/acervera/osm4scala/osmblock/denses/7875/strTable"
+        "core/src/test/resources/com/acervera/osm4scala/primitives/dense/strTable"
       )
       val osmosisDense = DenseNodes parseFrom new FileInputStream(
-        "core/src/test/resources/com/acervera/osm4scala/osmblock/denses/7875/0.dense"
+        "core/src/test/resources/com/acervera/osm4scala/primitives/dense/dense"
       )
-      var counter = 0
-      DenseNodesIterator(strTable, osmosisDense).foreach(_ => counter += 1)
-      assert(counter == 6432, "There are 6432 nodes!")
-    }
 
-    "Decode location" in {
-      val strTable = StringTable parseFrom new FileInputStream(
-        "core/src/test/resources/com/acervera/osm4scala/osmblock/denses/7875/strTable"
-      )
-      val osmosisDense = DenseNodes parseFrom new FileInputStream(
-        "core/src/test/resources/com/acervera/osm4scala/osmblock/denses/7875/0.dense"
-      )
-      val expectedCoordIter = Source
-        .fromFile(
-          new File(
-            "core/src/test/resources/com/acervera/osm4scala/osmblock/denses/7875/nodes_coord_list.txt"
+      DenseNodesIterator(strTable, osmosisDense)
+        .find(_.id == 4020124946L) shouldBe Some(
+        NodeEntity(
+          id = 4020124946L,
+          latitude = 43.732560499999984,
+          longitude = 7.418018399999998,
+          tags = Map("entrance" -> "yes", "addr:street" -> "Rue de la Colle", "addr:housenumber" -> "4"),
+          info = Some(
+            Info(
+              version = Some(1),
+              timestamp = Some(Instant.parse("2016-02-22T17:20:29Z")),
+              changeset = Some(0),
+              userId = Some(0),
+              userName = Some(""),
+              visible = None
+            )
           )
         )
-        .getLines()
-      DenseNodesIterator(strTable, osmosisDense).foreach(x => {
-        val latAndLon = expectedCoordIter.next().split(",")
-        x.latitude shouldBe latAndLon(0).toDouble +- 0.01
-        x.longitude shouldBe latAndLon(1).toDouble +- 0.01
-      })
+      )
     }
   }
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2021 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,57 +23,48 @@
  *
  */
 
-package com.acervera.osm4scala.examples.blocksextraction
+package com.acervera.osm4scala.examples.taken
 
 import com.acervera.osm4scala.BlobTupleIterator
-import com.acervera.osm4scala.examples.blocksextraction.ParametersConfig._
+import com.acervera.osm4scala.examples.taken.ParametersConfig._
 import com.acervera.osm4scala.examples.utilities.Benchmarking
 import com.acervera.osm4scala.utilities.Osm4ScalaUtils
-import scalapb.GeneratedMessage
 
 import java.io._
 import java.nio.file.{Files, Paths}
 
 /**
-  * Low level example about how to uncompress and extract all data blocks to a folder.
-  * Usually, it is not necessary to do it, but is good, for example, to extract fragments from the pbf that represent
-  * data blocks and then use them to test the data block reader.
-  *
-  * In this example, I am writing all blocks in a folders. Rememeber that this block is a Blob, so contains
-  * the string table and the possble compressed data.
+  * Low level example about how take the N first blocks in a pbf file and write it in another.
   */
-object BlocksExtraction extends App with Osm4ScalaUtils with Benchmarking {
+object TakeN extends App with Osm4ScalaUtils with Benchmarking {
 
-  def fromPbf(pbfFilePath: String, extractRootFolder: String): Long = {
+  def fromPbf(inPbfPath: String, outPbfPath: String, blocksNumber: Int): Unit = {
     var pbfIS: InputStream = null
+    var dsOS: DataOutputStream = null
     try {
-      pbfIS = new FileInputStream(pbfFilePath)
-      Files.createDirectories(Paths.get(extractRootFolder))
+      Files.createDirectories(Paths.get(outPbfPath).getParent)
+      pbfIS = new FileInputStream(inPbfPath)
+      dsOS = new DataOutputStream(new FileOutputStream(outPbfPath))
       BlobTupleIterator
         .fromPbf(pbfIS)
-        .foldLeft(0L) {
-          case (counter, (header, blob)) =>
-            write(s"$extractRootFolder/${counter}_${header.`type`}.blob", blob)
-            write(s"$extractRootFolder/${counter}_${header.`type`}.header", header)
-            counter + 1
+        .take(blocksNumber)
+        .foreach {
+          case (header, blob) =>
+            dsOS.writeInt(header.serializedSize)
+            header writeTo dsOS
+            blob writeTo dsOS
         }
     } finally {
       if (pbfIS != null) pbfIS.close()
+      if (dsOS != null) dsOS.close()
     }
-  }
-
-  private def write(outPath: String, message: GeneratedMessage) {
-    val output = new FileOutputStream(outPath)
-    message writeTo output
-    output.close
   }
 
   // Logic that parse parameters.
   parser.parse(args, Config()) match {
     case Some(config) => {
-      val result = time { fromPbf(config.input, config.output) }
-      println(f"Extracted ${config.input}%s file in ${config.input} in ${result._1 * 1e-9}%,2.2f sec.")
-      println(s"Resume: ${result._2} Blob blocks")
+      val (mms, _) = time { fromPbf(config.input, config.output, config.blocks) }
+      println(f"Extracted ${config.blocks} blocks from ${config.input}%s file and stored in ${config.output} in ${mms * 1e-9}%,2.2f sec.")
     }
     case _ =>
   }

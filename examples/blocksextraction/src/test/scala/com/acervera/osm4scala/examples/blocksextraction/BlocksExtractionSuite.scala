@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2021 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,19 +25,19 @@
 
 package com.acervera.osm4scala.examples.blocksextraction
 
-import java.io.File
-
 import com.acervera.osm4scala.examples.blocksextraction.BlocksExtraction._
 import org.apache.commons.io.FileUtils
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
+
+import java.io.File
 
 /**
   * Created by angelcervera on 23/06/16.
   */
 class BlocksExtractionSuite extends AnyFunSuite with BeforeAndAfter {
 
-  val extractRootFolder = "target/testing/BlocksExtractionSuite/"
+  val extractRootFolder = "examples/blocksextraction/target/testing/BlocksExtractionSuite/"
 
   before {
     FileUtils.deleteQuietly(new File(extractRootFolder))
@@ -47,21 +47,21 @@ class BlocksExtractionSuite extends AnyFunSuite with BeforeAndAfter {
     val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/dense_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
-    assert( new File(extractRootFolder).list().length == 2, "Must extract two blocks.")
+    assert( new File(extractRootFolder).list().length == 3*2, "Must extract 3 blocks and headers.")
   }
 
   test("Extracting relations blocks from pbf") {
     val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/relations_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
-    assert( new File(extractRootFolder).list().length == 1, "Must extract one blocks.")
+    assert( new File(extractRootFolder).list().length == 2, "Must extract one block and one header.")
   }
 
   test("Extracting ways blocks from pbf") {
     val pbfFile = "examples/blocksextraction/src/test/resources/com/acervera/osm4scala/examples/blocksextraction/ways_blocks.osm.pbf"
     fromPbf(pbfFile, extractRootFolder)
 
-    assert( new File(extractRootFolder).list().length == 1, "Must extract one blocks.")
+    assert( new File(extractRootFolder).list().length == 2, "Must extract one block and one header.")
   }
 
 }
