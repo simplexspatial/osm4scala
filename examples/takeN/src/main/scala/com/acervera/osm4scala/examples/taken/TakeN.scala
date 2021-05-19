@@ -40,7 +40,6 @@ object TakeN extends App with Osm4ScalaUtils with Benchmarking {
 
   def fromPbf(inPbfPath: String, outPbfPath: String, blocksNumber: Int): Unit = {
     var pbfIS: InputStream = null
-//    var pbfOS: OutputStream = null
     var dsOS: DataOutputStream = null
     try {
       Files.createDirectories(Paths.get(outPbfPath).getParent)
