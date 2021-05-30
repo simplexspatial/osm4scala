@@ -20,6 +20,8 @@ Full documentation at https://simplexspatial.github.io/osm4scala/
 
 
 ## Dev information:
+Reminder: Only '+' will trigger cross versions.
+
 ### Prepare environment
 It's possible to develop using a Windows machine, but all documentation suppose that you are using Linux or Mac.
 
@@ -35,9 +37,11 @@ PATCH_211=false sbt release
 
 git checkout v1.*.*
 PATCH_211=true sbt clean +publish
+```
 
 ### Publish documentation
 ```bash
+git checkout v1.*.*
 export GIT_USER=<username>; export USE_SSH=true; npm run deploy
 ```
 

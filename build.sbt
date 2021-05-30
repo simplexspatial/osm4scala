@@ -1,6 +1,31 @@
-import sbt.Keys.{baseDirectory, _}
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2021 Ángel Cervera Claudio
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
-import sbtrelease.ReleasePlugin.autoImport.{releaseCrossBuild, _}
+import sbtrelease.ReleasePlugin.autoImport._
 
 def isPatch211Enable(): Boolean = sys.env.getOrElse("PATCH_211", "false").toBoolean
 
@@ -26,17 +51,17 @@ lazy val commonSettings = Seq(
   organization := "com.acervera.osm4scala",
   organizationHomepage := Some(url("https://www.acervera.com")),
   licenses += ("MIT", url("https://opensource.org/licenses/MIT")),
-  homepage in ThisBuild := Some(
+  ThisBuild / homepage := Some(
     url(s"https://simplexspatial.github.io/osm4scala/")
   ),
-  scmInfo in ThisBuild := Some(
+  ThisBuild / scmInfo := Some(
     ScmInfo(
       url("https://github.com/simplexspatial/osm4scala"),
       "scm:git:git://github.com/simplexspatial/osm4scala.git",
       "scm:git:ssh://github.com:simplexspatial/osm4scala.git"
     )
   ),
-  developers in ThisBuild := List(
+  ThisBuild / developers := List(
     Developer(
       "angelcervera",
       "Angel Cervera Claudio",
@@ -49,7 +74,7 @@ lazy val commonSettings = Seq(
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % Test,
     "commons-io" % "commons-io" % commonIOVersion % Test
   ),
-  test in assembly := {},
+  assembly / test := {},
   scalacOptions ++= Seq(
     "-target:jvm-1.8",
     "-encoding",
@@ -69,12 +94,12 @@ lazy val commonSettings = Seq(
 )
 
 lazy val disablingPublishingSettings =
-  Seq(skip in publish := true, publishArtifact := false)
+  Seq(publish / skip := true, publishArtifact := false)
 
 lazy val enablingPublishingSettings = Seq(
   publishArtifact := true, // Enable publish
   publishMavenStyle := true,
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   // Bintray
   bintrayPackageLabels := Seq("scala", "osm", "openstreetmap"),
   bintrayRepository := "maven",
@@ -102,7 +127,7 @@ def generateSparkFatShadedModule(sparkVersion: String, sparkPrj: Project): Proje
       name := s"osm4scala-spark${sparkVersion.head}-shaded",
       description := "Spark 2 connector for OpenStreetMap Pbf parser as shaded fat jar.",
       bintrayPackage := s"osm4scala-spark${sparkVersion.head}-shaded",
-      packageBin in Compile := (assembly in (sparkPrj, Compile)).value
+      Compile / packageBin := (sparkPrj / Compile/ assembly).value
     )
 
 def generateSparkModule(sparkVersion: String): Project = {
@@ -137,12 +162,12 @@ def generateSparkModule(sparkVersion: String): Project = {
       libraryDependencies ++= Seq(
         "org.apache.spark" %% "spark-sql" % sparkVersion % Provided
       ),
-      assemblyOption in assembly := (assemblyOption in assembly).value.copy(
+      assembly / assemblyOption := (assembly / assemblyOption).value.copy(
         includeScala = false,
         cacheUnzip = false,
         cacheOutput = false
       ),
-      assemblyShadeRules in assembly := Seq(
+      assembly / assemblyShadeRules := Seq(
         ShadeRule
           .rename("com.google.protobuf.**" -> "shadeproto.@1")
           .inAll
@@ -222,8 +247,8 @@ lazy val core = Project(id = "core", base = file("core"))
     name := "osm4scala-core",
     description := "Scala OpenStreetMap Pbf 2 parser. Core",
     bintrayPackage := "osm4scala-core",
-    PB.targets in Compile := Seq(
-      scalapb.gen(grpc = false) -> (sourceManaged in Compile).value
+    Compile / PB.targets := Seq(
+      scalapb.gen(grpc = false) -> (Compile / sourceManaged).value
     )
   )
 
@@ -234,7 +259,7 @@ lazy val commonUtilities = Project(id = "examples-common-utilities", base = file
   .settings(
     commonSettings,
     exampleSettings,
-    skip in publish := true,
+    publish / skip := true,
     name := "osm4scala-examples-common-utilities",
     description := "Utilities shared by all examples",
     libraryDependencies ++= Seq("com.github.scopt" %% "scopt" % scoptVersion)
