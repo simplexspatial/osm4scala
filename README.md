@@ -31,6 +31,7 @@ sbt compile
 ```
 
 ### Release process
+The release process includes publishing into sonatype.
 ```shell script
 git checkout master
 PATCH_211=false sbt release

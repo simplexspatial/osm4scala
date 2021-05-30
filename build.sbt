@@ -90,6 +90,12 @@ lazy val commonSettings = Seq(
     "-target",
     "1.8",
     "-parameters"
+  ),
+  credentials += Credentials(
+    "Angel Cervera Claudio",
+    "gpg",
+    "A047A2C5A9AFE4850537A00DFC14CE4C2E7B7CBB",
+    "ignored"
   )
 )
 
