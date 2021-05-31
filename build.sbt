@@ -213,6 +213,7 @@ lazy val root = (project in file("."))
   .aggregate( listOfProjects(): _*)
   .settings(
     name := "osm4scala-root",
+    sonatypeProfileName := "com.acervera.osm4scala",
     // crossScalaVersions must be set to Nil on the aggregating project
     crossScalaVersions := Nil,
     publish / skip := true,

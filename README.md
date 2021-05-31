@@ -42,10 +42,11 @@ The publication into Maven Central has been removed from the release process, so
    After set the right credentials file at [`$HOME/.sbt/1.0/sonatype.sbt`](https://github.com/xerial/sbt-sonatype#homesbtsbt-version-013-or-10sonatypesbt):
     ```shell script
     git checkout v1.*.*
-    PATCH_211=false sbt clean +publishSigned sonatypeBundleRelease
-    
-    git checkout v1.*.*
-    PATCH_211=true sbt clean +publishSigned sonatypeBundleRelease
+    sbt clean
+    PATCH_211=false sbt +publishSigned
+    PATCH_211=true sbt +publishSigned
+    # In this point, tree target/sonatype-staging/ will show all artifacts to publish.
+    sbt sonatypeBundleRelease
     ```
 3. Publish documentation and site.
     ```bash
