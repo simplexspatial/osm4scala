@@ -32,12 +32,13 @@ sbt compile
 
 ### Release process
 The publication into Maven Central has been removed from the release process, so now there are few steps:
-1. Release:
+1. Release.
     ```shell script
     git checkout master
     sbt release
     ```
-2. Publish into Maven Central:
+2. Publish into Maven Central.
+   After set the right credentials file at `~/.sbt/sonatype_credentials`:
     ```shell script
     git checkout v1.*.*
     PATCH_211=false sbt clean +publish
@@ -45,7 +46,7 @@ The publication into Maven Central has been removed from the release process, so
     git checkout v1.*.*
     PATCH_211=true sbt clean +publish
     ```
-3. Publish documentation and site:
+3. Publish documentation and site.
     ```bash
     git checkout v1.*.*
     export GIT_USER=<username>; export USE_SSH=true; npm run deploy
