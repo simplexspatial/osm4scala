@@ -90,12 +90,6 @@ lazy val commonSettings = Seq(
     "-target",
     "1.8",
     "-parameters"
-  ),
-  credentials += Credentials(
-    "Angel Cervera Claudio",
-    "gpg",
-    "A047A2C5A9AFE4850537A00DFC14CE4C2E7B7CBB",
-    "ignored"
   )
 )
 
@@ -105,11 +99,7 @@ lazy val disablingPublishingSettings =
 lazy val enablingPublishingSettings = Seq(
   publishArtifact := true, // Enable publish
   publishMavenStyle := true,
-  Test / publishArtifact := false,
-  // Bintray
-  bintrayPackageLabels := Seq("scala", "osm", "openstreetmap"),
-  bintrayRepository := "maven",
-  bintrayVcsUrl := Some("https://github.com/simplexspatial/osm4scala.git")
+  Test / publishArtifact := false
 )
 
 lazy val disablingCoverage = Seq(coverageEnabled := false)
@@ -132,7 +122,6 @@ def generateSparkFatShadedModule(sparkVersion: String, sparkPrj: Project): Proje
       disablingCoverage,
       name := s"osm4scala-spark${sparkVersion.head}-shaded",
       description := "Spark 2 connector for OpenStreetMap Pbf parser as shaded fat jar.",
-      bintrayPackage := s"osm4scala-spark${sparkVersion.head}-shaded",
       Compile / packageBin := (sparkPrj / Compile/ assembly).value
     )
 
@@ -164,7 +153,6 @@ def generateSparkModule(sparkVersion: String): Project = {
       coverageConfig,
       name := s"osm4scala-spark${sparkVersion.head}",
       description := "Spark 2 connector for OpenStreetMap Pbf parser.",
-      bintrayPackage := s"osm4scala-spark${sparkVersion.head}",
       libraryDependencies ++= Seq(
         "org.apache.spark" %% "spark-sql" % sparkVersion % Provided
       ),
@@ -252,7 +240,6 @@ lazy val core = Project(id = "core", base = file("core"))
     coverageExcludedPackages := "org.openstreetmap.osmosis.osmbinary.*",
     name := "osm4scala-core",
     description := "Scala OpenStreetMap Pbf 2 parser. Core",
-    bintrayPackage := "osm4scala-core",
     Compile / PB.targets := Seq(
       scalapb.gen(grpc = false) -> (Compile / sourceManaged).value
     )

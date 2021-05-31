@@ -16,7 +16,6 @@ def getScalaPBVersion(): String = sys.env.getOrElse("PATCH_211", "false").toBool
   case false => scalapbVersion
 }
 
-addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.5.6")
 addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.1.2")
 addSbtPlugin("com.github.sbt" % "sbt-release" % "1.0.15")
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.15.0")
