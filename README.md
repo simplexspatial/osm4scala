@@ -31,19 +31,27 @@ sbt compile
 ```
 
 ### Release process
-```shell script
-git checkout master
-PATCH_211=false sbt release
-
-git checkout v1.*.*
-PATCH_211=true sbt clean +publish
-```
-
-### Publish documentation
-```bash
-git checkout v1.*.*
-export GIT_USER=<username>; export USE_SSH=true; npm run deploy
-```
+The publication into Maven Central has been removed from the release process, so now there are few steps:
+1. Release.
+    ```shell script
+    git checkout master
+    sbt release
+    ```
+2. Publish into Maven Central.
+   Info at [xerial/sbt-sonatype](https://github.com/xerial/sbt-sonatype#advanced-build-settings)
+   After set the right credentials file at [`$HOME/.sbt/1.0/sonatype.sbt`](https://github.com/xerial/sbt-sonatype#homesbtsbt-version-013-or-10sonatypesbt):
+    ```shell script
+    git checkout v1.*.*
+    PATCH_211=false sbt clean +publishSigned sonatypeBundleRelease
+    
+    git checkout v1.*.*
+    PATCH_211=true sbt clean +publishSigned sonatypeBundleRelease
+    ```
+3. Publish documentation and site.
+    ```bash
+    git checkout v1.*.*
+    export GIT_USER=<username>; export USE_SSH=true; npm run deploy
+    ```
 
 ## References.
 
