@@ -90,7 +90,9 @@ lazy val commonSettings = Seq(
     "-target",
     "1.8",
     "-parameters"
-  )
+  ),
+  usePgpKeyHex("A047A2C5A9AFE4850537A00DFC14CE4C2E7B7CBB"),
+  publishTo := sonatypePublishToBundle.value
 )
 
 lazy val disablingPublishingSettings =
@@ -224,7 +226,6 @@ lazy val root = (project in file("."))
       setReleaseVersion,
       commitReleaseVersion,
       tagRelease,
-      releaseStepCommandAndRemaining("+publish"),
       setNextVersion,
       commitNextVersion,
       pushChanges
