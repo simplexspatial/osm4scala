@@ -31,20 +31,25 @@ sbt compile
 ```
 
 ### Release process
-The release process includes publishing into sonatype.
-```shell script
-git checkout master
-PATCH_211=false sbt release
-
-git checkout v1.*.*
-PATCH_211=true sbt clean +publish
-```
-
-### Publish documentation
-```bash
-git checkout v1.*.*
-export GIT_USER=<username>; export USE_SSH=true; npm run deploy
-```
+The publication into Maven Central has been removed from the release process, so now there are few steps:
+1. Release:
+    ```shell script
+    git checkout master
+    sbt release
+    ```
+2. Publish into Maven Central:
+    ```shell script
+    git checkout v1.*.*
+    PATCH_211=false sbt clean +publish
+    
+    git checkout v1.*.*
+    PATCH_211=true sbt clean +publish
+    ```
+3. Publish documentation and site:
+    ```bash
+    git checkout v1.*.*
+    export GIT_USER=<username>; export USE_SSH=true; npm run deploy
+    ```
 
 ## References.
 
