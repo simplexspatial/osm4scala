@@ -51,6 +51,8 @@ The publication into Maven Central has been removed from the release process, so
 3. Publish documentation and site.
     ```bash
     git checkout v1.*.*
+    cd website
+    nvm use
     export GIT_USER=<username>; export USE_SSH=true; npm run deploy
     ```
 
