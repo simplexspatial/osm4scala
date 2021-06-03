@@ -215,7 +215,7 @@ installation, you can use [jupyter/all-spark-notebook](https://hub.docker.com/r/
 
 To start the docker image, as easy as running the docker image and use the link provided:
 ```ssh
-$ docker run -e JUPYTER_ENABLE_LAB=yes -p 8888:8888 jupyter/all-spark-notebook
+$ docker run -e JUPYTER_ENABLE_LAB=yes -d -p 8888:8888 -p 4040:4040 -p 4041:4041 jupyter/all-spark-notebook
 [I 11:02:45.132 NotebookApp] Serving notebooks from local directory: /home/jovyan
 [I 11:02:45.132 NotebookApp] Jupyter Notebook 6.2.0 is running at:
 [I 11:02:45.132 NotebookApp] http://479a92a85698:8888/?token=60ace2db5d456f7348c2ba0399cab986e36f4de9XX00a554
