@@ -37,10 +37,7 @@ import java.nio.file.{Files, Paths}
 
 /**
   * Low level example about how to uncompress and extract all data blocks to a folder.
-  * In this case, I'm going to extract
-  *
-  * In this example, I am writing all blocks in a folders. Rememeber that this block is a Blob, so contains
-  * the string table and the possble compressed data.
+  * In this example, I'm going to extract only the block that contains the Id passed as parameter.
   */
 object BlocksWithIdExtraction extends App with Osm4ScalaUtils with Benchmarking {
 
@@ -70,7 +67,7 @@ object BlocksWithIdExtraction extends App with Osm4ScalaUtils with Benchmarking 
       case _ => false
     }
 
-  private def write(outPath: String, message: GeneratedMessage) {
+  private def write(outPath: String, message: GeneratedMessage): Unit = {
     val output = new FileOutputStream(outPath)
     message writeTo output
     output.close
