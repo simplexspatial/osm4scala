@@ -315,6 +315,16 @@ lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", b
   )
   .dependsOn(core, commonUtilities)
 
+lazy val examplesBlocksWithIdExtraction = Project(id = "examples-blocks-with-id-extraction", base = file("examples/blockswithidextraction"))
+  .disablePlugins(AssemblyPlugin)
+  .settings(
+    commonSettings,
+    exampleSettings,
+    name := "examples-blocks-with-id-extraction",
+    description := "Extract blocks that contains the id from the pbf into a folder using osm4scala."
+  )
+  .dependsOn(core, commonUtilities)
+
 lazy val examplesTakeN = Project(id = "examples-takeN", base = file("examples/takeN"))
   .disablePlugins(AssemblyPlugin)
   .settings(
@@ -335,6 +345,8 @@ lazy val examplesPrimitivesExtraction =
       description := "Extract all primitives from the pbf into a folder using osm4scala."
     )
     .dependsOn(core, commonUtilities)
+
+
 
 lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base = file("examples/spark-utilities"))
   .disablePlugins(AssemblyPlugin)
