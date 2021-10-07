@@ -26,7 +26,6 @@
 package com.acervera.osm4scala.spark
 
 import java.io.InputStream
-
 import scala.annotation.tailrec
 
 object OSMDataFinder {
@@ -36,8 +35,9 @@ object OSMDataFinder {
   implicit class InputStreamEnricher(in: InputStream) {
 
     /**
-      * Search the first block. Neive search for this first PoC.
-      * If it work, let's try with KMP Algorithm
+      * Search the first block in the `in` from the current location in the Stream.
+      *
+      * Naive search for this first PoC. If it work, let's try with KMP Algorithm
       *
       */
     def firstBlockIndex(): Option[Long] = {

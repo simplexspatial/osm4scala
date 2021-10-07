@@ -25,10 +25,9 @@
 
 package com.acervera.osm4scala.spark
 
-import java.net.URI
-
 import com.acervera.osm4scala.EntityIterator
 import com.acervera.osm4scala.spark.OSMDataFinder._
+import com.acervera.osm4scala.spark.OsmPbfFormat.{PARAMETER_SPLIT, PARAMETER_SPLIT_DEFAULT}
 import com.acervera.osm4scala.spark.OsmPbfRowIterator._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FSDataInputStream, FileStatus, Path}
@@ -40,6 +39,8 @@ import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.execution.datasources.{FileFormat, OutputWriterFactory, PartitionedFile}
 import org.apache.spark.sql.sources.{DataSourceRegister, Filter}
 import org.apache.spark.sql.types._
+
+import java.net.URI
 
 class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
 
@@ -57,7 +58,8 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
       s"write is not supported for spark-osm-pbf files. If you need it, please create a issue and try to support the project."
     )
 
-  override def isSplitable(sparkSession: SparkSession, options: Map[String, String], path: Path): Boolean = true
+  override def isSplitable(sparkSession: SparkSession, options: Map[String, String], path: Path): Boolean =
+    options.get(PARAMETER_SPLIT).map(_.toBoolean).getOrElse(PARAMETER_SPLIT_DEFAULT)
 
   override protected def buildReader(sparkSession: SparkSession,
                                      dataSchema: StructType,
@@ -99,4 +101,9 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
       }
   }
 
+}
+
+object OsmPbfFormat {
+  val PARAMETER_SPLIT = "split"
+  val PARAMETER_SPLIT_DEFAULT = false
 }
