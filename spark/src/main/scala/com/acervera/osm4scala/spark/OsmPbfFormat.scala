@@ -25,23 +25,31 @@
 
 package com.acervera.osm4scala.spark
 
-import java.net.URI
-
 import com.acervera.osm4scala.EntityIterator
 import com.acervera.osm4scala.spark.OSMDataFinder._
+import com.acervera.osm4scala.spark.OsmPbfFormat.{PARAMETER_SPLIT, PARAMETER_SPLIT_DEFAULT}
 import com.acervera.osm4scala.spark.OsmPbfRowIterator._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FSDataInputStream, FileStatus, Path}
 import org.apache.hadoop.mapreduce.Job
 import org.apache.spark.SerializableWritable
-import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.execution.datasources.{FileFormat, OutputWriterFactory, PartitionedFile}
 import org.apache.spark.sql.sources.{DataSourceRegister, Filter}
 import org.apache.spark.sql.types._
+import org.slf4j.{Logger, LoggerFactory}
 
-class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
+import java.net.URI
+
+object OsmPbfFormat {
+  val logger: Logger = LoggerFactory.getLogger(this.getClass.getName.stripSuffix("$"))
+
+  val PARAMETER_SPLIT = "split"
+  val PARAMETER_SPLIT_DEFAULT = true
+}
+
+class OsmPbfFormat extends FileFormat with DataSourceRegister {
 
   override def shortName(): String = "osm.pbf"
 
@@ -57,7 +65,8 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
       s"write is not supported for spark-osm-pbf files. If you need it, please create a issue and try to support the project."
     )
 
-  override def isSplitable(sparkSession: SparkSession, options: Map[String, String], path: Path): Boolean = true
+  override def isSplitable(sparkSession: SparkSession, options: Map[String, String], path: Path): Boolean =
+    options.get(PARAMETER_SPLIT).map(_.toBoolean).getOrElse(PARAMETER_SPLIT_DEFAULT)
 
   override protected def buildReader(sparkSession: SparkSession,
                                      dataSchema: StructType,
@@ -77,7 +86,7 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
         val fs = path.getFileSystem(broadcastedHadoopConf.value.value)
         val status = fs.getFileStatus(path)
 
-        def firstBlockOffset(): Option[Long] = {
+        def findFirstBlockOffset(): Option[Long] = {
           var pbfIS: FSDataInputStream = null
           try {
             pbfIS = fs.open(status.getPath)
@@ -88,12 +97,26 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
           }
         }
 
-        firstBlockOffset() match {
+        /**
+          * Open the file at the specified position.
+          *
+          * @param offset Initial position.
+          * @return Input stream
+          */
+        def openAtTheBeginning(offset: Long) = {
+          val fsIS = fs.open(status.getPath)
+          fsIS.seek(file.start + offset)
+          fsIS
+        }
+
+        findFirstBlockOffset() match {
           case None => Iterator.empty
-          case Some(offset) =>
-            val atFirstBlock = fs.open(status.getPath)
-            atFirstBlock.seek(file.start + offset)
-            EntityIterator.fromPbf(new InputStreamLengthLimit(atFirstBlock, file.length - offset)).toOsmPbfRowIterator(requiredSchema)
+          case Some(offset) => EntityIterator.fromPbf(
+              new InputStreamLengthLimit(
+                openAtTheBeginning(offset),
+                (file.length - offset) + HEADER_SIZE_LENGTH // plus 4 byte header-size Int
+              )
+            ).toOsmPbfRowIterator(requiredSchema)
         }
 
       }

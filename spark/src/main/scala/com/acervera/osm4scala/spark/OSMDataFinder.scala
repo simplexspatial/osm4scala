@@ -26,18 +26,22 @@
 package com.acervera.osm4scala.spark
 
 import java.io.InputStream
-
 import scala.annotation.tailrec
 
 object OSMDataFinder {
   private val pattern = Array[Byte](0x0A, 0x07, 0x4F, 0x53, 0x4D, 0x44, 0x61, 0x74, 0x61)
-  private val blobHeaderLengthSize = 4
+
+  /**
+    * The length of the Int value before the header block, that specify the size of the header block.
+    */
+  val HEADER_SIZE_LENGTH = 4
 
   implicit class InputStreamEnricher(in: InputStream) {
 
     /**
-      * Search the first block. Neive search for this first PoC.
-      * If it work, let's try with KMP Algorithm
+      * Search the first block in the `in` from the current location in the Stream.
+      *
+      * Naive search for this first PoC. If it work, let's try with KMP Algorithm
       *
       */
     def firstBlockIndex(): Option[Long] = {
@@ -70,7 +74,7 @@ object OSMDataFinder {
         if (read < length) None else Some(buffer)
       }
 
-      readNBytes(blobHeaderLengthSize) // Ignore length header.
+      readNBytes(HEADER_SIZE_LENGTH) // Ignore length header.
         .flatMap(_ => readNBytes(pattern.length)) // Take the first possible BlockHeader
         .flatMap(firstPossibleBlock => rec(0, firstPossibleBlock))
 

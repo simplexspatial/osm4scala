@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Ángel Cervera Claudio
+ * Copyright (c) 2021 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,37 @@
  *
  */
 
-package com.acervera.osm4scala
+package com.acervera.osm4scala.examples.blockswithidextraction
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import scopt.OptionParser
 
-import java.io.{FileInputStream, InputStream}
+/**
+  * Command line arguments parser.
+  */
+object ParametersConfig {
 
-class BlobTupleIteratorSpec extends AnyWordSpec with Matchers {
+  // Parser
+  case class Config(source: String = "", output: String = "", id: Long = 0)
+  val parser: OptionParser[Config] = new scopt.OptionParser[Config]("extract-blocks-with-ids") {
 
-  "The BlobTupleIterator" should {
-    "Read three pairs" in {
-      val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.pbf"
-      var pbfIS: InputStream = null
-      try {
-        pbfIS = new FileInputStream(testFile)
-        BlobTupleIterator.fromPbf(pbfIS).size shouldBe  3
-      } finally {
-        if (pbfIS != null) pbfIS.close()
-      }
-    }
-    "Read ten pairs" in {
-      val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/ten_blocks.pbf"
-      var pbfIS: InputStream = null
-      try {
-        pbfIS = new FileInputStream(testFile)
-        BlobTupleIterator.fromPbf(pbfIS).size shouldBe 10
-      } finally {
-        if (pbfIS != null) pbfIS.close()
-      }
-    }
+    opt[String]('s', "source")
+      .required()
+      .valueName("<file>")
+      .action((x, c) => c.copy(source = x))
+      .text("source is a required pbf2 format file")
+
+    opt[String]('o', "output")
+      .required()
+      .valueName("<folder>")
+      .action((x, c) => c.copy(output = x))
+      .text("output is a required folder path to store blocks extracted.")
+
+    opt[Long]('i', "id")
+      .required()
+      .valueName("<id>")
+      .action((x, c) => c.copy(id = x))
+      .text("ID that should be in the block.")
+
   }
 
 }
