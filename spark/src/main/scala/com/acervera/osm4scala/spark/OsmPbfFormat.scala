@@ -122,7 +122,7 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
           case Some(offset) => EntityIterator.fromPbf(
               new InputStreamLengthLimit(
                 openAtTheBeginning(offset),
-                file.length - offset
+                (file.length - offset) + HEADER_SIZE_LENGTH // plus 4 byte header-size Int
               )
             ).toOsmPbfRowIterator(requiredSchema)
         }

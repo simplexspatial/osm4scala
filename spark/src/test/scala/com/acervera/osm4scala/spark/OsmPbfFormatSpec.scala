@@ -62,10 +62,17 @@ class OsmPbfFormatWithSplitsSpec extends AnyWordSpec with Matchers with TableDri
   private val CORES = 2
   private val offsets = Table(
     ("testName", "offset"),
-    ("header-size Int 1", 170+1),
-    ("header-size Int 2", 70436+1),
+    ("header-size Int first 1", 170+1),
+    ("header-size Int 0", 70436+0),
+    ("header-size Int 1", 70436+1),
+    ("header-size Int 2", 70436+2),
+    ("header-size Int 3", 70436+3),
+    ("header-size Int 4", 70436+4),
     ("header 1", 174+1),
-    ("header 2", 70440+1),
+    ("header second 1", 70440+1),
+    ("header second 2", 70440+2),
+    ("header second 3", 70440+3),
+    ("header second 4", 70440+4),
     ("blob 1", 187+1),
     ("blob 2", 70453+1),
   )
