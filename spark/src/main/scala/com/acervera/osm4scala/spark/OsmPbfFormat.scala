@@ -27,7 +27,7 @@ package com.acervera.osm4scala.spark
 
 import com.acervera.osm4scala.EntityIterator
 import com.acervera.osm4scala.spark.OSMDataFinder._
-import com.acervera.osm4scala.spark.OsmPbfFormat.{PARAMETER_SPLIT, PARAMETER_SPLIT_DEFAULT, logger}
+import com.acervera.osm4scala.spark.OsmPbfFormat.{PARAMETER_SPLIT, PARAMETER_SPLIT_DEFAULT}
 import com.acervera.osm4scala.spark.OsmPbfRowIterator._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FSDataInputStream, FileStatus, Path}
@@ -82,14 +82,6 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
 
     (file: PartitionedFile) =>
       {
-        logger.info(
-          "Processing file [{}] offset [{}] of [{}] bytes. Locations [{}].",
-          file.filePath,
-          file.start.toString(),
-          file.length.toString(),
-          if(file.locations != null) file.locations.mkString(",") else ""
-        )
-
         val path = new Path(new URI(file.filePath))
         val fs = path.getFileSystem(broadcastedHadoopConf.value.value)
         val status = fs.getFileStatus(path)
