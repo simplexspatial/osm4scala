@@ -27,22 +27,29 @@ package com.acervera.osm4scala.spark
 
 import com.acervera.osm4scala.EntityIterator
 import com.acervera.osm4scala.spark.OSMDataFinder._
-import com.acervera.osm4scala.spark.OsmPbfFormat.{PARAMETER_SPLIT, PARAMETER_SPLIT_DEFAULT}
+import com.acervera.osm4scala.spark.OsmPbfFormat.{PARAMETER_SPLIT, PARAMETER_SPLIT_DEFAULT, logger}
 import com.acervera.osm4scala.spark.OsmPbfRowIterator._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FSDataInputStream, FileStatus, Path}
 import org.apache.hadoop.mapreduce.Job
 import org.apache.spark.SerializableWritable
-import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.execution.datasources.{FileFormat, OutputWriterFactory, PartitionedFile}
 import org.apache.spark.sql.sources.{DataSourceRegister, Filter}
 import org.apache.spark.sql.types._
+import org.slf4j.{Logger, LoggerFactory}
 
 import java.net.URI
 
-class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
+object OsmPbfFormat {
+  val logger: Logger = LoggerFactory.getLogger(this.getClass.getName.stripSuffix("$"))
+
+  val PARAMETER_SPLIT = "split"
+  val PARAMETER_SPLIT_DEFAULT = true
+}
+
+class OsmPbfFormat extends FileFormat with DataSourceRegister {
 
   override def shortName(): String = "osm.pbf"
 
@@ -75,11 +82,19 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
 
     (file: PartitionedFile) =>
       {
+        logger.info(
+          "Processing file [{}] offset [{}] of [{}] bytes. Locations [{}].",
+          file.filePath,
+          file.start.toString(),
+          file.length.toString(),
+          if(file.locations != null) file.locations.mkString(",") else ""
+        )
+
         val path = new Path(new URI(file.filePath))
         val fs = path.getFileSystem(broadcastedHadoopConf.value.value)
         val status = fs.getFileStatus(path)
 
-        def firstBlockOffset(): Option[Long] = {
+        def findFirstBlockOffset(): Option[Long] = {
           var pbfIS: FSDataInputStream = null
           try {
             pbfIS = fs.open(status.getPath)
@@ -90,20 +105,29 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister with Logging {
           }
         }
 
-        firstBlockOffset() match {
+        /**
+          * Open the file at the specified position.
+          *
+          * @param offset Initial position.
+          * @return Input stream
+          */
+        def openAtTheBeginning(offset: Long) = {
+          val fsIS = fs.open(status.getPath)
+          fsIS.seek(file.start + offset)
+          fsIS
+        }
+
+        findFirstBlockOffset() match {
           case None => Iterator.empty
-          case Some(offset) =>
-            val atFirstBlock = fs.open(status.getPath)
-            atFirstBlock.seek(file.start + offset)
-            EntityIterator.fromPbf(new InputStreamLengthLimit(atFirstBlock, file.length - offset)).toOsmPbfRowIterator(requiredSchema)
+          case Some(offset) => EntityIterator.fromPbf(
+              new InputStreamLengthLimit(
+                openAtTheBeginning(offset),
+                file.length - offset
+              )
+            ).toOsmPbfRowIterator(requiredSchema)
         }
 
       }
   }
 
-}
-
-object OsmPbfFormat {
-  val PARAMETER_SPLIT = "split"
-  val PARAMETER_SPLIT_DEFAULT = false
 }
