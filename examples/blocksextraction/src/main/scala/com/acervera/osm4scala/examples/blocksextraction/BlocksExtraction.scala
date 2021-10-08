@@ -39,8 +39,8 @@ import java.nio.file.{Files, Paths}
   * Usually, it is not necessary to do it, but is good, for example, to extract fragments from the pbf that represent
   * data blocks and then use them to test the data block reader.
   *
-  * In this example, I am writing all blocks in a folders. Rememeber that this block is a Blob, so contains
-  * the string table and the possble compressed data.
+  * In this example, I am writing all blocks in a folders. Remember that this block is a Blob, so contains
+  * the string table and the possible compressed data.
   */
 object BlocksExtraction extends App with Osm4ScalaUtils with Benchmarking {
 
@@ -72,7 +72,7 @@ object BlocksExtraction extends App with Osm4ScalaUtils with Benchmarking {
   parser.parse(args, Config()) match {
     case Some(config) => {
       val result = time { fromPbf(config.input, config.output) }
-      println(f"Extracted ${config.input}%s file in ${config.input} in ${result._1 * 1e-9}%,2.2f sec.")
+      println(f"Extracted ${config.input}%s file in ${config.output} in ${result._1 * 1e-9}%,2.2f sec.")
       println(s"Resume: ${result._2} Blob blocks")
     }
     case _ =>
