@@ -25,9 +25,9 @@
 
 package com.acervera.osm4scala
 
-import java.io._
-
 import org.openstreetmap.osmosis.osmbinary.fileformat.{Blob, BlobHeader}
+
+import java.io._
 
 object BlobTupleIterator {
 
@@ -63,18 +63,18 @@ class BlobTupleIterator(pbfInputStream: InputStreamSentinel) extends Iterator[(B
   // Read the input stream using DataInputStream to access easily to Int and raw fields.
   private val pbfStream = new DataInputStream(pbfInputStream)
 
-  // Store the next block length. None if there are not more to read.
-  var nextBlockLength: Option[Int] = None
+  // Store the next block header size. None if there are not more to read.
+  var nextHeaderSize: Option[Int] = None
 
   // Read the length of the next block
   readNextBlockLength()
 
-  override def hasNext: Boolean = pbfInputStream.continueReading() && nextBlockLength.isDefined
+  override def hasNext: Boolean = pbfInputStream.continueReading() && nextHeaderSize.isDefined
 
   override def next(): (BlobHeader, Blob) = {
 
     // Reading header.
-    val bufferBlobHeader = new Array[Byte](nextBlockLength.get)
+    val bufferBlobHeader = new Array[Byte](nextHeaderSize.get)
     pbfStream.readFully(bufferBlobHeader)
 
     // Parsing pbf header.
@@ -97,9 +97,9 @@ class BlobTupleIterator(pbfInputStream: InputStreamSentinel) extends Iterator[(B
     */
   private def readNextBlockLength(): Unit =
     try {
-      nextBlockLength = Some(pbfStream.readInt)
+      nextHeaderSize = Some(pbfStream.readInt)
     } catch {
-      case _: EOFException => nextBlockLength = None
+      case _: EOFException => nextHeaderSize = None
     }
 
 }

@@ -26,29 +26,36 @@
 package com.acervera.osm4scala.spark
 
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.{SQLContext, SparkSession}
+import org.apache.spark.sql.SparkSession
 import org.scalatest.{BeforeAndAfterAll, Suite}
 
 object SparkSessionFixture {
 
   /**
     * Create a new spark session.
-    * Warning 1: It there is a session open, is going to use it and close it at the end of the test.
-    * Warning 2: Using it only with `in` case, don't with `should`, `when`, etc... because the finally is executed before
+    * - Warning 1: It there is a session open, is going to use it and close it at the end of the test.
+    * - Warning 2: Using it only with `in` case, don't with `should`, `when`, etc... because the finally is executed before
     * the test. Maybe is executed concurrently.
     *
     * @param cores Number of cores to use.
     * @param appName Application name to use.
+    * @param sparkConf Optional spark configuration.
     * @param testCode Test to execute
     */
-  def withSparkSession(cores: Int, appName: String)(testCode: (SparkSession, SQLContext) => Any): Unit = {
+  def withSparkSession(cores: Int, appName: String, sparkConf: Option[SparkConf] = None)(testCode: SparkSession => Any): Unit = {
+
+    val cnf = sparkConf
+      .getOrElse(new SparkConf())
+      .setMaster(s"local[$cores]")
+      .setAppName(appName)
+
     val sparkSession = SparkSession
       .builder()
-      .appName(appName)
-      .master(s"local[$cores]")
+      .config(cnf)
       .getOrCreate()
+
     try {
-      testCode(sparkSession, sparkSession.sqlContext)
+      testCode(sparkSession)
     } finally {
       sparkSession.close()
     }

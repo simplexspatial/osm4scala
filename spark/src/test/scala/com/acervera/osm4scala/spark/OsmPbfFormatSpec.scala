@@ -25,14 +25,66 @@
 
 package com.acervera.osm4scala.spark
 
+import com.acervera.osm4scala.spark.SourcesForTesting._
+import com.acervera.osm4scala.spark.SparkSessionFixture.withSparkSession
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SaveMode, SparkSession, functions => fn}
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 
 import java.io.File
 import scala.util.Random
+
+object SourcesForTesting {
+  val madridPath = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
+  val monacoPath = "core/src/test/resources/com/acervera/osm4scala/monaco-anonymized.osm.pbf"
+  val threeBlocks = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.pbf"
+}
+
+/**
+  * Testing with offset is in middle of the different parts of the pbf file.
+  * For the three blocks testing file, these are the offsets
+  *                          OFFSET
+  *      4 bytes             0
+  *      Header Size: [14]   0+4=4
+  *      Blob Size: [152]    4+14=18
+  *      4 bytes             18+152=170
+  *      Header Size: [13]   170+4=174
+  *      Blob Size: [70249]  174+13=187
+  *      4 bytes             187+70249=70436
+  *      Header Size: [13]   70436+4=70440
+  *      Blob Size: [60870]  70440+13=70453
+  */
+class OsmPbfFormatWithSplitsSpec extends AnyWordSpec with Matchers with TableDrivenPropertyChecks {
+  private val CORES = 2
+  private val offsets = Table(
+    ("testName", "offset"),
+    ("header-size Int 1", 170+1),
+    ("header-size Int 2", 70436+1),
+    ("header 1", 174+1),
+    ("header 2", 70440+1),
+    ("blob 1", 187+1),
+    ("blob 2", 70453+1),
+  )
+
+  def splitSize(size: Int): Option[SparkConf] = Some(new SparkConf().set("spark.sql.files.maxPartitionBytes", size.toString))
+
+  "OsmPbfFormat" should {
+    "process all blocks depending of splits offset" when {
+      forAll(offsets){ (testName, offset) =>
+        s"is in $testName" in withSparkSession(CORES, testName, splitSize(offset)) { spark =>
+          spark.sqlContext.read
+            .format("osm.pbf")
+            .load(threeBlocks)
+            .count() shouldBe 16000
+        }
+      }
+    }
+  }
+}
 
 class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBeforeAfterAll {
 
@@ -43,12 +95,11 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
       )
     )
 
-  val madridPath = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
-  val monacoPath = "core/src/test/resources/com/acervera/osm4scala/monaco-anonymized.osm.pbf"
 
-  def loadOsmPbf(spark: SparkSession, path: String, tableName: Option[String] = None): DataFrame = {
+  def loadOsmPbf(spark: SparkSession, path: String, tableName: Option[String] = None, options: Map[String, String] = Map.empty): DataFrame = {
     val df = spark.sqlContext.read
       .format("osm.pbf")
+      .options(options)
       .load(path)
       .repartition(cores * 2)
     tableName.foreach(df.createOrReplaceTempView)
@@ -58,8 +109,13 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
   "OsmPbfFormat" should {
 
     "parsing all only one time" in {
-      val entitiesCount = loadOsmPbf(spark, madridPath).count()
-      entitiesCount shouldBe 2677227
+      val expectedEntities = 2677227
+
+      val withoutSplit = loadOsmPbf(spark, madridPath, None,Map(OsmPbfFormat.PARAMETER_SPLIT -> "false")).count()
+      withoutSplit shouldBe expectedEntities
+
+      val withSplit = loadOsmPbf(spark, madridPath, None,Map(OsmPbfFormat.PARAMETER_SPLIT -> "true")).count()
+      withSplit shouldBe expectedEntities
     }
 
     "parser correctly" when {

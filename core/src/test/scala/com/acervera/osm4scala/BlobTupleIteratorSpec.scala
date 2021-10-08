@@ -32,7 +32,7 @@ import java.io.{FileInputStream, InputStream}
 
 class BlobTupleIteratorSpec extends AnyWordSpec with Matchers {
 
-  "The BlobTupleIterator should" should {
+  "The BlobTupleIterator" should {
     "Read three pairs" in {
       val testFile = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.pbf"
       var pbfIS: InputStream = null
