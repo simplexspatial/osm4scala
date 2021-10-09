@@ -38,9 +38,16 @@ The publication into Maven Central has been removed from the release process, so
     git checkout master
     sbt release
     ```
-2. Publish into Maven Central.
-   Info at [xerial/sbt-sonatype](https://github.com/xerial/sbt-sonatype#advanced-build-settings)
-   After set the right credentials file at [`$HOME/.sbt/1.0/sonatype.sbt`](https://github.com/xerial/sbt-sonatype#homesbtsbt-version-013-or-10sonatypesbt):
+2. Publish into Maven Central. Information about configuration in plugins involved:
+   - [sbt-pgp](https://github.com/sbt/sbt-pgp#sbt-pgp) using `gpg` command-line utility under the cover.
+   - [Sonatype GPG documentation](https://central.sonatype.org/publish/requirements/gpg/)
+   - [xerial/sbt-sonatype](https://github.com/xerial/sbt-sonatype#sbt-sonatype-plugin)
+   
+   Basically:
+   - Set the keys as [sbt-pgp#working-with-pgp-signatures](https://github.com/sbt/sbt-pgp#working-with-pgp-signatures) explains.
+   - Be sure that public key has been uploaded into, at least last time, `pgp.mit.edu`: `gpg --keyserver hkp://pgp.mit.edu --send-keys <key>`
+   - Set the right credentials file at [`$HOME/.sbt/1.0/sonatype.sbt`](https://github.com/xerial/sbt-sonatype#homesbtsbt-version-013-or-10sonatypesbt).
+   - Execute:
     ```shell script
     git checkout v1.*.*
     sbt clean
