@@ -15,9 +15,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Scala 2.11 Testing
-        run: PATCH_211=true sbt clean "++2.11.12 test"
-      - name: 2.13 Testing
-        run: PATCH_211=true sbt clean "++2.13.5 test"
-      - name: Scala 2.12 and 2.13 Testing
+#      - name: Scala 2.11 Testing
+#        run: PATCH_211=true sbt clean "++2.11.12 test"
+#      - name: 2.13 Testing
+#        run: PATCH_211=true sbt clean "++2.13.5 test"
+      - name: Scala 2.12
         run: PATCH_211=false sbt clean coverage "++2.12.13 test" coverageAggregate
