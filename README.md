@@ -16,19 +16,32 @@
 High performance Scala library and Spark Polyglot (Scala, Python, SQL, etc.) connector for OpenStreetMap Pbf files.
 
 ## Documentation and site
-Full documentation at https://simplexspatial.github.io/osm4scala/
+> ⚠ Full usage documentation at https://simplexspatial.github.io/osm4scala/
 
 
 
 ## Dev information:
-Reminder: Only '+' will trigger cross versions.
-
-### Prepare environment
 It's possible to develop using a Windows machine, but all documentation suppose that you are using Linux or Mac.
 
+### Prepare environment
 The only special requirement is to execute `sbt compile` to generate the protobuf source code.
 ```shell script
 sbt compile
+```
+
+## PATCH_211 flag
+Because depending on the Scala version, there are projects that are disabled (No spark3 for Scala 2.11) and different
+libraries dependencies. Because this, there is a flag called PATCH_211 (default value is false) to enable or disable
+Scala 2.11 compatibility.
+
+### Cross versions
+The project is using cross version to manage 2.11, 2.12 and 2.13 using the same code base, so remember to use '+' to
+trigger all versions versions.
+
+So remember, as example, for testing:
+```shell script
+PATCH_211=false sbt +test
+PATCH_211=true sbt +test
 ```
 
 ### Release process
@@ -42,6 +55,7 @@ The publication into Maven Central has been removed from the release process, so
    - [sbt-pgp](https://github.com/sbt/sbt-pgp#sbt-pgp) using `gpg` command-line utility under the cover.
    - [Sonatype GPG documentation](https://central.sonatype.org/publish/requirements/gpg/)
    - [xerial/sbt-sonatype](https://github.com/xerial/sbt-sonatype#sbt-sonatype-plugin)
+   - [scala-lang documentation](https://docs.scala-lang.org/overviews/contributors/index.html#publish-a-release)
    
    Basically:
    - Set the keys as [sbt-pgp#working-with-pgp-signatures](https://github.com/sbt/sbt-pgp#working-with-pgp-signatures) explains.

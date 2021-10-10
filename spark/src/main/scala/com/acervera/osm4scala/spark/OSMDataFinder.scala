@@ -28,8 +28,27 @@ package com.acervera.osm4scala.spark
 import java.io.InputStream
 import scala.annotation.tailrec
 
+/**
+  * `java.io.InputStream` enricher class that adds the `firstBlockIndex` functionality.
+  *
+  * The idea is that every `BlobHeader`s starts with the same `pattern`. So to be able to find the first `BlobHeader` in
+  * a chunk file, we are looking for that `pattern`.
+  *
+  * Just before every `BlobHeader`, there is a set of 4 bytes that contains the size of the next `BlobHeader`, but of course
+  * it is not a fixed value like the `pattern`. It is necessary to keep it in mind to ignore these 4 bytes.
+  *
+  * So this is the structure of every block that contains data:
+  *
+  *   1. 4 bytes with header size.
+  *   1. 9 bytes with the constant "0x0A, 0x07, OSMData"
+  *   1. Rest of the header.
+  *   1. Blob containing data.
+  *
+  * @see [[https://wiki.openstreetmap.org/wiki/PBF_Format OSM PBF Format documentation]]
+  *
+  */
 object OSMDataFinder {
-  private val pattern = Array[Byte](0x0A, 0x07, 0x4F, 0x53, 0x4D, 0x44, 0x61, 0x74, 0x61)
+  private val pattern = Array[Byte](0x0A, 0x07, 'O', 'S', 'M', 'D', 'a', 't', 'a')
 
   /**
     * The length of the Int value before the header block, that specify the size of the header block.
@@ -58,13 +77,13 @@ object OSMDataFinder {
         }
 
       /**
-        * Check that It's OSMData string and a true block as well.
+        * Checks that It's OSMData string and a true block as well.
         * @return
         */
       def isFalsePositive(): Boolean = false // TODO: Needs implementation.
 
       /**
-        * Read next n bytes from the stream. If are not enough, return None.
+        * Reads next n bytes from the stream. If are not enough, return None.
         * @param length Length to read.
         * @return Array of bytes with the content, or None if no enough data to fill the buffer.
         */

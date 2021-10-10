@@ -49,6 +49,73 @@ object OsmPbfFormat {
   val PARAMETER_SPLIT_DEFAULT = true
 }
 
+/**
+  * FileFormat implementation to read [[https://wiki.openstreetmap.org/wiki/PBF_Format OSM Pbf files]].
+  *
+  * Basically, it is implemented in three steps:
+  *   1. Take every split file
+  *   1. Search first block of data per split.
+  *   2. Extract all entities that are present in the split, starting from the first block found and ending at the last
+  *   block whose header is in the split.
+  *
+  *
+  * @example Its usage is like other Spark connectors:
+  * {{{
+  * scala> spark.read.format("osm.pbf").load("<osm files path here>").select("id","latitude","longitude","tags").filter("type == 0 and size(tags) > 0").show(false)
+  * +------+------------------+------------------+-------------------------------------------------------+
+  * |id    |latitude          |longitude         |tags                                                   |
+  * +------+------------------+------------------+-------------------------------------------------------+
+  * |272629|39.01344329999999 |-77.03783400000007|{ref -> 31, highway -> motorway_junction}              |
+  * |278454|38.99543909999999 |-76.87885730000008|{noref -> yes, highway -> motorway_junction}           |
+  * |278495|39.09727710000001 |-76.8004246000001 |{noref -> yes, highway -> motorway_junction}           |
+  * |278499|39.10949280000001 |-76.7842974000001 |{noref -> yes, highway -> motorway_junction}           |
+  * |278665|39.13675140000001 |-76.75700080000009|{highway -> motorway_junction, noref -> yes}           |
+  * |278679|39.16433720000001 |-76.73629450000011|{noref -> yes, highway -> motorway_junction}           |
+  * |278702|39.20996720000001 |-76.68302190000011|{noref -> yes, highway -> motorway_junction}           |
+  * |281260|39.047928000000006|-77.15067590000012|{noref -> yes, highway -> motorway_junction}           |
+  * |281323|39.1811582        |-77.2515329000001 |{ref -> 15A, highway -> motorway_junction}             |
+  * |281359|39.152438         |-77.29614050000009|{highway -> traffic_signals}                           |
+  * |287905|38.843457699999995|-77.1106591000001 |{highway -> traffic_signals, traffic_signals -> signal}|
+  * |287913|38.85178319999999 |-77.13165830000011|{highway -> traffic_signals}                           |
+  * |287943|38.876419799999994|-77.05647270000011|{curve_geometry -> yes}                                |
+  * |390841|38.41534949999998 |-77.42648520000014|{ref -> 140, highway -> motorway_junction}             |
+  * |390920|38.333087899999974|-77.49828340000015|{ref -> 133, highway -> motorway_junction}             |
+  * |390955|38.29694369999998 |-77.50489810000018|{ref -> 130B, highway -> motorway_junction}            |
+  * |391002|38.24086209999997 |-77.50026980000017|{ref -> 126B, highway -> motorway_junction}            |
+  * |396346|37.97631839999997 |-77.49251700000009|{noref -> yes, highway -> motorway_junction}           |
+  * |396542|37.93273709999998 |-77.46779110000014|{ref -> 104, highway -> motorway_junction}             |
+  * |396693|37.84187889999999 |-77.45102540000016|{ref -> 98, highway -> motorway_junction}              |
+  * +------+------------------+------------------+-------------------------------------------------------+
+  * only showing top 20 rows
+  * }}}
+  *
+  * @note Dataframe schema used is:
+  *   {{{
+  *     root
+  *      |-- id: long (nullable = true)
+  *      |-- type: byte (nullable = true)
+  *      |-- latitude: double (nullable = true)
+  *      |-- longitude: double (nullable = true)
+  *      |-- nodes: array (nullable = true)
+  *      |    |-- element: long (containsNull = true)
+  *      |-- relations: array (nullable = true)
+  *      |    |-- element: struct (containsNull = true)
+  *      |    |    |-- id: long (nullable = true)
+  *      |    |    |-- relationType: byte (nullable = true)
+  *      |    |    |-- role: string (nullable = true)
+  *      |-- tags: map (nullable = true)
+  *      |    |-- key: string
+  *      |    |-- value: string (valueContainsNull = true)
+  *      |-- info: struct (nullable = true)
+  *      |    |-- version: integer (nullable = true)
+  *      |    |-- timestamp: timestamp (nullable = true)
+  *      |    |-- changeset: long (nullable = true)
+  *      |    |-- userId: integer (nullable = true)
+  *      |    |-- userName: string (nullable = true)
+  *      |    |-- visible: boolean (nullable = true)
+  *   }}}
+  *
+  */
 class OsmPbfFormat extends FileFormat with DataSourceRegister {
 
   override def shortName(): String = "osm.pbf"

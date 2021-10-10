@@ -42,7 +42,7 @@ class FromPbfFileEntitiesIteratorSpec extends AnyWordSpec with Matchers with Tab
     Table(
       ("testName", "filePath", "total", "nodes", "ways", "relations"),  // First tuple defines column names
       ("Madrid", "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf",   2677227, 2328075, 338795, 10357),  // Subsequent tuples define the data
-      ("ThreeBlocksNodes", "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.pbf",   16000, 16000, 0, 0),  // Subsequent tuples define the data
+      ("ThreeBlocksNodes", "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.pbf",   16000, 16000, 0, 0)  // Subsequent tuples define the data
       // TODO: Add more cases, for ways and relations.
     )
 
