@@ -74,7 +74,7 @@ class OsmPbfFormatWithSplitsSpec extends AnyWordSpec with Matchers with TableDri
     ("header second 3", 70440+3),
     ("header second 4", 70440+4),
     ("blob 1", 187+1),
-    ("blob 2", 70453+1),
+    ("blob 2", 70453+1)
   )
 
   def splitSize(size: Int): Option[SparkConf] = Some(new SparkConf().set("spark.sql.files.maxPartitionBytes", size.toString))
