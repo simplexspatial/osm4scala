@@ -37,7 +37,7 @@ import java.io.File
   */
 class BlocksWithIdExtractionSuite extends AnyFunSuite with BeforeAndAfter {
 
-  val extractRootFolder = "examples/blockswithidextraction/target/testing/BlocksExtractionSuite/"
+  val extractRootFolder = "examples/blockswithidextraction/target/testing_outputs/BlocksExtractionSuite/"
 
   before {
     FileUtils.deleteQuietly(new File(extractRootFolder))

@@ -37,7 +37,7 @@ import org.scalatest.funsuite.AnyFunSuite
   */
 class PrimitivesExtractionSuite extends AnyFunSuite with BeforeAndAfter {
 
-  val extractRootFolder = "target/testing/PrimitivesExtractionSuite/"
+  val extractRootFolder = "target/testing_outputs/PrimitivesExtractionSuite/"
 
   before {
     FileUtils.deleteQuietly(new File(extractRootFolder))

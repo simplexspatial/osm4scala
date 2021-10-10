@@ -36,7 +36,7 @@ import java.io.{File, FileInputStream}
 
 class TakeNSpec extends AnyWordSpecLike with BeforeAndAfterAll with Matchers {
 
-  val tmpFolder = "examples/takeN/target/testing"
+  val tmpFolder = "examples/takeN/target/testing_outputs"
   val monacoInFilePath = "core/src/test/resources/com/acervera/osm4scala/monaco-anonymized.osm.pbf"
   val madridInFilePath = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
 

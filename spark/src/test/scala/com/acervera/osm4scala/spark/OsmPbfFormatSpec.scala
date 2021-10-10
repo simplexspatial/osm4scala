@@ -98,7 +98,7 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
   def withTemporalFolder(testCode: File => Any): Unit =
     testCode(
       new File(
-        s"target/test_outs/${this.getClass().getCanonicalName()}/${Random.alphanumeric.take(10).mkString.toUpperCase()}"
+        s"target/testing_outputs/${this.getClass().getCanonicalName()}/${Random.alphanumeric.take(10).mkString.toUpperCase()}"
       )
     )
 
