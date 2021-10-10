@@ -55,6 +55,7 @@ The publication into Maven Central has been removed from the release process, so
    - [sbt-pgp](https://github.com/sbt/sbt-pgp#sbt-pgp) using `gpg` command-line utility under the cover.
    - [Sonatype GPG documentation](https://central.sonatype.org/publish/requirements/gpg/)
    - [xerial/sbt-sonatype](https://github.com/xerial/sbt-sonatype#sbt-sonatype-plugin)
+   - [scala-lang documentation](https://docs.scala-lang.org/overviews/contributors/index.html#publish-a-release)
    
    Basically:
    - Set the keys as [sbt-pgp#working-with-pgp-signatures](https://github.com/sbt/sbt-pgp#working-with-pgp-signatures) explains.
