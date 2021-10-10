@@ -10,7 +10,7 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](https://github.com/simplexspatial/osm4scala/blob/master/code_of_conduct.md)
 
 <p align="center">
-  <img src="website/static/android-chrome-192x192.png">
+  <a href="https://simplexspatial.github.io/osm4scala"><img src="website/static/android-chrome-192x192.png"></a>
 </p>
 
 High performance Scala library and Spark Polyglot (Scala, Python, SQL, etc.) connector for OpenStreetMap Pbf files.
