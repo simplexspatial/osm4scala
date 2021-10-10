@@ -1,5 +1,10 @@
 language: scala
 
+addons:
+  sonarcloud:
+    organization: "simplexspatial"
+#    token: "*********"
+
 jobs:
   include:
     - scala: 2.11.12
@@ -13,7 +18,7 @@ jobs:
       script:
         - sbt clean coverage "++$TRAVIS_SCALA_VERSION test" coverageAggregate
       after_success:
-        - sbt coveralls
+        - sonar-scanner
     - scala: 2.13.3
       jdk: openjdk8
       env: PATCH_211=false
@@ -21,7 +26,7 @@ jobs:
         - sbt clean "++$TRAVIS_SCALA_VERSION test"
 
 git:
-  depth: 3
+  depth: false
 
 before_install:
   - sudo apt-get -qq update

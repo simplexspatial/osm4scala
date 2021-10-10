@@ -106,8 +106,9 @@ lazy val enablingPublishingSettings = Seq(
 
 lazy val disablingCoverage = Seq(coverageEnabled := false)
 
+// Only used in Spark and core modules. Not in examples.
 lazy val coverageConfig =
-  Seq(coverageMinimum := 80, coverageFailOnMinimum := true)
+  Seq(coverageMinimumStmtTotal := 80, coverageFailOnMinimum := true, coverageEnabled := true)
 
 lazy val exampleSettings = disablingPublishingSettings ++ disablingCoverage
 
