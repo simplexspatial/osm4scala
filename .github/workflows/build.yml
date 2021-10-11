@@ -21,8 +21,8 @@ jobs:
 #        run: PATCH_211=true sbt clean "++2.13.5 test"
 #      - name: Scala 2.12
 #        run: PATCH_211=false sbt clean coverage "++2.12.13 test" coverageAggregate
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#      - name: SonarCloud Scan
+#        uses: sonarsource/sonarcloud-github-action@master
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
