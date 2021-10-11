@@ -22,13 +22,15 @@ addSbtPlugin("com.github.sbt" % "sbt-release" % "1.0.15")
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.15.0")
 addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.34")
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.0")
-
 libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % getScalaPBVersion()
 
 logLevel := Level.Warn
 
+// CI
+addSbtPlugin("com.sonar-scala" % "sbt-sonar" % "2.3.0")
+
 // Helpers for dev time.
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.0")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.20")

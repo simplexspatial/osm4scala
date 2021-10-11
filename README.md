@@ -44,6 +44,21 @@ PATCH_211=false sbt +test
 PATCH_211=true sbt +test
 ```
 
+### Running SonarQube locally
+Start docker SonarQube:
+```shell
+ docker run -p 80:9000 mwizner/sonarqube-scala-plugins:latest-full
+```
+
+Run test:
+```shell
+PATCH_211=false sbt \
+          -Dsonar.host.url=http://localhost \
+          -Dsonar.login=<TOKEN> \
+          -Dsonar.scala.scoverage.reportPath=target/scala-2.12/scoverage-report/scoverage.xml \
+          clean coverage "++2.12.13 test" coverageAggregate sonarScan
+```
+
 ### Release process
 The publication into Maven Central has been removed from the release process, so now there are few steps:
 1. Release.

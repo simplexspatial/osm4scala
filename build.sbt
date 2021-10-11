@@ -26,6 +26,7 @@
 import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
+import sbtsonar.SonarPlugin.autoImport.sonarUseExternalConfig
 
 def isPatch211Enable(): Boolean = sys.env.getOrElse("PATCH_211", "false").toBoolean
 
@@ -45,6 +46,8 @@ lazy val scala212 = "2.12.13"
 lazy val scala211 = "2.11.12"
 lazy val scalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(scala213, scala212)
 lazy val sparkScalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(scala212)
+
+sonarUseExternalConfig := true
 
 lazy val commonSettings = Seq(
   crossScalaVersions := scalaVersions,
@@ -106,11 +109,13 @@ lazy val enablingPublishingSettings = Seq(
 
 lazy val disablingCoverage = Seq(coverageEnabled := false)
 
+lazy val disablingSonarQube = Seq(sonarScan := false)
+
 // Only used in Spark and core modules. Not in examples.
 lazy val coverageConfig =
   Seq(coverageMinimumStmtTotal := 80, coverageFailOnMinimum := true, coverageEnabled := true)
 
-lazy val exampleSettings = disablingPublishingSettings ++ disablingCoverage
+lazy val exampleSettings = disablingPublishingSettings ++ disablingCoverage ++ disablingSonarQube
 
 def generateSparkFatShadedModule(sparkVersion: String, sparkPrj: Project): Project =
   Project(
