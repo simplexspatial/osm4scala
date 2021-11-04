@@ -37,7 +37,6 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import java.io.File
 import java.sql.Timestamp
-import java.time.Instant
 import scala.util.Random
 
 object SourcesForTesting {
