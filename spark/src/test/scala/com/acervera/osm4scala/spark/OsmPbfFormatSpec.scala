@@ -36,6 +36,8 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 
 import java.io.File
+import java.sql.Timestamp
+import java.time.Instant
 import scala.util.Random
 
 object SourcesForTesting {
@@ -143,6 +145,21 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
         "read without info" in {
           val node171946 = loadOsmPbf(spark, madridPath).select("id").filter("id == 171946").collect()(0)
           node171946.getAs[Long]("id") shouldBe 171946L
+        }
+
+        "read info" in {
+          // <node id="1699777711" version="2" timestamp="2018-03-26T07:24:26Z" lat="43.7402163" lon="7.4281505"/>
+          // Epoch 1522049066000 = Monday, March 26, 2018 7:24:26 AM
+          val node1699777711 = loadOsmPbf(spark, monacoPath)
+            .select(
+              col("id"),
+              col("info.version") as "version",
+              col("info.timestamp") as "timestamp"
+            ).filter("id == 1699777711").collect()(0)
+
+          node1699777711.getAs[Long]("id") shouldBe 1699777711L
+          node1699777711.getAs[Integer]("version") should be(2)
+          node1699777711.getAs[Timestamp]("timestamp").toInstant.toEpochMilli shouldBe 1522049066000L
         }
 
         "read null info" in {
