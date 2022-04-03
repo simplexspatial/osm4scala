@@ -19,6 +19,10 @@ High performance Scala library and Spark Polyglot (Scala, Python, SQL, etc.) con
 > ⚠ Full usage documentation at https://simplexspatial.github.io/osm4scala/
 
 
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/simplexspatial/osm4scala.svg)](https://starchart.cc/simplexspatial/osm4scala)
+
 
 ## Dev information:
 It's possible to develop using a Windows machine, but all documentation suppose that you are using Linux or Mac.
