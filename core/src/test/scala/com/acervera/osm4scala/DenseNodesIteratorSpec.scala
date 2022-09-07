@@ -28,42 +28,64 @@ package com.acervera.osm4scala
 import com.acervera.osm4scala.model.{Info, NodeEntity}
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseNodes, StringTable}
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 
 import java.io.FileInputStream
 import java.time.Instant
 
-class DenseNodesIteratorSpec extends AnyWordSpec with Matchers {
+class DenseNodesIteratorSpec extends AnyWordSpec with Matchers with TableDrivenPropertyChecks {
 
-  "The DenseNodesIterator should" should {
-    "Read known node" in {
-      val strTable = StringTable parseFrom new FileInputStream(
-        "core/src/test/resources/com/acervera/osm4scala/primitives/dense/strTable"
-      )
-      val osmosisDense = DenseNodes parseFrom new FileInputStream(
-        "core/src/test/resources/com/acervera/osm4scala/primitives/dense/dense"
-      )
+  private val strTable = StringTable parseFrom new FileInputStream(
+    "core/src/test/resources/com/acervera/osm4scala/primitives/dense/strTable"
+  )
+  private val osmosisDense = DenseNodes parseFrom new FileInputStream(
+    "core/src/test/resources/com/acervera/osm4scala/primitives/dense/dense"
+  )
 
-      DenseNodesIterator(strTable, osmosisDense)
-        .find(_.id == 4020124946L) shouldBe Some(
-        NodeEntity(
-          id = 4020124946L,
-          latitude = 43.732560499999984,
-          longitude = 7.418018399999998,
-          tags = Map("entrance" -> "yes", "addr:street" -> "Rue de la Colle", "addr:housenumber" -> "4"),
-          info = Some(
-            Info(
-              version = Some(1),
-              timestamp = Some(Instant.parse("2016-02-22T17:20:29Z")),
-              changeset = Some(0),
-              userId = Some(0),
-              userName = Some(""),
-              visible = None
+  private val osmosisDenseVisibleTrue = osmosisDense.copy(denseinfo =
+    Option(osmosisDense.denseinfo.get.copy(visible = Vector.fill(osmosisDense.id.size)(true)))
+  )
+
+  private val expectedDenseNodes =
+    Table(
+      ("testName", "osmosisDense", "visible"),
+      ("with visible flag unset", osmosisDense, None),
+      ("with visible flag explicitly set to true", osmosisDenseVisibleTrue, Some(true))
+    )
+
+  "The DenseNodesIterator" should {
+    forAll(expectedDenseNodes) { (testName, osmosisDense, visible) =>
+      s"Read known node $testName" in {
+        DenseNodesIterator(strTable, osmosisDense)
+          .find(_.id == 4020124946L) shouldBe Some(
+          NodeEntity(
+            id = 4020124946L,
+            latitude = 43.732560499999984,
+            longitude = 7.418018399999998,
+            tags = Map("entrance" -> "yes", "addr:street" -> "Rue de la Colle", "addr:housenumber" -> "4"),
+            info = Some(
+              Info(
+                version = Some(1),
+                timestamp = Some(Instant.parse("2016-02-22T17:20:29Z")),
+                changeset = Some(0),
+                userId = Some(0),
+                userName = Some(""),
+                visible = visible
+              )
             )
           )
         )
+      }
+    }
+
+    "Throw an exception when non-visible nodes are included" in {
+
+      val osmosisDenseVisibleFalse = osmosisDense.copy(denseinfo =
+        Option(osmosisDense.denseinfo.get.copy(visible = Vector.fill(osmosisDense.id.size)(false)))
       )
+
+      an[Exception] shouldBe thrownBy(DenseNodesIterator(strTable, osmosisDenseVisibleFalse))
     }
   }
-
 }
