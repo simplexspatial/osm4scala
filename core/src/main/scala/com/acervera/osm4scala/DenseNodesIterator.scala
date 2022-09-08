@@ -55,7 +55,7 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
                          granularity: Int = 100)
     extends Iterator[NodeEntity] {
 
-  if (osmosisDenseNode.denseinfo.isDefined && osmosisDenseNode.denseinfo.get.visible.nonEmpty) {
+  if (osmosisDenseNode.denseinfo.isDefined && osmosisDenseNode.denseinfo.get.visible.exists(b => !b)) {
     throw new Exception("Only visible nodes are implemented.")
   }
 
