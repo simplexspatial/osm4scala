@@ -90,13 +90,13 @@ necessary.
 The fat jar is near 5MB, so the size should be not a problem.
 
 As you probably know, Spark is base in Scala. Different Spark distributions are using different Scala versions.
-This is the Spark/Scala version combination available for latest release v1.0.10:
+This is the Spark/Scala version combination available for latest release v1.0.11:
 
 | Spark Branch |  Scala | Packages |
 |:------------:|:------:|:---------|
-| 2.4          | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.10`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.11/1.0.10/jar)
-| 2.4          | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.10`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.12/1.0.10/jar)
-| 3.0 / 3.1    | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.10`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3-shaded_2.12/1.0.10/jar)
+| 2.4          | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.11:1.0.11`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.11/1.0.11/jar)
+| 2.4          | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2-shaded_2.12:1.0.11`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2-shaded_2.12/1.0.11/jar)
+| 3.0 / 3.1    | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.11`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3-shaded_2.12/1.0.11/jar)
 
 Although following sections are focus on Spark Shell and Notebooks, you can use the same technique in other situations where
 you want to use the shaded version.
@@ -115,13 +115,13 @@ To solve the conflict, I published the library in two fashion:
 1. Start the spark shell as usual, using the `--packages` option to add the right dependency. The dependency will depend to
    the Spark Version that you are using. Please, check the reference table in the previous section.
     ```shell title="Scala"
-    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.10'
+    bin/spark-shell --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.11'
     ```
     ```scala title="PySpark"
-    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.10'
+    bin/pyspark --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.11'
     ```
     ```scala title="SQL"
-    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.10'
+    bin/spark-sql --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.11'
     ```
 
 2. Create the Dataframe using the osm.pbf format, pointing to the pbf file or folder containing pbf files.
@@ -258,7 +258,7 @@ If you prefer an online option, you can try [MyBinder](https://mybinder.org/v2/g
    of the [All in one jar](#all-in-one-jar) section. In or case, the version used is `Spark v3.1.1` with `Scala 2.12`.
    ```jypiter
    %%init_spark
-   launcher.packages = ["com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.10"]
+   launcher.packages = ["com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.11"]
    ```
    If you did not execute anything before, running the cell will start the Spark session. Sometime, depending to the
    Notebook used, **you will need to restart the Spark session (or Kernel session)**.
@@ -304,13 +304,13 @@ When we need to write more complex analysis, data extractions, ETLs, etc, it is 
     can not *easily* to import and use facilities from the Scala library. So in this case, you can jump to the next step.
 
     ```sbt title="Sbt"
-    libraryDependencies += "com.acervera.osm4scala" % "osm4scala-spark3-shaded_2.12" % "1.0.10"
+    libraryDependencies += "com.acervera.osm4scala" % "osm4scala-spark3-shaded_2.12" % "1.0.11"
     ```
     ```xml title="Maven"
     <dependency>
         <groupId>com.acervera.osm4scala</groupId>
         <artifactId>osm4scala-spark3-shaded_2.12</artifactId>
-        <version>1.0.10</version>
+        <version>1.0.11</version>
     </dependency>
     ```
     :::tip Reduce artifact size.
@@ -364,20 +364,20 @@ When we need to write more complex analysis, data extractions, ETLs, etc, it is 
 3. Submit the application to your Spark cluster.
     ```shell title="Scala"
     bin/spark-submit \
-        --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.10' \
-        examples/spark-documentation/target/scala-2.12/osm4scala-examples-spark-documentation_2.12-1.0.10-SNAPSHOT.jar \
+        --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.11' \
+        examples/spark-documentation/target/scala-2.12/osm4scala-examples-spark-documentation_2.12-1.0.11.jar \
         /tmp/osm/monaco-anonymized.osm.pbf
     ```
     ```shell title="PySpark"
     bin/spark-submit \
-        --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.10' \
+        --packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.11' \
         examples/spark-documentation/src/main/scala/com/acervera/osm4scala/examples/spark/documentation/PrimiriveCounter.py \
         /tmp/osm/monaco-anonymized.osm.pbf
     ```
 
     :::note Optional --packages.
 
-    You will not need to add `--packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.10'` if it is part of the
+    You will not need to add `--packages 'com.acervera.osm4scala:osm4scala-spark3-shaded_2.12:1.0.11'` if it is part of the
     deployed artifact.
 
     :::
@@ -545,13 +545,13 @@ In that case, the best practice is to manage dependencies using `sbt` or `maven`
 OSM Pbf files are based on [Protocol Buffer](https://developers.google.com/protocol-buffers), so [Scalapb](https://scalapb.github.io) is
 used as deserializer so it's the unique transitive dependency.
 
-This is the Spark/Scala version combination available for latest release v1.0.10:
+This is the Spark/Scala version combination available for latest release v1.0.11:
 
 | Spark branch | Scalapb |  Scala | Packages |
 |:------------:|:-------:|:------:|:---------|
-| 2.4          | 0.9.7  | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2_2.11:1.0.10`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.11/1.0.10/jar)
-| 2.4          | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2_2.12:1.0.10`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.12/1.0.10/jar)
-| 3.0 / 3.1    | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3_2.12:1.0.10`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3_2.12/1.0.10/jar)
+| 2.4          | 0.9.7  | 2.11   | [`com.acervera.osm4scala:osm4scala-spark2_2.11:1.0.11`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.11/1.0.11/jar)
+| 2.4          | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark2_2.12:1.0.11`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark2_2.12/1.0.11/jar)
+| 3.0 / 3.1    | 0.10.2 | 2.12   | [`com.acervera.osm4scala:osm4scala-spark3_2.12:1.0.11`](https://search.maven.org/artifact/com.acervera.osm4scala/osm4scala-spark3_2.12/1.0.11/jar)
 
 After importing the connector, you can use it as we explained in the [All in one section](#all-in-one-jar). So lets see
 how to import the library in our project and few examples.
