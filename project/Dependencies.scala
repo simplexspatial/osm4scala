@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2021 Ángel Cervera Claudio
+ * Copyright (c) 2023 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,21 +23,13 @@
  *
  */
 
-addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.34")
-libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.10.2"
-
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.7")
-addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.1.2")
-addSbtPlugin("com.github.sbt" % "sbt-release" % "1.0.15")
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.15.0")
-
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
-addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.2.7")
-
-logLevel := Level.Warn
-
-// Helpers for dev time.
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.20")
-addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")
+object Dependencies {
+  lazy val scalatestVersion = "3.2.0"
+  lazy val scalacheckVersion = "1.14.3"
+  lazy val commonIOVersion = "2.5"
+  lazy val logbackVersion = "1.1.7"
+  lazy val scoptVersion = "3.7.1"
+  lazy val akkaVersion = "2.5.31"
+  lazy val spark3Version = "3.3.1"
+  lazy val spark2Version = "2.4.8"
+}

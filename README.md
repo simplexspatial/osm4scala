@@ -40,7 +40,7 @@ Scala 2.11 compatibility.
 
 ### Cross versions
 The project is using cross version to manage 2.11, 2.12 and 2.13 using the same code base, so remember to use '+' to
-trigger all versions versions.
+trigger all versions.
 
 So remember, as example, for testing:
 ```shell script
