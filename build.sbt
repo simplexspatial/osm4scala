@@ -29,18 +29,12 @@ import sbtrelease.ReleasePlugin.autoImport._
 import Dependencies._
 import CommonSettings._
 
-def isPatch211Enable: Boolean = sys.env.getOrElse("PATCH_211", "false").toBoolean
-
 // Dependencies
 lazy val sparkDefaultVersion = spark3Version
 
 lazy val scala213 = "2.13.10"
 lazy val scala212 = "2.12.17"
-
 lazy val scalaAllVersions = Seq(scala212, scala213)
-
-//lazy val scalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(scala213, scala212)
-//lazy val sparkScalaVersions = if (isPatch211Enable()) Seq(scala211) else Seq(scala212)
 
 lazy val disablingPublishingSettings =
   Seq(publish / skip := true, publishArtifact := false)
