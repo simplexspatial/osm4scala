@@ -104,8 +104,8 @@ def generateSparkModule(sparkVersion: String): Project = {
     .dependsOn(core)
 }
 
-lazy val spark2 = generateSparkModule(spark2Version)
-lazy val spark2FatShaded = generateSparkFatShadedModule(spark2Version, spark2)
+//lazy val spark2 = generateSparkModule(spark2Version)
+//lazy val spark2FatShaded = generateSparkFatShadedModule(spark2Version, spark2)
 lazy val spark3 = generateSparkModule(spark3Version)
 lazy val spark3FatShaded = generateSparkFatShadedModule(spark3Version, spark3)
 
@@ -113,8 +113,8 @@ lazy val root = (project in file("."))
   .disablePlugins(AssemblyPlugin)
   .aggregate(
     core,
-    spark2,
-    spark2FatShaded,
+//    spark2,
+//    spark2FatShaded,
     commonUtilities,
     examplesCounter,
     examplesCounterParallel,

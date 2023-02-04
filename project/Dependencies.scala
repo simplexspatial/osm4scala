@@ -27,8 +27,8 @@ object Dependencies {
 
   lazy val sparkDefaultVersion = spark3Version
 
-//  lazy val selectedScalaVersion = "2.13.10"
-  lazy val selectedScalaVersion = "2.12.17"
+  lazy val selectedScalaVersion = "2.13.10"
+//  lazy val selectedScalaVersion = "2.12.17"
   //lazy val selectedScalaVersion = "2.11.10"
 
   lazy val scalatestVersion = "3.2.0"
