@@ -33,6 +33,7 @@ import xerial.sbt.Sonatype.autoImport.sonatypePublishToBundle
 object CommonSettings {
 
   lazy val commonSettings = Seq(
+    scalaVersion := selectedScalaVersion,
     organization := "com.acervera.osm4scala",
     organizationHomepage := Some(url("https://www.acervera.com")),
     licenses += ("MIT", url("https://opensource.org/licenses/MIT")),

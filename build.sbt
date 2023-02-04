@@ -29,13 +29,6 @@ import sbtrelease.ReleasePlugin.autoImport._
 import Dependencies._
 import CommonSettings._
 
-// Dependencies
-lazy val sparkDefaultVersion = spark3Version
-
-lazy val scala213 = "2.13.10"
-lazy val scala212 = "2.12.17"
-lazy val scalaAllVersions = Seq(scala212, scala213)
-
 lazy val disablingPublishingSettings =
   Seq(publish / skip := true, publishArtifact := false)
 
@@ -112,16 +105,9 @@ def generateSparkModule(sparkVersion: String): Project = {
 }
 
 lazy val spark2 = generateSparkModule(spark2Version)
-  .settings(crossScalaVersions := Seq(scala212))
-
 lazy val spark2FatShaded = generateSparkFatShadedModule(spark2Version, spark2)
-  .settings(crossScalaVersions := Seq(scala212))
-
 lazy val spark3 = generateSparkModule(spark3Version)
-  .settings(crossScalaVersions := Seq(scala212, scala213))
-
 lazy val spark3FatShaded = generateSparkFatShadedModule(spark3Version, spark3)
-  .settings(crossScalaVersions := Seq(scala212, scala213))
 
 lazy val root = (project in file("."))
   .disablePlugins(AssemblyPlugin)
@@ -169,7 +155,6 @@ lazy val root = (project in file("."))
 lazy val core = Project(id = "core", base = file("core"))
   .disablePlugins(AssemblyPlugin)
   .settings(
-    crossScalaVersions := scalaAllVersions,
     commonSettings,
     enablingPublishingSettings,
     coverageConfig,
@@ -186,7 +171,6 @@ lazy val core = Project(id = "core", base = file("core"))
 lazy val commonUtilities = Project(id = "examples-common-utilities", base = file("examples/common-utilities"))
   .disablePlugins(AssemblyPlugin)
   .settings(
-    crossScalaVersions := scalaAllVersions,
     commonSettings,
     exampleSettings,
     publish / skip := true,
@@ -200,7 +184,6 @@ lazy val examplesCounter =
   Project(id = "examples-counter", base = file("examples/counter"))
     .disablePlugins(AssemblyPlugin)
     .settings(
-      crossScalaVersions := scalaAllVersions,
       commonSettings,
       exampleSettings,
       name := "osm4scala-examples-counter",
@@ -211,7 +194,6 @@ lazy val examplesCounter =
 lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", base = file("examples/counter-parallel"))
   .disablePlugins(AssemblyPlugin)
   .settings(
-    crossScalaVersions := scalaAllVersions,
     commonSettings,
     exampleSettings,
     name := "osm4scala-examples-counter-parallel",
@@ -222,7 +204,6 @@ lazy val examplesCounterParallel = Project(id = "examples-counter-parallel", bas
 lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file("examples/counter-akka"))
   .disablePlugins(AssemblyPlugin)
   .settings(
-    crossScalaVersions := scalaAllVersions,
     commonSettings,
     exampleSettings,
     name := "osm4scala-examples-counter-akka",
@@ -236,7 +217,6 @@ lazy val examplesCounterAkka = Project(id = "examples-counter-akka", base = file
 lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base = file("examples/tagsextraction"))
   .disablePlugins(AssemblyPlugin)
   .settings(
-    crossScalaVersions := scalaAllVersions,
     commonSettings,
     exampleSettings,
     name := "osm4scala-examples-tags-extraction",
@@ -247,7 +227,6 @@ lazy val examplesTagsExtraction = Project(id = "examples-tag-extraction", base =
 lazy val examplesBlocksExtraction = Project(id = "examples-blocks-extraction", base = file("examples/blocksextraction"))
   .disablePlugins(AssemblyPlugin)
   .settings(
-    crossScalaVersions := scalaAllVersions,
     commonSettings,
     exampleSettings,
     name := "osm4scala-examples-blocks-extraction",
@@ -259,7 +238,6 @@ lazy val examplesBlocksWithIdExtraction =
   Project(id = "examples-blocks-with-id-extraction", base = file("examples/blockswithidextraction"))
     .disablePlugins(AssemblyPlugin)
     .settings(
-      crossScalaVersions := scalaAllVersions,
       commonSettings,
       exampleSettings,
       name := "examples-blocks-with-id-extraction",
@@ -270,7 +248,6 @@ lazy val examplesBlocksWithIdExtraction =
 lazy val examplesTakeN = Project(id = "examples-takeN", base = file("examples/takeN"))
   .disablePlugins(AssemblyPlugin)
   .settings(
-    crossScalaVersions := scalaAllVersions,
     commonSettings,
     exampleSettings,
     name := "osm4scala-examples-takeN",
@@ -282,7 +259,6 @@ lazy val examplesPrimitivesExtraction =
   Project(id = "examples-primitives-extraction", base = file("examples/primitivesextraction"))
     .disablePlugins(AssemblyPlugin)
     .settings(
-      crossScalaVersions := scalaAllVersions,
       commonSettings,
       exampleSettings,
       name := "osm4scala-examples-primitives-extraction",
@@ -293,7 +269,6 @@ lazy val examplesPrimitivesExtraction =
 lazy val exampleSparkUtilities = Project(id = "examples-spark-utilities", base = file("examples/spark-utilities"))
   .disablePlugins(AssemblyPlugin)
   .settings(
-    crossScalaVersions := scalaAllVersions,
     commonSettings,
     exampleSettings,
     name := "osm4scala-examples-spark-utilities",
@@ -308,7 +283,6 @@ lazy val exampleSparkDocumentation =
   Project(id = "examples-spark-documentation", base = file("examples/spark-documentation"))
     .disablePlugins(AssemblyPlugin)
     .settings(
-      crossScalaVersions := scalaAllVersions,
       commonSettings,
       exampleSettings,
       name := "osm4scala-examples-spark-documentation",
