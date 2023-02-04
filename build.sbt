@@ -34,7 +34,40 @@ lazy val sparkDefaultVersion = spark3Version
 
 lazy val scala213 = "2.13.10"
 lazy val scala212 = "2.12.17"
-lazy val scalaAllVersions = Seq(scala212, scala213)
+lazy val scala211 = "2.11.12"
+lazy val scalaAllVersions = Seq(scala211, scala212, scala213)
+
+def scalapbGen(ver: String) =
+  (protocbridge.SandboxedJvmGenerator.forModule(
+     "scala",
+     protocbridge.Artifact(
+       "com.thesamet.scalapb",
+       s"compilerplugin_2.13",
+       ver
+     ),
+     "scalapb.ScalaPbCodeGenerator$",
+     Seq(
+       protocbridge.Artifact(
+         "com.thesamet.scalapb",
+         "scalapb-runtime",
+         ver,
+         crossVersion = true
+       ))
+   ),
+   Seq())
+
+def getScalaPBVersion = Def.setting {
+  println(">>>>>>> scalaVersion.value", scalaVersion.value)
+  println(">>>>>>> CrossVersion.partialVersion", CrossVersion.partialVersion(scalaVersion.value))
+  println(">>>>>>> CrossVersion.scalaApiVersion", CrossVersion.scalaApiVersion(scalaVersion.value))
+  println(">>>>>>> CrossVersion.binaryScalaVersion", CrossVersion.binaryScalaVersion(scalaVersion.value))
+  println(">>>>>>> CrossVersion.sbtApiVersion", CrossVersion.sbtApiVersion(scalaVersion.value))
+  println(">>>>>>> CrossVersion.sbtApiVersion", CrossVersion.formatted(scalaVersion.value))
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, n)) if n < 12 => "0.9.7"
+    case x                      => "0.10.2"
+  }
+}
 
 lazy val disablingPublishingSettings =
   Seq(publish / skip := true, publishArtifact := false)
@@ -112,10 +145,10 @@ def generateSparkModule(sparkVersion: String): Project = {
 }
 
 lazy val spark2 = generateSparkModule(spark2Version)
-  .settings(crossScalaVersions := Seq(scala212))
+  .settings(crossScalaVersions := Seq(scala211, scala212))
 
 lazy val spark2FatShaded = generateSparkFatShadedModule(spark2Version, spark2)
-  .settings(crossScalaVersions := Seq(scala212))
+  .settings(crossScalaVersions := Seq(scala211, scala212))
 
 lazy val spark3 = generateSparkModule(spark3Version)
   .settings(crossScalaVersions := Seq(scala212, scala213))
@@ -177,8 +210,11 @@ lazy val core = Project(id = "core", base = file("core"))
     name := "osm4scala-core",
     description := "Scala OpenStreetMap Pbf 2 parser. Core",
     Compile / PB.targets := Seq(
-      scalapb.gen(grpc = false) -> (Compile / sourceManaged).value
+      scalapbGen(getScalaPBVersion.value) -> (Compile / sourceManaged).value / "scalapb"
     )
+//    Compile / PB.targets := Seq(
+//      scalapb.gen(grpc = false) -> (Compile / sourceManaged).value
+//    )
   )
 
 // Examples

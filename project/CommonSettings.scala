@@ -60,14 +60,28 @@ object CommonSettings {
       "commons-io" % "commons-io" % commonIOVersion % Test
     ),
     assembly / test := {},
-    scalacOptions ++= Seq(
-      "-target:jvm-1.8",
-      "-encoding",
-      "utf8",
-      "-deprecation",
-      "-unchecked",
-      "-Xlint"
-    ),
+    scalacOptions ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, x)) if x < 12 =>
+          Seq(
+            "-target:jvm-1.8",
+            "-encoding",
+            "utf8",
+            "-deprecation",
+            "-unchecked",
+            "-Xlint"
+          )
+        case _ =>
+          Seq(
+            "-release:8",
+            "-encoding",
+            "utf8",
+            "-deprecation",
+            "-unchecked",
+            "-Xlint"
+          )
+      }
+    },
     javacOptions ++= Seq(
       "-Xlint:all",
       "-source",
