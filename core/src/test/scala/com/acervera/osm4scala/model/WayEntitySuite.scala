@@ -47,7 +47,27 @@ class WayEntitySuite extends AnyFunSuite with Matchers {
 
     // Test
     val way = WayEntity(strTable, osmosisWay)
-    way shouldBe WayEntity(
+    way shouldBe expectedWayEntity(Vector(), Vector())
+  }
+
+  test("read a real osmosis Way, with geometry.") {
+
+    val strTable = StringTable parseFrom new FileInputStream(
+      "core/src/test/resources/com/acervera/osm4scala/primitives/way/strTable")
+    val osmosisWay = Way parseFrom new FileInputStream(
+      "core/src/test/resources/com/acervera/osm4scala/primitives/way/way-with-geo")
+
+    // Test
+    val way = WayEntity(strTable, osmosisWay)
+    way shouldBe expectedWayEntity(Vector(43.7389436, 43.7392238, 43.7393298, 43.7395534, 43.7397211, 43.7390370,
+      43.7391636, 43.7390849, 43.7394273, 43.7395025, 43.7392768, 43.7391243, 43.7394671, 43.7395255, 43.7389997,
+      43.7393746, 43.7390601, 43.7395762),
+      Vector(7.4259531, 7.4256611, 7.4256563, 7.4256163, 7.4251382, 7.4257964, 7.4256818, 7.4257430, 7.4257083,
+        7.4256947, 7.4256536, 7.4257083, 7.4257117, 7.4256666, 7.4258602, 7.4256802, 7.4257682, 7.4255146))
+  }
+
+  private def expectedWayEntity(latitude: Vector[Double], longitude: Vector[Double]) = {
+    WayEntity(
       4097656,
       Vector(
         21912089L, 7265761724L, 1079750744L, 2104793864L, 6340961560L, 1110560507L, 21912093L, 6340961559L, 21912095L,
@@ -70,8 +90,9 @@ class WayEntitySuite extends AnyFunSuite with Matchers {
           Some(""),
           None
         )
-      )
+      ),
+      latitude,
+      longitude,
     )
   }
-
 }

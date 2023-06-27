@@ -25,6 +25,7 @@
 
 package com.acervera.osm4scala.model
 
+import com.acervera.osm4scala.utilities.CoordUtils.convertToMicroDegrees
 import com.acervera.osm4scala.utilities.StringTableUtils._
 import org.openstreetmap.osmosis.osmbinary.osmformat
 
@@ -88,7 +89,9 @@ case class WayEntity(
     id: Long,
     nodes: Seq[Long],
     tags: Map[String, String],
-    info: Option[Info] = None
+    info: Option[Info] = None,
+    lat: Seq[Double],
+    lgn: Seq[Double]
 ) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Way
 }
@@ -101,7 +104,13 @@ object WayEntity {
         .scanLeft(0L) { _ + _ }
         .drop(1), // Calculate nodes references in stored in delta compression. TODO: extract to utility class.
       osmosisStringTable.extractTags(osmosisWay.keys, osmosisWay.vals),
-      Info(osmosisStringTable, osmosisWay.info)
+      Info(osmosisStringTable, osmosisWay.info),
+      osmosisWay.lat
+        .scanLeft(0L) { _ + _ }
+        .drop(1).map(x=> convertToMicroDegrees(x)),
+      osmosisWay.lon
+        .scanLeft(0L) { _ + _ }
+        .drop(1).map(x => convertToMicroDegrees(x))
     )
 }
 

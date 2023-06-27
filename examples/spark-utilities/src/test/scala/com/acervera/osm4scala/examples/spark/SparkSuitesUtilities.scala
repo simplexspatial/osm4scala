@@ -37,5 +37,10 @@ object SparkSuitesUtilities {
   def monaco: DataFrame = spark.sqlContext.read
     .format("osm.pbf")
     .load("core/src/test/resources/com/acervera/osm4scala/monaco-anonymized.osm.pbf")
+
+  def monacoWithGeometry: DataFrame = spark.sqlContext.read
+    .format("osm.pbf")
+    .option("wayWithGeometry", "true")
+    .load("core/src/test/resources/com/acervera/osm4scala/monaco-anonymized-with-geo.osm.pbf")
 }
 

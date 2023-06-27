@@ -42,6 +42,7 @@ import scala.util.Random
 object SourcesForTesting {
   val madridPath = "core/src/test/resources/com/acervera/osm4scala/Madrid.bbbike.osm.pbf"
   val monacoPath = "core/src/test/resources/com/acervera/osm4scala/monaco-anonymized.osm.pbf"
+  val monacoWithGeoPath = "core/src/test/resources/com/acervera/osm4scala/monaco-anonymized-with-geo.osm.pbf"
   val threeBlocks = "core/src/test/resources/com/acervera/osm4scala/fileblock/three_blocks.pbf"
 }
 
@@ -200,6 +201,46 @@ class OsmPbfFormatSpec extends AnyWordSpec with Matchers with SparkSessionBefore
 
         way3996192.getAs[Seq[Long]]("nodes") shouldBe Seq(20952914L, 2424952617L)
         way3996192.getAs[Seq[Any]]("relations") shouldBe Seq.empty
+      }
+
+      "is parsing ways with geometry" in {
+        val way25739583 = loadOsmPbf(spark, monacoWithGeoPath, None, Map("wayWithGeometry" -> "true")).filter("id == " +
+          "25739583").collect()(0)
+        way25739583.getAs[Long]("id") shouldBe 25739583L
+        way25739583.getAs[Byte]("type") shouldBe 1
+        way25739583.getAs[AnyRef]("latitude") should be(null)
+        way25739583.getAs[AnyRef]("longitude") should be(null)
+        way25739583.getAs[Map[String, String]]("tags") shouldBe
+          Map("name" -> "Rue Hector Otto",
+            "highway" -> "residential",
+            "junction" -> "roundabout"
+          )
+
+        way25739583.getAs[Seq[Row]]("nodes").map(x => (
+          x.getAs[Long]("id"),
+          x.getAs[Double]("latitude"),
+          x.getAs[Double]("longitude")
+        )) shouldBe Seq(
+          (257076297, 43.7335259, 7.4130796),
+          (1780610235, 43.7335222, 7.4130215),
+          (257076299, 43.7335295, 7.4129884),
+          (257076301, 43.7335487, 7.4129352),
+          (1780610236, 43.7335549, 7.4128692),
+          (280703046, 43.733544, 7.4128292),
+          (257076304, 43.7335135, 7.4128022),
+          (280703045, 43.7334773, 7.412792),
+          (257076306, 43.7334402, 7.4128023),
+          (257076309, 43.7334118, 7.4128333),
+          (1780610229, 43.7334052, 7.4128794),
+          (257076311, 43.7334003, 7.4129156),
+          (280703047, 43.7334, 7.4129789),
+          (257076297, 43.7335259, 7.4130796))
+        way25739583.getAs[Seq[Any]]("relations") shouldBe Seq.empty
+
+        //ensure nodes order is the same if you read with geometry or without
+        val way25739583WithoutGeo = loadOsmPbf(spark, monacoPath).filter("id == 25739583").collect()(0)
+        val nodeListWithoutGeo = way25739583WithoutGeo.getAs[Seq[Long]]("nodes")
+        way25739583.getAs[Seq[Row]]("nodes").map(x => x.getAs[Long]("id")) shouldBe nodeListWithoutGeo
       }
 
       "is parsing relations" in {
