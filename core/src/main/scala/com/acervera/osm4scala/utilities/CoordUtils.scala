@@ -32,11 +32,8 @@ import scala.math.BigDecimal.RoundingMode
  */
 object CoordUtils {
 
-  private val COORDINATE_PRECISION = 7
-
   /**
    * Calculate coordinate applying offset, granularity and delta.
-   * The floating precision is 7 with Half Even rounding
    * mode
    *
    * @param offSet
@@ -45,24 +42,16 @@ object CoordUtils {
    * @return
    */
   def decompressCoord(offSet: Long, delta: Long, currentValue: Double, granularity: Int): Double = {
-    BigDecimal.valueOf(offSet + (granularity * delta))
-      .*(BigDecimal.valueOf(1E-9))
-      .+(BigDecimal.valueOf(currentValue))
-      .setScale(COORDINATE_PRECISION, RoundingMode.HALF_EVEN)
-      .doubleValue();
+    (.000000001 * (offSet + (granularity * delta))) + currentValue
   }
 
   /**
    * Calculate coordinate applying offset, granularity and delta.
-   * The floating precision is 7 with Half Even rounding
    *
    * @param coordValue
    * @return
    */
   def convertToMicroDegrees(coordValue: Double): Double = {
-    BigDecimal.valueOf(coordValue)
-      .*(1E-7)
-      .setScale(COORDINATE_PRECISION, RoundingMode.HALF_EVEN)
-      .doubleValue();
+    .0000001 * coordValue
   }
 }
