@@ -61,8 +61,8 @@ class DenseNodesIteratorSpec extends AnyWordSpec with Matchers with TableDrivenP
           .find(_.id == 4020124946L) shouldBe Some(
           NodeEntity(
             id = 4020124946L,
-            latitude = 43.7325605,
-            longitude = 7.4180184,
+            latitude = 43.732560499999984,
+            longitude = 7.418018399999998,
             tags = Map("entrance" -> "yes", "addr:street" -> "Rue de la Colle", "addr:housenumber" -> "4"),
             info = Some(
               Info(
