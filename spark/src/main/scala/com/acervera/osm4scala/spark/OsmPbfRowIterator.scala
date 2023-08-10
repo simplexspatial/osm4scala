@@ -31,7 +31,7 @@ import com.acervera.osm4scala.spark.OsmSqlEntity._
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.UnsafeArrayData
 import org.apache.spark.sql.catalyst.util._
-import org.apache.spark.sql.types.{ArrayType, StructField, StructType}
+import org.apache.spark.sql.types.{ArrayType, LongType, StructField, StructType}
 import org.apache.spark.unsafe.types.UTF8String
 
 class OsmPbfRowIterator(osmEntityIterator: Iterator[OSMEntity], requiredSchema: StructType)
@@ -88,17 +88,56 @@ object OsmPbfRowIterator {
       case fieldName            => throw new Exception(s"Field $fieldName not valid for Info.")
     })
 
-    private def populateWay(entity: WayEntity, structType: StructType): Seq[Any] = structType.fieldNames.map {
-      case FIELD_ID        => entity.id
-      case FIELD_TYPE      => ENTITY_TYPE_WAY
-      case FIELD_LATITUDE  => null
-      case FIELD_LONGITUDE => null
-      case FIELD_NODES     => UnsafeArrayData.fromPrimitiveArray(entity.nodes.toArray)
-      case FIELD_RELATIONS => new GenericArrayData(Seq.empty)
-      case FIELD_TAGS      => calculateTags(entity.tags)
-      case FIELD_INFO      => entity.info.map(populateInfo).orNull
-      case fieldName       => throw new Exception(s"Field $fieldName not valid for a Way.")
+    private def populateWay(entity: WayEntity, structType: StructType): Seq[Any] = structType.fields.map(f =>
+      f.name match {
+        case FIELD_ID        => entity.id
+        case FIELD_TYPE      => ENTITY_TYPE_WAY
+        case FIELD_LATITUDE  => null
+        case FIELD_LONGITUDE => null
+        case FIELD_NODES     => calculateWayNodes(entity.nodes, entity.lat, entity.lgn, f)
+        case FIELD_RELATIONS => new GenericArrayData(Seq.empty)
+        case FIELD_TAGS      => calculateTags(entity.tags)
+        case FIELD_INFO      => entity.info.map(populateInfo).orNull
+        case fieldName       => throw new Exception(s"Field $fieldName not valid for a Way.")
+      }
+    )
+
+    private def calculateWayNodes(nodeIds: Seq[Long], lat: Seq[Double], lgn: Seq[Double], structField: StructField)
+    : ArrayData = {
+      if (structField.dataType.asInstanceOf[ArrayType].elementType == LongType) {
+        //way nodes without geometry
+        UnsafeArrayData.fromPrimitiveArray(nodeIds.toArray)
+      } else {
+        //way nodes with geometry
+        calculateWayNodeWithGeometry(nodeIds, lat, lgn, structField)
+      }
     }
+
+    private def calculateWayNodeWithGeometry(nodeIds: Seq[Long], lat: Seq[Double], lgn: Seq[Double], structField: StructField) = {
+      val nodes: Seq[(Long, (Double, Double))] = (nodeIds zip (lat, lgn).zipped.toList)
+      new GenericArrayData(
+        structField.dataType match {
+          case ArrayType(elementType, _) =>
+            elementType match {
+              case s: StructType => nodes.map(r => InternalRow.fromSeq(calculateWayNode(r, s)))
+              case s             =>
+                throw new UnsupportedOperationException(
+                  s"Schema ${s} isn't supported. Only arrays of StructType are allowed for way nodes.")
+            }
+          case s                         =>
+            throw new UnsupportedOperationException(
+              s"Schema ${s} isn't supported. Only arrays of StructType are allowed for way nodes.")
+        }
+      )
+    }
+
+    private def calculateWayNode(wayNode: (Long, (Double, Double)), structType: StructType): Seq[Any] =
+      structType.fieldNames.map {
+        case FIELD_ID        => wayNode._1
+        case FIELD_LATITUDE  => wayNode._2._1
+        case FIELD_LONGITUDE => wayNode._2._2
+        case fieldName       => throw new Exception(s"Field $fieldName not valid for a way node.")
+      }
 
     private def populateRelation(entity: RelationEntity, structType: StructType): Seq[Any] =
       structType.fields.map(f =>

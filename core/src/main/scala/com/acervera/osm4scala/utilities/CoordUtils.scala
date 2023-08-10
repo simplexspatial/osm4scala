@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020 Ángel Cervera Claudio
+ * Copyright (c) 2023 Ángel Cervera Claudio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,24 +23,35 @@
  *
  */
 
-package com.acervera.osm4scala.examples.spark
+package com.acervera.osm4scala.utilities
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import scala.math.BigDecimal.RoundingMode
 
-object SparkSuitesUtilities {
-  implicit val spark = SparkSession.builder()
-    .appName("Testing")
-    .config("spark.sql.warehouse.dir", "target/spark-warehouse")
-    .master("local[4]")
-    .getOrCreate()
+/**
+ * Utility to manage coordinates
+ */
+object CoordUtils {
 
-  def monaco: DataFrame = spark.sqlContext.read
-    .format("osm.pbf")
-    .load("core/src/test/resources/com/acervera/osm4scala/monaco-anonymized.osm.pbf")
+  /**
+   * Calculate coordinate applying offset, granularity and delta.
+   * mode
+   *
+   * @param offSet
+   * @param delta
+   * @param currentValue
+   * @return
+   */
+  def decompressCoord(offSet: Long, delta: Long, currentValue: Double, granularity: Int): Double = {
+    (.000000001 * (offSet + (granularity * delta))) + currentValue
+  }
 
-  def monacoWithGeometry: DataFrame = spark.sqlContext.read
-    .format("osm.pbf")
-    .option("wayWithGeometry", "true")
-    .load("core/src/test/resources/com/acervera/osm4scala/monaco-anonymized-with-geo.osm.pbf")
+  /**
+   * Calculate coordinate applying offset, granularity and delta.
+   *
+   * @param coordValue
+   * @return
+   */
+  def convertToMicroDegrees(coordValue: Double): Double = {
+    .0000001 * coordValue
+  }
 }
-

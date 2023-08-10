@@ -32,37 +32,38 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 class JobSpec extends AnyWordSpecLike with Matchers {
 
-  "TagKeys" should {
-    "extracting keys without filter" in {
-      monaco.createOrReplaceTempView("tag_keys_no_filter")
-      val result = Job.run(monaco, "tag_keys_no_filter", Config(tagKeysConfig = Some(TagKeysCfg())))
-        .count()
-      result shouldBe 833
-    }
+  for (dataFrame <- Seq(("withoutGeometry", monaco), ("withGeometry", monacoWithGeometry))) {
+    "TagKeys" should {
+      s"extracting keys without filter - ${dataFrame._1}" in {
+        dataFrame._2.createOrReplaceTempView("tag_keys_no_filter")
+        val result = Job.run(monaco, "tag_keys_no_filter", Config(tagKeysConfig = Some(TagKeysCfg())))
+          .count()
+        result shouldBe 833
+      }
 
-    "extracting keys filtering by nodes" in {
-      monaco.createOrReplaceTempView("tag_keys_nodes_filter")
-      val result = Job.run(monaco, "tag_keys_nodes_filter", Config(tagKeysConfig = Some(TagKeysCfg(osmType = Some(0)))))
-        .count()
+      s"extracting keys filtering by nodes - ${dataFrame._1}" in {
+        dataFrame._2.createOrReplaceTempView("tag_keys_nodes_filter")
+        val result = Job.run(monaco, "tag_keys_nodes_filter", Config(tagKeysConfig = Some(TagKeysCfg(osmType = Some(0)))))
+          .count()
 
-      result shouldBe 513
-    }
+        result shouldBe 513
+      }
 
-    "extracting keys filtering by ways" in {
-      monaco.createOrReplaceTempView("tag_keys_ways_filter")
-      val result = Job.run(monaco, "tag_keys_ways_filter", Config(tagKeysConfig = Some(TagKeysCfg(osmType = Some(1)))))
-        .count()
+      s"extracting keys filtering by ways - ${dataFrame._1}" in {
+        dataFrame._2.createOrReplaceTempView("tag_keys_ways_filter")
+        val result = Job.run(monaco, "tag_keys_ways_filter", Config(tagKeysConfig = Some(TagKeysCfg(osmType = Some(1)))))
+          .count()
 
-      result shouldBe 329
-    }
+        result shouldBe 329
+      }
 
-    "extracting keys filtering by relations" in {
-      monaco.createOrReplaceTempView("tag_keys_relations_filter")
-      val result = Job.run(monaco, "tag_keys_relations_filter", Config(tagKeysConfig = Some(TagKeysCfg(osmType = Some(2)))))
-        .count()
+      s"extracting keys filtering by relations - ${dataFrame._1}" in {
+        dataFrame._2.createOrReplaceTempView("tag_keys_relations_filter")
+        val result = Job.run(monaco, "tag_keys_relations_filter", Config(tagKeysConfig = Some(TagKeysCfg(osmType = Some(2)))))
+          .count()
 
-      result shouldBe 485
+        result shouldBe 485
+      }
     }
   }
-
 }
