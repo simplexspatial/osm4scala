@@ -90,8 +90,8 @@ case class WayEntity(
     nodes: Seq[Long],
     tags: Map[String, String],
     info: Option[Info] = None,
-    lat: Seq[Double],
-    lgn: Seq[Double]
+    lat: Seq[Double] = Seq.empty,
+    lgn: Seq[Double] = Seq.empty
 ) extends OSMEntity {
   override val osmModel: OSMTypes.Value = OSMTypes.Way
 }
