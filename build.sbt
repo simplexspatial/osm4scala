@@ -36,7 +36,7 @@ lazy val commonIOVersion = "2.5"
 lazy val logbackVersion = "1.1.7"
 lazy val scoptVersion = "3.7.1"
 lazy val akkaVersion = "2.5.31"
-lazy val spark3Version = "3.1.1"
+lazy val spark3Version = "3.5.0"
 lazy val spark2Version = "2.4.7"
 lazy val sparkDefaultVersion = spark3Version
 

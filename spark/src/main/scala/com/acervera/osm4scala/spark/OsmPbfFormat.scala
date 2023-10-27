@@ -149,7 +149,7 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
 
     (file: PartitionedFile) =>
       {
-        val path = new Path(new URI(file.filePath))
+        val path = new Path(new URI(file.filePath.toString))
         val fs = path.getFileSystem(broadcastedHadoopConf.value.value)
         val status = fs.getFileStatus(path)
 
