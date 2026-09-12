@@ -81,6 +81,12 @@ object OsmSqlEntity {
       StructField(FIELD_INFO_VISIBLE, BooleanType, true)
     ))
 
+  lazy val wayNodeSchema = StructType(
+    Seq(
+      StructField(FIELD_ID, LongType, true),
+      StructField(FIELD_LATITUDE, DoubleType, true),
+      StructField(FIELD_LONGITUDE, DoubleType, true)
+    ))
 
   lazy val schema = StructType(
     Seq(
@@ -89,6 +95,18 @@ object OsmSqlEntity {
       StructField(FIELD_LATITUDE, DoubleType, true),
       StructField(FIELD_LONGITUDE, DoubleType, true),
       StructField(FIELD_NODES, ArrayType(LongType, false), true),
+      StructField(FIELD_RELATIONS, ArrayType(relationSchema, false), true),
+      StructField(FIELD_TAGS, MapType(StringType, StringType, false), true),
+      StructField(FIELD_INFO, StructType(infoSchema), true)
+    ))
+
+  lazy val schemaWithGeo = StructType(
+    Seq(
+      StructField(FIELD_ID, LongType, false),
+      StructField(FIELD_TYPE, ByteType, false),
+      StructField(FIELD_LATITUDE, DoubleType, true),
+      StructField(FIELD_LONGITUDE, DoubleType, true),
+      StructField(FIELD_NODES, ArrayType(StructType(wayNodeSchema), false), true),
       StructField(FIELD_RELATIONS, ArrayType(relationSchema, false), true),
       StructField(FIELD_TAGS, MapType(StringType, StringType, false), true),
       StructField(FIELD_INFO, StructType(infoSchema), true)

@@ -26,6 +26,7 @@
 package com.acervera.osm4scala
 
 import com.acervera.osm4scala.model.{Info, NodeEntity}
+import com.acervera.osm4scala.utilities.CoordUtils.decompressCoord
 import com.acervera.osm4scala.utilities.StringTableUtils._
 import org.openstreetmap.osmosis.osmbinary.osmformat.{DenseInfo, DenseNodes, StringTable}
 
@@ -76,8 +77,8 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
 
     // Calculate new values base in deltas and update deltas
     lastId = idIterator.next() + lastId
-    lastLatitude = decompressCoord(latOffset, latIterator.next(), lastLatitude)
-    lastLongitude = decompressCoord(lonOffset, lonIterator.next(), lastLongitude)
+    lastLatitude = decompressCoord(latOffset, latIterator.next(), lastLatitude, granularity)
+    lastLongitude = decompressCoord(lonOffset, lonIterator.next(), lastLongitude, granularity)
 
     // Create node
     NodeEntity(
@@ -88,18 +89,6 @@ class DenseNodesIterator(osmosisStringTable: StringTable,
       infoIterator.next()
     )
 
-  }
-
-  /**
-    * Calculate coordinate applying offset, granularity and delta.
-    *
-    * @param offSet
-    * @param delta
-    * @param currentValue
-    * @return
-    */
-  def decompressCoord(offSet: Long, delta: Long, currentValue: Double): Double = {
-    (.000000001 * (offSet + (granularity * delta))) + currentValue
   }
 
   // Decode DenseInfo

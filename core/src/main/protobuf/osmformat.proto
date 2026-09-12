@@ -236,6 +236,9 @@ message Way {
    optional Info info = 4;
 
    repeated sint64 refs = 8 [packed = true];  // DELTA coded
+
+  repeated sint64 lat = 9 [packed = true]; // DELTA coded, optional
+  repeated sint64 lon = 10 [packed = true]; // DELTA coded, optional
 }
 
 message Relation {

@@ -122,7 +122,12 @@ class OsmPbfFormat extends FileFormat with DataSourceRegister {
 
   override def inferSchema(sparkSession: SparkSession,
                            options: Map[String, String],
-                           files: Seq[FileStatus]): Option[StructType] = Some(OsmSqlEntity.schema)
+                           files: Seq[FileStatus]): Option[StructType] =
+    if (options.getOrElse("wayWithGeometry","false").toLowerCase().equals("true")) {
+      Some(OsmSqlEntity.schemaWithGeo)
+    } else {
+      Some(OsmSqlEntity.schema)
+    }
 
   override def prepareWrite(sparkSession: SparkSession,
                             job: Job,
